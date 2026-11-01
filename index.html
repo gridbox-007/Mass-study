@@ -401,20 +401,112 @@ const go = h => { if (location.hash === h) route(); else location.hash = h; };
 // =================================================================
 // 홈: 프로젝트 목록
 // =================================================================
+// ---------- 백업: 이 기기의 데이터(열쇠·초안·체험 모드 데이터)를 파일로 옮기기 ----------
+function exportBackup(){
+  const items = {};
+  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('ms_')) items[k] = localStorage.getItem(k); }
+  const blob = new Blob([JSON.stringify({ app:'mass-study', v:1, exportedAt:new Date().toISOString(), from:location.host, items })], {type:'application/json'});
+  const d = new Date(), stamp = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `mass-study-backup-${stamp}.json`;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  const nd = Object.keys(ls.get('ms_drafts', {})).length, nl = (ls.get('ms_local_db', {projects:[]}).projects || []).length;
+  toast(`내보냈어요 · 초안 ${nd}개, 체험 모드 프로젝트 ${nl}개`);
+}
+function importBackup(){
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json,application/json';
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return;
+    let data; try { data = JSON.parse(await f.text()); } catch { toast('백업 파일을 읽지 못했어요'); return; }
+    if (data.app !== 'mass-study' || !data.items) { toast('매스 스터디 백업 파일이 아니에요'); return; }
+    const it = data.items;
+    const nd = Object.keys(JSON.parse(it.ms_drafts || '{}')).length, nl = (JSON.parse(it.ms_local_db || '{"projects":[]}').projects || []).length;
+    const ok = await modal({ title:'백업을 가져올까요?', text:`초안 ${nd}개, 체험 모드 프로젝트 ${nl}개${it.ms_token ? ', 기기 열쇠' : ''}가 들어 있어요. 지금 이 기기에 있는 것과 합쳐져요.`, ok:'가져오기' });
+    if (!ok) return;
+    try {
+      // 초안: 합치기
+      if (it.ms_drafts) { const cur = ls.get('ms_drafts', {}); ls.set('ms_drafts', {...cur, ...JSON.parse(it.ms_drafts)}); }
+      // 체험 모드 데이터: id 기준으로 합치기
+      if (it.ms_local_db) {
+        const inc = JSON.parse(it.ms_local_db), cur = ls.get('ms_local_db', {projects:[], folders:[], images:[], plans:[]});
+        for (const t of ['projects','folders','images','plans']) { const ids = new Set((cur[t]||[]).map(r=>r.id)); cur[t] = [...(cur[t]||[]), ...(inc[t]||[]).filter(r=>!ids.has(r.id))]; }
+        if (!ls.set('ms_local_db', cur)) throw new Error('저장 공간이 부족해요');
+      }
+      for (const [k, v] of Object.entries(it)) {
+        if (k.startsWith('ms_img_') || k.startsWith('ms_folder_')) localStorage.setItem(k, v);
+      }
+      // 열쇠·닉네임: 예전 것으로 (예전에 만든 것들의 주인 확인용)
+      if (it.ms_token) localStorage.setItem('ms_token', it.ms_token);
+      if (it.ms_nick) localStorage.setItem('ms_nick', it.ms_nick);
+      toast('가져왔어요. 새로고침할게요');
+      setTimeout(()=>location.reload(), 900);
+    } catch(e){ toast('가져오기 실패: ' + e.message); }
+  };
+  inp.click();
+}
+// 체험 모드에서 만든 것을 온라인(Supabase)으로 올리기
+function localDemoData(){ const db = ls.get('ms_local_db', null); return db && db.projects && db.projects.length ? db : null; }
+async function migrateLocalToOnline(){
+  const db = localDemoData(); if (!db || !ONLINE) return;
+  const ok = await modal({ title:'체험 모드 데이터를 올릴까요?', text:`이 기기에만 있던 프로젝트 ${db.projects.length}개(플랜·레퍼런스 포함)를 조원들과 공유되는 곳으로 올려요. 프로젝트 코드는 새로 붙어요.`, ok:'올리기' });
+  if (!ok) return;
+  const pMap = {}, fMap = {}, plMap = {};
+  try {
+    for (const p of db.projects) {
+      toast(`프로젝트 올리는 중… ${p.name}`);
+      const np = await api.createProject(p.name); pMap[p.id] = np;
+      for (const f of db.folders.filter(x=>x.project_id===p.id)) {
+        const nf = await api.createFolder(np.id, f.name); fMap[f.id] = nf;
+        const imgs = db.images.filter(x=>x.folder_id===f.id);
+        for (let i = 0; i < imgs.length; i++) {
+          toast(`이미지 올리는 중… ${f.name} ${i+1}/${imgs.length}`);
+          const dataUrl = ls.get('ms_img_'+imgs[i].id, ''); if (!dataUrl) continue;
+          const blob = await (await fetch(dataUrl)).blob();
+          await api.uploadImage(np.id, nf.id, blob);
+        }
+      }
+      for (const pl of db.plans.filter(x=>x.project_id===p.id)) {
+        const npl = await api.savePlan({ projectId: np.id, name: pl.name, data: pl.data }); plMap[pl.id] = npl.id;
+      }
+    }
+    // 초안들도 새 프로젝트로 연결
+    const all = drafts.all();
+    for (const d of Object.values(all)) {
+      const np = pMap[d.projectId]; if (!np) continue;
+      d.projectId = np.id; d.projectCode = np.code; d.linkedPlanId = d.linkedPlanId ? (plMap[d.linkedPlanId] || null) : null; if (!d.linkedPlanId) d.dirty = true;
+    }
+    ls.set('ms_drafts', all);
+    db.images.forEach(i=>ls.del('ms_img_'+i.id)); ls.del('ms_local_db');
+    toast(`프로젝트 ${db.projects.length}개를 올렸어요`); route();
+  } catch(e){
+    console.error(e);
+    // 이미 올라간 프로젝트는 체험 데이터에서 빼서 중복 업로드 방지
+    const left = ls.get('ms_local_db', db); left.projects = left.projects.filter(p=>!pMap[p.id]); ls.set('ms_local_db', left);
+    const all = drafts.all(); for (const d of Object.values(all)) { const np = pMap[d.projectId]; if (np) { d.projectId = np.id; d.projectCode = np.code; d.linkedPlanId = plMap[d.linkedPlanId] || null; } } ls.set('ms_drafts', all);
+    toast('올리다 멈췄어요: ' + e.message + ' · 다시 누르면 남은 것부터 올려요'); route();
+  }
+}
+
 function settingsModal(){
   const scrim = document.createElement('div'); scrim.className = 'scrim';
   scrim.innerHTML = `<div class="modal"><h3>내 정보</h3>
-    <p>이 기기는 <b>기기 열쇠</b>로 내 프로젝트·플랜·이미지를 알아봐요. 브라우저 기록이 지워지면 열쇠도 사라지니, 아래 링크를 나와의 채팅에 저장해 두면 언제든 다시 불러올 수 있어요. <b>열쇠 링크는 다른 사람에게 보내지 마세요.</b></p>
+    <p>이 기기는 <b>기기 열쇠</b>로 내 프로젝트·플랜·이미지를 알아봐요. 아래 열쇠 링크를 나와의 채팅에 저장해 두면 언제든 다시 불러올 수 있어요. <b>열쇠 링크는 다른 사람에게 보내지 마세요.</b></p>
     <label>이름(닉네임)</label><input type="text" id="nk" value="${esc(me.nick)}" maxlength="20">
     <div class="actions" style="justify-content:space-between">
       <button class="btn" data-a="key">🔑 열쇠 링크 복사</button>
       <button class="btn primary" data-a="save">저장</button>
     </div>
-    <p style="margin:14px 0 0;font-size:12px">${ONLINE ? '온라인 모드 · 조원들과 공유돼요' : '체험 모드 · 이 기기에만 저장돼요'}</p></div>`;
+    <label style="margin-top:18px">기기·주소 옮기기 (초안과 열쇠를 파일로)</label>
+    <div class="actions" style="justify-content:flex-start;margin-top:6px">
+      <button class="btn small" data-a="export">📦 내보내기</button>
+      <button class="btn small" data-a="import">📥 가져오기</button>
+    </div>
+    <p style="margin:14px 0 0;font-size:12px">${ONLINE ? '온라인 모드 · 조원들과 공유돼요' : '체험 모드 · 이 기기에만 저장돼요'} · ${esc(location.host)}</p></div>`;
   document.body.appendChild(scrim);
   scrim.addEventListener('click', async e => {
     const a = e.target.closest('[data-a]')?.dataset.a;
     if (a === 'key') { await copyText(keyLink()); toast('열쇠 링크를 복사했어요. 나와의 채팅에 붙여넣어 두세요'); }
+    else if (a === 'export') exportBackup();
+    else if (a === 'import') { scrim.remove(); importBackup(); }
     else if (a === 'save') { const v = scrim.querySelector('#nk').value.trim(); if (v) { me.nick = v; ls.set('ms_nick', v); } scrim.remove(); route(); }
     else if (e.target === scrim) scrim.remove();
   });
@@ -429,6 +521,7 @@ async function viewHome(){
     const list = projects.filter(p => !qq || p.code.includes(qq) || p.name.toUpperCase().includes(qq));
     $app.innerHTML = `<div class="wrap">
       <header class="top"><h1>매스 스터디</h1><button class="chip" id="me">👤 ${esc(me.nick)}</button></header>
+      ${ONLINE && localDemoData() ? `<div class="banner" style="display:flex;justify-content:space-between;align-items:center;gap:10px">체험 모드에서 만든 프로젝트 ${localDemoData().projects.length}개가 이 기기에만 있어요. <button class="btn small primary" id="migrate">공유되게 올리기</button></div>` : ''}
       ${ONLINE ? '' : `<div class="banner">체험 모드예요. 지금 만드는 내용은 이 기기에만 저장돼요. Supabase를 연결하면 조원들과 공유돼요.</div>`}
       <div style="display:flex;gap:8px"><input type="text" id="q" placeholder="프로젝트 이름이나 코드로 찾기" value="${esc(q)}"><button class="btn primary" id="new">＋ 새 프로젝트</button></div>
       <div class="section-title"><h2>프로젝트 ${list.length}개</h2></div>
@@ -440,6 +533,7 @@ async function viewHome(){
     const qi = $app.querySelector('#q');
     qi.addEventListener('input', () => { const pos = qi.selectionStart; render(qi.value); const n = $app.querySelector('#q'); n.focus(); n.setSelectionRange(pos,pos); });
     $app.querySelector('#me').onclick = settingsModal;
+    const mg = $app.querySelector('#migrate'); if (mg) mg.onclick = migrateLocalToOnline;
     $app.querySelector('#new').onclick = async () => {
       const r = await modal({ title:'새 프로젝트', text:'과제 단위의 공동 작업 공간이에요. 만들면 고유 코드가 붙어요.', fields:[{label:'프로젝트 이름', placeholder:'예: 3주차 주거 매스 스터디', required:true}], ok:'만들기' });
       if (!r) return;
