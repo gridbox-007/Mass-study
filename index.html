@@ -263,14 +263,20 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* 모형 작업대: 회색 커팅매트 위 흰 보드지 매스, 파란 선택, 빨간 대지선. 패드 가로화면 기준 오른쪽 패널 */
-  --paper:#ebeae5;
-  --panel:#fbfaf7;
-  --ink:#1c1e21;
-  --mute:#686b70;
-  --line:#d5d3cb;
-  --accent:#2546c9;
-  --warn:#c63f2a;
+  /* 설계 스튜디오 작업대: 아이보리 책상 위 종이 도면. 먹색 글자·버튼, 도면 블루는 선택, 벽돌색은 대지선·경고, 세이지는 스케치·공유 상태 */
+  --paper:#ece6d9;
+  --panel:#faf7ef;
+  --sheet:#fbf8f1;
+  --ink:#27241f;
+  --mute:#6d665b;
+  --line:#d9d0c0;
+  --line2:#e7e0d2;
+  --accent:#2c5a8c;
+  --accent-t:#e3e9f0;
+  --warn:#a3492f;
+  --warn-t:#f5e6df;
+  --sage:#5e7b66;
+  --sage-t:#e4ebe2;
   --sans:"IBM Plex Sans KR", -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
   --side:360px;
@@ -406,7 +412,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 /* ---------- 스터디 모드: 평면 캔버스 ---------- */
 #studyUI{position:absolute;inset:0}
-#pc{position:absolute;inset:0;width:100%;height:100%;touch-action:none;background:#f6f5f0;display:block;user-select:none;-webkit-user-select:none}
+#pc{position:absolute;inset:0;width:100%;height:100%;touch-action:none;background:#e9e2d4;display:block;user-select:none;-webkit-user-select:none}
 .stools{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .stools::-webkit-scrollbar{display:none}
 .stools button{flex:none;height:42px;padding:0 15px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:500;font-size:14.5px;white-space:nowrap}
@@ -449,7 +455,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .sheetbar .all{color:var(--mute)}
 .sbottom{overflow-x:auto;scrollbar-width:none}
 .sbottom::-webkit-scrollbar{display:none}
-.sbottom button.on{background:#eef1fb;border-color:#9aa6d8}
+.sbottom button.on{background:#e3e9f0;border-color:#a7b8cb}
 .sbottom button.fix{background:#fff3d6;border-color:#d9a93b;font-weight:600}
 .swc{width:18px;height:18px;border-radius:4px;border:1px solid rgba(0,0,0,.35);flex:none;display:inline-block}
 .swc.hatch{background-image:repeating-linear-gradient(45deg,#a9b8c8 0 1.5px,transparent 1.5px 6px) !important}
@@ -468,7 +474,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .ctx > *{flex:none}
 .ctx .dimb{font-family:var(--mono);font-weight:600;border:1px solid var(--line) !important;background:#fff !important}
 .sTag.top{transform:translateX(-50%);font-size:15px;padding:6px 12px;border-radius:99px}
-#pc .dropHi{stroke:#2546c9 !important;stroke-width:6px !important;vector-effect:non-scaling-stroke}
+#pc .dropHi{stroke:#2c5a8c !important;stroke-width:6px !important;vector-effect:non-scaling-stroke}
 .hsearch input{width:100%;height:46px;border:1px solid var(--line);border-radius:10px;padding:0 14px;font-size:16px;background:var(--panel)}
 .crumb{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .crumb b{font-size:18px}
@@ -501,13 +507,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 body.exact #tUndo, body.exact #tRedo{display:none !important}
 .sbottom{right:auto !important;max-width:100%;pointer-events:auto !important;gap:6px !important}
 .sbottom button{height:38px !important;padding:0 12px !important;font-size:13.5px !important}
-.sbottom button[aria-pressed="true"]{background:#eef1fb;border-color:#9aa6d8;color:#1f3aa8}
+.sbottom button[aria-pressed="true"]{background:#e3e9f0;border-color:#a7b8cb;color:#2c5a8c}
 .fadeR{-webkit-mask-image:linear-gradient(to right,#000 82%,transparent);mask-image:linear-gradient(to right,#000 82%,transparent)}
 .fadeL{-webkit-mask-image:linear-gradient(to left,#000 82%,transparent);mask-image:linear-gradient(to left,#000 82%,transparent)}
 .fadeL.fadeR{-webkit-mask-image:linear-gradient(to right,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(to right,transparent,#000 12%,#000 88%,transparent)}
 .ctx .ib{display:inline-flex !important;align-items:center;gap:3px;padding:0 9px !important;color:var(--ink)}
 .ctx .ib.on{background:var(--accent) !important;color:#fff !important}
-.ctx .ib.open{background:#eef1fb !important;box-shadow:inset 0 0 0 1.5px #9aa6d8}
+.ctx .ib.open{background:#e3e9f0 !important;box-shadow:inset 0 0 0 1.5px #a7b8cb}
 .ctx .ib .swc{width:20px;height:20px}
 .ctx .deg{font-family:var(--mono);font-size:12.5px !important;color:var(--accent)}
 .pop{position:fixed;z-index:9;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px;box-shadow:0 12px 30px rgba(0,0,0,.18);display:flex;gap:6px;flex-wrap:wrap;max-width:min(92vw,420px)}
@@ -523,7 +529,7 @@ body.exact #tUndo, body.exact #tRedo{display:none !important}
 .cmsw button.on{outline:3px solid var(--accent);outline-offset:2px}
 .sheetbar .vsep{height:24px;align-self:center}
 .sheetbar .all.on{background:var(--ink);border-color:var(--ink);color:#fff}
-.card.mine{border-color:#9aa6d8;background:#f3f5fd}
+.card.mine{border-color:#a7b8cb;background:#eef1f3}
 .card.mine .th{background:#eaeefb}
 .card.mine .nm::before{content:'내 스터디';display:block;font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.02em}
 .card.pinned{box-shadow:0 0 0 2px #e8c36a}
@@ -545,7 +551,7 @@ body.exact #tUndo, body.exact #tRedo{display:none !important}
 .newcard .half.k-sketch:hover{background:hsl(160 42% 88%)}
 .newcard .half.k-study:hover{background:hsl(226 42% 90%)}
 .pcard{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--panel);min-height:150px;text-align:left}
-.pcard.joined{border-color:#9aa6d8;background:#f3f5fd}
+.pcard.joined{border-color:#a7b8cb;background:#eef1f3}
 .pcard .pn{font-weight:700;font-size:17px;overflow-wrap:anywhere}
 .pcard .pm{font-size:12.5px;color:var(--mute)}
 .pcard .pa{display:flex;gap:6px;margin-top:auto}
@@ -574,7 +580,7 @@ body.fbmode #stools, body.fbmode #ctx{display:none !important}
 .savebtn.saved{background:var(--panel);color:var(--accent)}
 .savebtn.dirty::after{content:'';position:absolute;right:-3px;top:-3px;width:11px;height:11px;border-radius:50%;background:#ffb547;border:2px solid var(--paper)}
 body.sketchmode #uiModeSeg, body.sketchmode #sheetBar, body.sketchmode #snapBtn, body.sketchmode #fixBtn, body.sketchmode #sSum, body.sketchmode #setBtn, body.sketchmode [data-tool=outer]{display:none !important}
-body.sketchmode #pc{background:#fbfaf6}
+body.sketchmode #pc{background:#f7f3ea}
 #lockBtn{display:none !important}
 .card .nm{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em;line-height:1.3}
 .card.mine .nm{min-height:calc(2.6em + 14px)}
@@ -664,6 +670,181 @@ body.study.menuOpen .row2 .tools2 button{height:42px}
 .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mute);background:var(--paper);font-size:14px;padding:20px;text-align:center}
 @media (max-width:420px){.stepper button{width:30px}.seg button{padding:0 8px;font-size:13px}.views button,.tools2 button{padding:0 8px}.modeSeg button{padding:0 9px}}
 @media (prefers-reduced-motion:no-preference){.views button,.seg button,.tb{transition:background .15s}}
+
+/* ================= 디자인: 설계 스튜디오 작업대 =================
+   책상(아이보리) 위에 종이 도면을 펼친 느낌. 먹색은 글자와 주요 버튼, 도면 블루는 선택,
+   벽돌색은 대지선과 한도 초과, 세이지는 스케치와 '공유됨'. 장식보다 작업물이 먼저 보이게. */
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:"tnum" 0}
+.btn{border-color:var(--ink);background:var(--panel);border-radius:7px}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#faf7ef}
+.btn.sm{border-color:var(--line);font-weight:500}
+.btn.sm:hover{border-color:var(--ink)}
+
+/* 홈: 표제 */
+#home{background:var(--paper)}
+.wrap{gap:14px}
+.lh{border-bottom:2px solid var(--ink);padding-bottom:12px;align-items:flex-end}
+.lh h1{font-size:30px;letter-spacing:-0.035em;line-height:1.1}
+.lh p{font-size:14px;color:var(--mute);margin-top:6px}
+.htabs{border-bottom:1px solid var(--line)}
+.htabs button{font-size:15px;padding:10px 12px 9px;color:var(--mute)}
+.htabs button.on{color:var(--ink);font-weight:600;border-bottom-width:2px}
+.htabs .n{font-family:var(--sans);font-variant-numeric:tabular-nums;font-size:12.5px;opacity:.65}
+.hsearch input{height:42px;border-radius:8px;background:var(--sheet);border-color:var(--line)}
+.hsearch input:focus{border-color:var(--ink);outline:none}
+#tabDesc{font-size:13px;line-height:1.55;max-width:68ch}
+.note{background:#f6edd6;border-color:#dcc48c;color:#4d3f1c}
+.plist{grid-template-columns:repeat(auto-fill,minmax(224px,1fr));gap:14px;align-items:start}
+.card .th{position:relative;overflow:hidden}
+.card .th svg{position:absolute;inset:10px 12px;width:calc(100% - 24px);height:calc(100% - 20px)}
+.pthumbs.one .pt{aspect-ratio:16/9}
+.sbottom .sum .vv{display:flex;align-items:baseline;gap:3px;white-space:nowrap}
+.gsec{font-size:13.5px;font-weight:600;color:var(--ink);border-top:1px solid var(--line);padding-top:12px;margin-top:6px}
+.empty{padding:18px 2px}
+
+/* 작업물 카드 = 도면 한 장 + 표제란 */
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.card:hover{border-color:#b9ad97}
+.card .th{background:#ebe4d6;border-bottom:0;padding:10px 12px;aspect-ratio:4/3}
+.card.k-sketch .th{background:#efe9dc}
+.card.mine .th{background:#e6e3db}
+.tblock{border-top:1.5px solid var(--ink);display:flex;flex-direction:column;flex:1}
+.tbh{display:flex;align-items:flex-start;gap:8px;padding:8px 10px 7px;border-left:3px solid var(--accent)}
+.card.k-sketch .tbh{border-left-color:var(--sage)}
+.tbh .nm{flex:1;min-width:0;font-weight:600;font-size:15px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;min-height:0}
+.st{flex:none;font-size:11.5px;line-height:1;padding:4px 6px;border-radius:4px;border:1px solid var(--line);color:var(--mute);background:var(--panel);white-space:nowrap;margin-top:1px}
+.st.shared{background:var(--sage-t);border-color:#b9c8b8;color:#3f5a46}
+.st.changed{background:#f6ead0;border-color:#dcc48c;color:#6b5114}
+.st.mine{background:var(--accent-t);border-color:#b8c7d8;color:var(--accent)}
+.tbc{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);border-top:1px solid var(--line)}
+.tbc > div{display:flex;flex-direction:column;gap:2px;padding:6px 10px 7px;min-width:0}
+.tbc > div + div{border-left:1px solid var(--line)}
+.tbc .k{font-size:11px;color:var(--mute)}
+.tbc .v{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbn{font-size:12px;color:var(--mute);padding:6px 10px;border-top:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbn:empty{display:none}
+.card .row{padding:8px 10px 10px;gap:6px;border-top:1px solid var(--line2)}
+.card .row button{height:34px;padding:0 6px;border-radius:6px;border-color:var(--line);background:var(--panel);font-size:13px}
+.card .row button.main{border-color:var(--ink);background:var(--ink);color:#faf7ef;font-weight:600}
+.card.mine{background:var(--sheet);border-color:#b8c7d8}
+.card.mine .nm::before{content:none}
+.card.pinned{box-shadow:0 0 0 2px #d9b65c}
+.pinmark{background:#f6ead0;border-color:#d9b65c;color:#6b5114;border-radius:4px}
+
+/* 새로 시작: 모드마다 종이가 다르게 보이는 낮은 띠 */
+.newcard{grid-column:1/-1;display:grid !important;grid-template-columns:1fr 1fr;gap:12px;min-height:0 !important;border:0 !important;background:none !important;overflow:visible}
+.newcard .half{flex-direction:row;justify-content:flex-start;align-items:center;gap:14px;padding:10px 14px 10px 10px;border:1px solid var(--line);border-radius:6px;background:var(--sheet);text-align:left;min-height:84px}
+.newcard .half svg{width:96px;height:64px;flex:none}
+.newcard .half .tx{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.newcard .half .tx b{font-size:16px;letter-spacing:-0.01em}
+.newcard .half .tx span{font-size:13px;color:var(--mute)}
+.newcard .half.k-sketch{background:var(--sheet);border-color:var(--line);box-shadow:inset 4px 0 0 var(--sage)}
+.newcard .half.k-study{background:var(--sheet);border-color:var(--line);box-shadow:inset 4px 0 0 var(--accent)}
+.newcard .half.k-sketch b{color:#3f5a46}
+.newcard .half.k-study b{color:var(--accent)}
+.newcard .half:hover,.newcard .half.k-sketch:hover,.newcard .half.k-study:hover{background:#fffdf7;border-color:var(--ink)}
+.newcard .plus{width:30px;height:30px;border:1.5px solid var(--ink);border-radius:50%;margin:0;flex:none}
+.newcard .plus::before,.newcard .plus::after{width:12px;height:1.6px;background:var(--ink)}
+.newcard .half.k-sketch .plus{border-color:var(--sage)}
+.newcard .half.k-sketch .plus::before,.newcard .half.k-sketch .plus::after{background:var(--sage)}
+.newcard .half.k-study .plus{border-color:var(--accent)}
+.newcard .half.k-study .plus::before,.newcard .half.k-study .plus::after{background:var(--accent)}
+@media (max-width:560px){.newcard{grid-template-columns:1fr}.newcard .half svg{width:78px;height:52px}}
+
+/* 프로젝트 = 도면 묶음 (뒤에 종이가 겹쳐 보임) */
+.pcard{padding:0;gap:0;border-radius:5px;background:var(--sheet);border-color:var(--line);min-height:0;margin:0 8px 8px 0;
+  box-shadow:4px 4px 0 -1px var(--sheet),4px 4px 0 0 var(--line),8px 8px 0 -1px var(--sheet),8px 8px 0 0 var(--line)}
+.pcard.joined{background:var(--sheet);border-color:#9fb1c5}
+.pthumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:8px;background:#ebe4d6;border:0;border-bottom:1.5px solid var(--ink);border-radius:5px 5px 0 0}
+.pthumbs .pt{aspect-ratio:4/3;background:var(--sheet);border:1px solid var(--line);border-radius:2px;display:block;padding:2px}
+.pthumbs .pt svg{width:100%;height:100%;display:block}
+.pthumbs .pt.none{grid-column:1/-1;aspect-ratio:auto;height:64px;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:var(--mute);border-style:dashed;background:transparent}
+.pcard .tblock{border-top:0}
+.pcard .tbh{border-left-color:var(--ink)}
+.pcard .pn{flex:1;min-width:0;font-weight:700;font-size:16px;letter-spacing:-0.01em;overflow-wrap:anywhere}
+.pcard .pa{padding:8px 10px 10px;margin-top:0;border-top:1px solid var(--line2)}
+.pcard .pa button{height:34px;border-radius:6px;background:var(--panel)}
+.pcard .pa button.main{background:var(--ink);color:#faf7ef;border-color:var(--ink)}
+.pcard.newp{flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;padding:14px;border:1px dashed #b7ab95;background:transparent;box-shadow:none;margin:0;min-height:84px;color:var(--ink);text-align:left}
+.pcard.newp:hover{border-color:var(--ink);background:var(--sheet)}
+.pcard.newp .plus{width:30px;height:30px;border:1.5px solid var(--ink);border-radius:50%;position:relative;flex:none}
+.pcard.newp .plus::before,.pcard.newp .plus::after{content:'';position:absolute;left:50%;top:50%;width:12px;height:1.6px;background:var(--ink);transform:translate(-50%,-50%)}
+.pcard.newp .plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+.pcard.newp .tx{display:flex;flex-direction:column;gap:3px}
+.pcard.newp .tx b{font-size:16px}
+.pcard.newp .tx span{font-size:13px;color:var(--mute)}
+.crumb b{font-size:20px;letter-spacing:-0.02em}
+.tfilter button{height:32px;border-radius:6px;background:var(--sheet)}
+
+/* 작업 화면: 위 도구 */
+.icon{background:var(--panel);border-color:var(--line);border-radius:8px}
+.icon:hover:not(:disabled){border-color:var(--ink)}
+.name{background:var(--sheet);border-color:var(--line);font-size:15.5px;letter-spacing:-0.01em}
+.name:focus{border-color:var(--ink);outline:none}
+#tUndo{border-top-right-radius:0;border-bottom-right-radius:0}
+#tRedo{border-top-left-radius:0;border-bottom-left-radius:0;margin-left:-7px}
+.modeSeg{border-color:var(--ink);background:var(--panel)}
+.modeSeg button{background:var(--panel)}
+.modeSeg button.on{background:var(--ink);color:#faf7ef}
+.savebtn{background:var(--ink);border-color:var(--ink);color:#faf7ef;border-radius:8px}
+.savebtn.saved{background:var(--panel);color:#3f5a46;border-color:#a9bba9}
+.savebtn.dirty::after{background:#d9a23b}
+.pill{background:var(--panel);border-color:var(--line)}
+.stools{gap:8px;align-items:center}
+.stools .tgrp{display:flex;gap:2px;padding:3px;background:var(--panel);border:1px solid var(--line);border-radius:10px;flex:none}
+.stools .tgrp button{height:36px;padding:0 13px;border:0;border-radius:7px;background:transparent;font-size:14px;font-weight:500}
+.stools .tgrp button:hover:not(.on){background:#efe9dd}
+.stools .tgrp button.on{background:var(--ink);color:#faf7ef}
+.stools .tgrp.aux{background:transparent;border-style:dashed}
+.stools .tgrp.aux button{color:var(--mute)}
+.stools .tgrp.aux button.on{color:#faf7ef}
+.sheetbar button{height:34px;border-radius:6px;background:var(--panel);font-size:13.5px}
+.sheetbar button.on{background:var(--accent);border-color:var(--accent)}
+.sheetbar .all.on{background:var(--ink);border-color:var(--ink)}
+.banner{background:var(--ink);border-radius:8px}
+.origin{background:var(--sheet)}
+
+/* 작업 화면: 아래 상태줄 (화면 · 보기 · 자료 | 수치) */
+.sbottom{gap:8px !important;align-items:center}
+.sbottom .bgrp{display:flex;gap:2px;padding:3px;background:var(--panel);border:1px solid var(--line);border-radius:10px;flex:none}
+.sbottom .bgrp:not(:has(> button:not([hidden]))){display:none}
+.sbottom .bgrp button{height:34px !important;padding:0 11px !important;border:0 !important;border-radius:7px !important;background:transparent !important;font-size:13.5px !important;color:var(--ink)}
+.sbottom .bgrp button[aria-pressed="true"]{background:var(--accent-t) !important;color:var(--accent) !important}
+.sbottom .bgrp button.eye[aria-pressed="false"]{color:var(--mute) !important;text-decoration:line-through;text-decoration-color:rgba(109,102,91,.5)}
+.sbottom .bgrp button.fix{background:#f6ead0 !important;color:#6b5114 !important;font-weight:600}
+.sbottom .sum{display:flex;padding:0 !important;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-family:var(--sans);flex:none;overflow:hidden}
+.sbottom .sum:empty{display:none}
+.sbottom .sum .m{display:flex;flex-direction:column;justify-content:center;padding:4px 11px;min-height:40px}
+.sbottom .sum .m + .m{border-left:1px solid var(--line)}
+.sbottom .sum i{font-style:normal;font-size:10.5px;color:var(--mute);line-height:1.2}
+.sbottom .sum b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:500;color:var(--ink);line-height:1.25}
+.sbottom .sum small{font-family:var(--mono);font-size:11px;color:var(--mute)}
+.sbottom .sum .m.over{background:var(--warn-t)}
+.sbottom .sum .m.over b{color:var(--warn)}
+.sbottom .sum.over{border-color:#d7a493}
+.ctx{background:var(--panel);border-color:var(--line);box-shadow:0 10px 28px rgba(39,36,31,.16);border-radius:12px}
+.ctx button:not(.on):hover{background:#efe9dd}
+.pop{background:var(--panel);box-shadow:0 12px 30px rgba(39,36,31,.18)}
+.lblEd{border-color:var(--ink);background:var(--panel)}
+.sTag{background:var(--accent)}
+.hint,.toast{background:var(--ink)}
+.toast{color:#faf7ef}
+
+/* 창·패널 */
+.modal{background:rgba(39,36,31,.42)}
+.mbox{background:var(--panel);border-radius:10px}
+.mbox h2{letter-spacing:-0.02em}
+.dock,.sheet,#chat{background:var(--panel)}
+.rhead{background:var(--panel)}
+.tabs button{background:var(--sheet)}
+.rcard,.ditem,.plan{background:var(--sheet)}
+@media (max-width:640px){
+  .lh h1{font-size:26px}
+  .plist{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .tbc .v{font-size:12.5px}
+  .tbc > div{padding:5px 8px 6px}
+  .stools .tgrp button{padding:0 11px;font-size:13.5px}
+}
 </style>
 <script type="importmap">
 {"imports":{
@@ -697,7 +878,7 @@ body.study.menuOpen .row2 .tools2 button{height:42px}
       <span class="spacer"></span>
       <button class="btn sm" id="pjRename">이름 바꾸기</button>
       <button class="btn sm" id="pjLeave">나가기</button>
-      <button class="btn sm" id="pjDelete" style="color:#c63f2a">삭제</button>
+      <button class="btn sm" id="pjDelete" style="color:#a3492f">삭제</button>
     </div>
     <div class="tfilter" id="teamFilter" hidden role="group" aria-label="보기">
       <button data-f="all">전체</button><button data-f="pin">고정</button><button data-f="mine">내 것</button><button data-f="others">조원 것</button>
@@ -715,15 +896,21 @@ body.study.menuOpen .row2 .tools2 button{height:42px}
     <svg id="pc" xmlns="http://www.w3.org/2000/svg" role="application" aria-label="평면 스케치 캔버스"></svg>
     <div class="ctx" id="ctx" hidden></div>
     <div class="sbottom" id="sbottom">
-      <button id="zoomBtn" title="눌러서 지금 대지에 맞추기">100%</button>
-      <button id="snapBtn" aria-pressed="true">격자</button>
-      <button id="roleBtn" aria-pressed="false" title="이름·용도를 가리고 공간의 역할만 보기">역할만 보기</button>
-      <button id="flowEye" class="eye" aria-pressed="true">동선</button>
-      <button id="cardEye" class="eye" aria-pressed="true">사진</button>
-      <button id="dockBtn" aria-pressed="false">레퍼런스</button>
-      <button id="fbEye" aria-pressed="true" hidden>피드백</button>
-      <button id="fixBtn" class="fix" hidden>어긋난 맞추기</button>
-      <span class="sum" id="sSum"></span>
+      <div class="bgrp" role="group" aria-label="화면">
+        <button id="zoomBtn" title="눌러서 지금 대지에 맞추기">100%</button>
+        <button id="snapBtn" aria-pressed="true">격자</button>
+      </div>
+      <div class="bgrp" role="group" aria-label="보기">
+        <button id="roleBtn" aria-pressed="false" title="이름·용도를 가리고 공간의 역할만 보기">역할만 보기</button>
+        <button id="flowEye" class="eye" aria-pressed="true">동선</button>
+        <button id="cardEye" class="eye" aria-pressed="true">사진</button>
+        <button id="fbEye" aria-pressed="true" hidden>피드백</button>
+      </div>
+      <div class="bgrp" role="group" aria-label="자료">
+        <button id="dockBtn" aria-pressed="false">레퍼런스</button>
+        <button id="fixBtn" class="fix" hidden>어긋난 맞추기</button>
+      </div>
+      <div class="sum" id="sSum" aria-live="polite"></div>
     </div>
     <div class="pop" id="pop" hidden></div>
     <div class="pop" id="fbPop" hidden></div>
@@ -763,20 +950,25 @@ body.study.menuOpen .row2 .tools2 button{height:42px}
       <button id="menuBtn" class="icon" aria-label="메뉴">메뉴</button>
     </div>
     <div class="stools" id="stools">
-      <button data-tool="select">선택</button>
-      <button data-tool="rect">사각형</button>
-      <button data-tool="circle">원형</button>
-      <button data-tool="semi">반원</button>
-      <button data-tool="outer">점선 외곽</button>
-      <button data-tool="text">텍스트</button>
-      <span class="vsep"></span>
-      <button id="flowBtn">동선 그리기</button>
+      <div class="tgrp" role="group" aria-label="선택">
+        <button data-tool="select">선택</button>
+      </div>
+      <div class="tgrp" role="group" aria-label="도형 그리기">
+        <button data-tool="rect">사각형</button>
+        <button data-tool="circle">원형</button>
+        <button data-tool="semi">반원</button>
+        <button data-tool="outer">점선 외곽</button>
+      </div>
+      <div class="tgrp aux" role="group" aria-label="보조 도구">
+        <button data-tool="text">텍스트</button>
+        <button id="flowBtn">동선 그리기</button>
+      </div>
     </div>
     <div class="flowbar" id="flowBar" hidden>
       <span id="flowHint">화면을 끌어서 동선을 그려요</span>
       <div class="ftypes" id="flowTypes">
         <button data-ft="main"><i style="background:#d9480f"></i>주 동선</button>
-        <button data-ft="sub"><i style="background:#2546c9"></i>부 동선</button>
+        <button data-ft="sub"><i style="background:#2c5a8c"></i>부 동선</button>
         <button data-ft="service"><i style="background:#6b6e73"></i>서비스</button>
       </div>
       <button class="done" id="flowDone">완료</button>
@@ -1097,13 +1289,13 @@ const SHAPES = ['rect','circle','semi','quarter'];
 // 공간 종류: 꽉 찬 공간일수록 짙고 채도 높게, 빈 공간일수록 옅고 흐리게
 const CATS = {
   structure: { n: '구조·벽체', ex: '벽·기둥·구조 요소', c: '#4b4e54', t: '#ffffff' },
-  room:      { n: '일반 공간', ex: '방·실·작업실', c: '#c98a5e', t: '#1c1e21' },
-  vertical:  { n: '수직 동선', ex: '계단·엘리베이터·경사로', c: '#8f7fd3', t: '#1c1e21' },
-  public:    { n: '공용 공간', ex: '홀·라운지·로비', c: '#e3b673', t: '#1c1e21' },
-  corridor:  { n: '동선', ex: '복도·통로', c: '#e7e0cf', t: '#1c1e21' },
-  outdoor:   { n: '외부 공간', ex: '중정·선큰·테라스', c: '#cfe0bd', t: '#1c1e21' },
+  room:      { n: '일반 공간', ex: '방·실·작업실', c: '#c98a5e', t: '#27241f' },
+  vertical:  { n: '수직 동선', ex: '계단·엘리베이터·경사로', c: '#8f7fd3', t: '#27241f' },
+  public:    { n: '공용 공간', ex: '홀·라운지·로비', c: '#e3b673', t: '#27241f' },
+  corridor:  { n: '동선', ex: '복도·통로', c: '#e7e0cf', t: '#27241f' },
+  outdoor:   { n: '외부 공간', ex: '중정·선큰·테라스', c: '#cfe0bd', t: '#27241f' },
   void:      { n: '보이드', ex: '아트리움·오픈 투 빌로우', c: '#eef1f4', t: '#3b4a5a', hatch: true },
-  free:      { n: '미지정', ex: '자유 도형·기타', c: '#f6f4ee', t: '#1c1e21' }
+  free:      { n: '미지정', ex: '자유 도형·기타', c: '#f6f4ee', t: '#27241f' }
 };
 const CAT_KEYS = Object.keys(CATS);
 const CAT_WORDS = [
@@ -1116,7 +1308,7 @@ const CAT_WORDS = [
   ['room', ['방', '실', '작업', '침실', '서재', '사무', '교실', '스튜디오', '주방', '화장', '욕', '창고', '회의', '공방']]
 ];
 function guessCat(label){ const t = String(label || '').toLowerCase(); if (!t) return null; for (const [k, ws] of CAT_WORDS) if (ws.some(w => t.includes(w))) return k; return null; }
-function textOn(hex){ const n = parseInt(String(hex).slice(1), 16) || 0, f = v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }; const L = .2126 * f(n >> 16 & 255) + .7152 * f(n >> 8 & 255) + .0722 * f(n & 255); return L < .28 ? '#ffffff' : '#1c1e21'; }
+function textOn(hex){ const n = parseInt(String(hex).slice(1), 16) || 0, f = v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }; const L = .2126 * f(n >> 16 & 255) + .7152 * f(n >> 8 & 255) + .0722 * f(n & 255); return L < .28 ? '#ffffff' : '#27241f'; }
 function catInfo(k, proj){
   if (CATS[k]) return CATS[k];
   const pr = proj || (typeof P !== 'undefined' ? P : null);
@@ -1490,38 +1682,57 @@ function thumb(p){
     const bs = (p.boxes || []).map(b => normBox(b, 3));
     if (bs.length) { const a = bs.map(aabb); X0 = Math.min(...a.map(q => q.x0)); Z0 = Math.min(...a.map(q => q.z0)); W = Math.max(4, Math.max(...a.map(q => q.x1)) - X0); D = Math.max(3, Math.max(...a.map(q => q.z1)) - Z0); }
   }
-  const pad = Math.max(W, D) * 0.06, sw = Math.max(W, D) / 160;
+  const g = num(p.grid, 3), M = sketch ? 0 : g, pad = Math.max(W, D) * 0.05 + M, sw = Math.max(W, D) / 160;
   const svg = svgEl('svg', { viewBox: `${X0 - pad} ${Z0 - pad} ${W + pad * 2} ${D + pad * 2}`, preserveAspectRatio: 'xMidYMid meet' });
-  if (!sketch) svg.appendChild(svgEl('rect', { x: 0, y: 0, width: W, height: D, fill: '#fbfaf7', stroke: '#c63f2a', 'stroke-width': sw * 1.4, 'stroke-dasharray': `${sw * 6} ${sw * 3}` }));
+  if (sketch) svg.appendChild(svgEl('rect', { x: X0 - pad * .6, y: Z0 - pad * .6, width: W + pad * 1.2, height: D + pad * 1.2, rx: sw * 4, fill: '#f7f3ea', stroke: '#d3c9b6', 'stroke-width': sw * .8 }));
+  if (!sketch) {
+    svg.appendChild(svgEl('rect', { x: -M, y: -M, width: W + 2 * M, height: D + 2 * M, fill: '#fbf8f1', stroke: '#d3c9b6', 'stroke-width': sw * .8 }));
+    let d1 = '', d5 = '';
+    if ((W + 2 * M) / g < 90) {
+      for (let x = -M; x <= W + M + 1e-6; x += g) { const d = `M${x} ${-M}V${D + M}`; if (Math.round(x / g) % 5 === 0) d5 += d; else d1 += d; }
+      for (let z = -M; z <= D + M + 1e-6; z += g) { const d = `M${-M} ${z}H${W + M}`; if (Math.round(z / g) % 5 === 0) d5 += d; else d1 += d; }
+    }
+    if (d1) svg.appendChild(svgEl('path', { d: d1, stroke: '#e5ddcf', 'stroke-width': sw * .7, fill: 'none' }));
+    if (d5) svg.appendChild(svgEl('path', { d: d5, stroke: '#c9d1d8', 'stroke-width': sw * .8, fill: 'none' }));
+    svg.appendChild(svgEl('rect', { x: 0, y: 0, width: W, height: D, fill: 'none', stroke: '#a3492f', 'stroke-opacity': .85, 'stroke-width': sw * 1.2, 'stroke-dasharray': `${sw * 6} ${sw * 2.5} ${sw * 1.2} ${sw * 2.5}` }));
+  }
   let boxes = (p.boxes || []).map(b => ({ ...normBox(b, 3), cat: b.cat || 'free' })).filter(b => !b.sheet);
   if (boxes.some(b => b.lv === 0)) boxes = boxes.filter(b => b.lv === 0);
   boxes.sort((a, b) => (a.kind === 'outer' ? 1 : 0) - (b.kind === 'outer' ? 1 : 0) || (a.lv + a.fl) - (b.lv + b.fl));
   for (const b of boxes) {
     const pts = worldPts(b).map(([x, z]) => `${x},${z}`).join(' ');
+    if (sketch && b.kind !== 'outer' && b.shape === 'rect' && !b.ang) { const r = Math.min(sw * 5, b.w / 3, b.d / 3); svg.appendChild(svgEl('rect', { x: b.x, y: b.z, width: b.w, height: b.d, rx: r, fill: colorOf(b, p), stroke: '#2b2823', 'stroke-width': sw })); continue; }
     svg.appendChild(svgEl('polygon', b.kind === 'outer'
-      ? { points: pts, fill: 'none', stroke: '#1c1e21', 'stroke-width': sw * 1.2, 'stroke-dasharray': `${sw * 4} ${sw * 3}` }
-      : { points: pts, fill: colorOf(b, p), stroke: '#1c1e21', 'stroke-width': sw, rx: sketch ? sw * 6 : 0 }));
+      ? { points: pts, fill: 'none', stroke: '#27241f', 'stroke-width': sw * 1.2, 'stroke-dasharray': `${sw * 4} ${sw * 3}` }
+      : { points: pts, fill: colorOf(b, p), stroke: '#2b2823', 'stroke-width': sw, 'stroke-linejoin': 'round' }));
   }
   return svg;
 }
-function card({ name, data, badge, badgeCls, lines, actions, open, cls, pinned }){
-  const c = document.createElement('article'); c.className = 'card' + (cls ? ' ' + cls : '') + (pinned ? ' pinned' : '');
+// 작업물 카드 = 작은 도면 한 장: 위는 실제 화면 미리보기, 아래는 도면 표제란(이름 · 칸마다 정보)
+function card({ name, data, status, statusCls, cells, note, actions, open, cls, pinned }){
+  const kind = (data && data.kind) === 'sketch' ? 'sketch' : 'study';
+  const c = document.createElement('article'); c.className = `card k-${kind}` + (cls ? ' ' + cls : '') + (pinned ? ' pinned' : '');
   const th = document.createElement('button'); th.className = 'th'; th.setAttribute('aria-label', name + ' 열기');
   th.appendChild(thumb(data)); th.onclick = open;
-  if (badge) { const b = document.createElement('span'); b.className = 'badge ' + (badgeCls || ''); b.textContent = badge; th.appendChild(b); }
   if (pinned) { const pm = document.createElement('span'); pm.className = 'pinmark'; pm.textContent = '고정'; th.appendChild(pm); }
-  const meta = document.createElement('div'); meta.className = 'meta';
-  const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = name; meta.appendChild(nm);
-  lines.forEach((t, i) => { const l = document.createElement('div'); l.className = i ? 'by' : 'nums mono'; l.textContent = t; meta.appendChild(l); });
-  const row = document.createElement('div'); row.className = 'row';
+  const tb = document.createElement('div'); tb.className = 'tblock';
+  const head = document.createElement('div'); head.className = 'tbh';
+  const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = name; head.appendChild(nm);
+  if (status) { const st = document.createElement('span'); st.className = 'st ' + (statusCls || ''); st.textContent = status; head.appendChild(st); }
+  tb.appendChild(head);
+  const row = document.createElement('div'); row.className = 'tbc';
+  for (const [k, v] of cells) { const d = document.createElement('div'); const kk = document.createElement('span'); kk.className = 'k'; kk.textContent = k; const vv = document.createElement('span'); vv.className = 'v'; vv.textContent = v; d.append(kk, vv); row.appendChild(d); }
+  tb.appendChild(row);
+  if (note) { const n = document.createElement('div'); n.className = 'tbn'; n.textContent = note; tb.appendChild(n); }
+  const acts = document.createElement('div'); acts.className = 'row';
   const shown = actions.length > 3 ? actions.slice(0, 2) : actions, more = actions.length > 3 ? actions.slice(2) : [];
-  for (const [label, fn, cls] of shown) { const b = document.createElement('button'); b.textContent = label; if (cls) b.className = cls; b.onclick = fn; row.appendChild(b); }
+  for (const [label, fn, bcls] of shown) { const b = document.createElement('button'); b.textContent = label; if (bcls) b.className = bcls; b.onclick = fn; acts.appendChild(b); }
   if (more.length) {
     const b = document.createElement('button'); b.textContent = '더보기'; b.setAttribute('aria-label', name + ' 더보기');
     b.onclick = async () => { const k = await pickBox(name, '', more.map(([l], i) => ({ id: String(i), label: l })), null); if (k !== undefined && k !== null) more[Number(k)][1](); };
-    row.appendChild(b);
+    acts.appendChild(b);
   }
-  c.append(th, meta, row);
+  c.append(th, tb, acts);
   return c;
 }
 function exampleItems(){
@@ -1534,38 +1745,53 @@ function draftCard(p, inTeam){
   const badge = team ? (unsaved ? '공유 후 바뀜' : '공유됨') : '나만 봄';
   const acts = [['열기', () => go('d-' + p.id), 'main']];
   if (!readOnly) { if (!inTeam) acts.push(['복제', () => dupDraft(p)]); acts.push(['삭제', () => deleteDraft(p)]); }
-  const kindTxt = p.kind === 'sketch' ? '스케치' : `용적률 ${f1(s.far)}% · ${s.floors}층`;
-  return card({ name: p.name, data: p, badge: (p.kind === 'sketch' ? '스케치 · ' : '') + badge, badgeCls: team ? (unsaved ? '' : 'blue') : 'soft', cls: inTeam ? 'mine' : '',
-    lines: [`${!inTeam && projOf(p.project) ? projOf(p.project).name + ' · ' : ''}상자 ${p.boxes.length}개 · ${kindTxt}`, `수정 ${ago(p.updatedAt)}` + (p.origin && p.origin.name ? ` · 원본: ${p.origin.name}(${p.origin.owner === '__ex' ? '예시' : who(p.origin.owner)})` : '')],
+  const sketch = p.kind === 'sketch', pj = !inTeam && projOf(p.project);
+  return card({ name: p.name, data: p, status: badge, statusCls: team ? (unsaved ? 'changed' : 'shared') : 'private', cls: inTeam ? 'mine' : '',
+    cells: [['종류', sketch ? '스케치' : '스터디'], ['수정', ago(p.updatedAt)], sketch ? ['도형', `${p.boxes.length}개`] : ['용적률', `${f1(s.far)}%`]],
+    note: [pj ? `프로젝트 ${pj.name}` : '', p.origin && p.origin.name ? `원본 ${p.origin.name} (${p.origin.owner === '__ex' ? '예시' : who(p.origin.owner)})` : ''].filter(Boolean).join('  ·  '),
     actions: acts, open: () => go('d-' + p.id) });
 }
 function createCard(project){
   const c = document.createElement('div'); c.className = 'card newcard';
+  const art = {
+    sketch: '<svg viewBox="0 0 96 64" aria-hidden="true"><rect x="1" y="1" width="94" height="62" rx="4" fill="#f7f3ea" stroke="#c9c0ad"/><rect x="14" y="14" width="34" height="24" rx="7" fill="#e3b673" stroke="#2b2823" stroke-width="1.3"/><rect x="40" y="28" width="28" height="22" rx="7" fill="#cfe0bd" stroke="#2b2823" stroke-width="1.3"/><path d="M60 16c6-4 14-3 20 2" fill="none" stroke="#5e7b66" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    study: '<svg viewBox="0 0 96 64" aria-hidden="true"><rect x="1" y="1" width="94" height="62" rx="4" fill="#fbf8f1" stroke="#c9c0ad"/><path d="M13 1V63M25 1V63M37 1V63M49 1V63M61 1V63M73 1V63M85 1V63M1 13H95M1 25H95M1 37H95M1 49H95" stroke="#e5ddcf"/><path d="M1 1H95M1 61H95" stroke="none"/><rect x="13" y="13" width="72" height="36" fill="none" stroke="#a3492f" stroke-dasharray="6 2.5 1.2 2.5" stroke-width="1.2"/><rect x="25" y="25" width="24" height="24" fill="#c98a5e" stroke="#2b2823" stroke-width="1.3"/><rect x="49" y="25" width="24" height="12" fill="#e3b673" stroke="#2b2823" stroke-width="1.3"/></svg>'
+  };
   const mk = (kind, t, sub) => {
     const b = document.createElement('button'); b.className = 'half k-' + kind;
-    b.innerHTML = `<span class="plus" aria-hidden="true"></span><b>${t}</b><span>${sub}</span>`;
+    b.innerHTML = `${art[kind]}<span class="tx"><b>${t}</b><span>${sub}</span></span><span class="plus" aria-hidden="true"></span>`;
     b.onclick = () => createWork(kind, project || ''); return b;
   };
-  c.append(mk('sketch', '새 스케치', '대지 없이 자유롭게'), mk('study', '새 스터디', '대지·격자 위에서 비율로'));
+  c.append(mk('sketch', '새 스케치', '대지 없이 자유롭게 그려요'), mk('study', '새 스터디', '대지와 격자 위에서 비율로 쌓아요'));
   return c;
 }
 function projectCard(p){
-  const joined = isMember(p), np = teamIdx.filter(t => t.project === p.id).length, mem = [p.by, ...p.members.filter(m => m !== p.by)];
+  const joined = isMember(p), posts = teamIdx.filter(t => t.project === p.id), mem = [p.by, ...p.members.filter(m => m !== p.by)];
   const c = document.createElement('article'); c.className = 'pcard' + (joined ? ' joined' : '');
+  const strip = document.createElement('button'); strip.className = 'pthumbs'; strip.setAttribute('aria-label', (p.name || '프로젝트') + ' 열기');
+  strip.onclick = () => go('pj-' + p.id);
+  const shown = posts.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)).slice(0, 3);
+  strip.style.gridTemplateColumns = `repeat(${Math.max(1, shown.length)}, 1fr)`; if (shown.length === 1) strip.classList.add('one');
+  if (shown.length) for (const t of shown) { const f = document.createElement('span'); f.className = 'pt'; f.appendChild(thumb(t)); strip.appendChild(f); }
+  else { const e = document.createElement('span'); e.className = 'pt none'; e.textContent = '아직 공유된 작업물이 없어요'; strip.appendChild(e); }
   const n = document.createElement('div'); n.className = 'pn'; n.textContent = p.name || '이름 없는 프로젝트';
-  const m = document.createElement('div'); m.className = 'pm'; m.textContent = `참여 ${mem.length}명 · ${mem.slice(0, 4).map(who).join(', ')}${mem.length > 4 ? ' 외' : ''}`;
-  const m2 = document.createElement('div'); m2.className = 'pm'; m2.textContent = `공유된 작업물 ${np}개 · ${ago(p.updatedAt || p.at)}`;
+  const tag = document.createElement('span'); tag.className = 'st ' + (joined ? 'shared' : 'private'); tag.textContent = joined ? '참여 중' : '참여 전';
+  const head = document.createElement('div'); head.className = 'tbh'; head.append(n, tag);
+  const cells = document.createElement('div'); cells.className = 'tbc';
+  for (const [k, v] of [['참여', `${mem.length}명`], ['작업물', `${posts.length}개`], ['최근', ago(p.updatedAt || p.at)]]) { const d = document.createElement('div'); d.innerHTML = '<span class="k"></span><span class="v"></span>'; d.children[0].textContent = k; d.children[1].textContent = v; cells.appendChild(d); }
+  const m = document.createElement('div'); m.className = 'tbn'; m.textContent = mem.slice(0, 5).map(who).join(', ') + (mem.length > 5 ? ` 외 ${mem.length - 5}명` : '');
+  const tb = document.createElement('div'); tb.className = 'tblock'; tb.append(head, cells, m);
   const a = document.createElement('div'); a.className = 'pa';
   const b1 = document.createElement('button'); b1.className = 'main'; b1.textContent = joined ? '열기' : '참여하기';
   b1.onclick = () => joined ? go('pj-' + p.id) : joinProject(p);
   a.appendChild(b1);
   if (!joined) { const b2 = document.createElement('button'); b2.textContent = '둘러보기'; b2.onclick = () => go('pj-' + p.id); a.appendChild(b2); }
-  c.append(n, m, m2, a);
+  c.append(strip, tb, a);
   return c;
 }
 function newProjectCard(){
   const c = document.createElement('button'); c.className = 'pcard newp';
-  c.innerHTML = '<span class="plus" style="width:40px;height:40px;border:1.6px dashed #9a968b;border-radius:10px;position:relative;display:block"></span><b style="color:var(--ink)">새 프로젝트</b><span class="pm">과제나 설계 주제 하나로 조원을 모아요</span>';
+  c.innerHTML = '<span class="plus" aria-hidden="true"></span><span class="tx"><b>새 프로젝트</b><span>과제나 설계 주제 하나로 조원을 모아요</span></span>';
   c.onclick = createProject; return c;
 }
 function postHay(t){ return hay([t.name, t.ex ? '예시' : who(t.owner), ...(t.labels || []), t.origin && t.origin.name]); }
@@ -1615,7 +1841,7 @@ function renderHome(){
     for (const p of mine) tl.appendChild(projectCard(p));
     if (others.length) { sec('참여할 수 있는 프로젝트'); for (const p of others) tl.appendChild(projectCard(p)); }
     const ex = exampleItems();
-    if (ex.length && !q) { sec('둘러보기용 예시'); for (const t of ex) tl.appendChild(card({ name: t.name, data: t, badge: '예시', badgeCls: 'soft', lines: [`연면적 ${f1(t.gfa || 0)}㎡ · 용적률 ${f1(t.far || 0)}%`, '예시'], actions: [['보기', () => go('v-' + t.pid), 'main'], ...(readOnly ? [] : [['복제', () => copyFromTeam(t)]])], open: () => go('v-' + t.pid) })); }
+    if (ex.length && !q) { sec('둘러보기용 예시'); for (const t of ex) tl.appendChild(card({ name: t.name, data: t, status: '예시', statusCls: 'private', cells: [['연면적', `${f1(t.gfa || 0)}㎡`], ['용적률', `${f1(t.far || 0)}%`]], actions: [['보기', () => go('v-' + t.pid), 'main'], ...(readOnly ? [] : [['복제', () => copyFromTeam(t)]])], open: () => go('v-' + t.pid) })); }
     if (!tl.children.length) { const d = document.createElement('div'); d.className = 'empty'; d.textContent = q ? `‘${q}’에 맞는 프로젝트가 없어요.` : '아직 프로젝트가 없어요.'; tl.appendChild(d); }
     return;
   }
@@ -1632,8 +1858,9 @@ function renderHome(){
     const acts = mine ? [['고치기', () => go('d-' + t.pid), 'main'], ['보기', () => go('v-' + t.pid)], ['공유 내리기', () => unpublish(t.pid, t.name)]]
       : [['보기', () => go('v-' + t.pid), 'main'], ...(readOnly || !member ? [] : [['복제', () => copyFromTeam(t)]])];
     if (!readOnly && member) acts.push([isPinned(t.pid) ? '고정 풀기' : '고정', () => togglePin(t.pid)]);
-    tl.appendChild(card({ name: t.name || '이름 없음', data: t, badge: t.kind === 'sketch' ? '스케치' : '', badgeCls: 'soft', cls: mine ? 'mine' : '', pinned: isPinned(t.pid),
-      lines: [`${mine ? '나' : who(t.owner)} · ${ago(t.publishedAt)} 저장${nf ? ` · 피드백 ${nf}` : ''}`, t.origin && t.origin.name ? `복제 출처: ${t.origin.name} (${who(t.origin.owner)})` : (t.labels || []).slice(0, 3).join(' · ') || ' '],
+    tl.appendChild(card({ name: t.name || '이름 없음', data: t, status: mine ? '내 작업물' : '', statusCls: 'mine', cls: mine ? 'mine' : '', pinned: isPinned(t.pid),
+      cells: [['작성', mine ? '나' : who(t.owner)], ['저장', ago(t.publishedAt)], ['피드백', nf ? `${nf}명` : '없음']],
+      note: t.origin && t.origin.name ? `복제 출처 ${t.origin.name} (${who(t.origin.owner)})` : (t.labels || []).slice(0, 4).join(', '),
       actions: acts, open: () => go((mine ? 'd-' : 'v-') + t.pid) }));
   }
   if (!items.length) { const d = document.createElement('div'); d.className = 'empty'; d.textContent = q ? `‘${q}’에 맞는 작업물이 없어요.` : '아직 공유된 작업물이 없어요.'; tl.appendChild(d); }
@@ -1786,7 +2013,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('#ebeae5');
+scene.background = new THREE.Color('#ece6d9');
 scene.add(new THREE.HemisphereLight(0xffffff, 0xa9a69d, 1.6));
 const sun = new THREE.DirectionalLight(0xffffff, 2.4);
 sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
@@ -1803,23 +2030,23 @@ function solidMat(color, selected){
   const k = color + (selected ? '*' : '');
   if (!matCache.has(k)) {
     const m = new THREE.MeshStandardMaterial({ color, roughness: 0.88, metalness: 0, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
-    if (selected) { m.emissive = new THREE.Color('#2546c9'); m.emissiveIntensity = 0.28; }
+    if (selected) { m.emissive = new THREE.Color('#2c5a8c'); m.emissiveIntensity = 0.28; }
     matCache.set(k, m);
   }
   return matCache.get(k);
 }
 const outerFill = new THREE.MeshBasicMaterial({ color: '#8d93a0', transparent: true, opacity: 0.07, depthWrite: false, side: THREE.DoubleSide });
-const outerFillSel = new THREE.MeshBasicMaterial({ color: '#2546c9', transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide });
-const edgeMat = new THREE.LineBasicMaterial({ color: '#25272b' });
-const edgeSel = new THREE.LineBasicMaterial({ color: '#2546c9' });
-const edgeOut = new THREE.LineBasicMaterial({ color: '#c63f2a' });
-const dashMat = new THREE.LineDashedMaterial({ color: '#25272b', dashSize: 0.6, gapSize: 0.4 });
-const dashSel = new THREE.LineDashedMaterial({ color: '#2546c9', dashSize: 0.6, gapSize: 0.4 });
-const dashOut = new THREE.LineDashedMaterial({ color: '#c63f2a', dashSize: 0.6, gapSize: 0.4 });
+const outerFillSel = new THREE.MeshBasicMaterial({ color: '#2c5a8c', transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide });
+const edgeMat = new THREE.LineBasicMaterial({ color: '#27241f' });
+const edgeSel = new THREE.LineBasicMaterial({ color: '#2c5a8c' });
+const edgeOut = new THREE.LineBasicMaterial({ color: '#a3492f' });
+const dashMat = new THREE.LineDashedMaterial({ color: '#27241f', dashSize: 0.6, gapSize: 0.4 });
+const dashSel = new THREE.LineDashedMaterial({ color: '#2c5a8c', dashSize: 0.6, gapSize: 0.4 });
+const dashOut = new THREE.LineDashedMaterial({ color: '#a3492f', dashSize: 0.6, gapSize: 0.4 });
 const floorLineMat = new THREE.LineBasicMaterial({ color: '#7e8188' });
 const edgeLock = new THREE.LineBasicMaterial({ color: '#a07a1e' });
 const dashLock = new THREE.LineDashedMaterial({ color: '#a07a1e', dashSize: 0.6, gapSize: 0.4 });
-const handleMat = new THREE.MeshBasicMaterial({ color: '#2546c9', depthTest: false });
+const handleMat = new THREE.MeshBasicMaterial({ color: '#2c5a8c', depthTest: false });
 const handleRing = new THREE.MeshBasicMaterial({ color: '#ffffff', depthTest: false });
 const hitMat = new THREE.MeshBasicMaterial({ visible: false });
 const texCache = new Map();
@@ -1849,7 +2076,7 @@ function buildSite(){
     const gl = new THREE.LineSegments(gg, new THREE.LineBasicMaterial({ color: '#bdb9ae', transparent: true, opacity: 0.75 }));
     gl.userData.ownMat = true; siteG.add(gl);
   }
-  const t = Math.max(0.08, R / 300), red = new THREE.MeshBasicMaterial({ color: '#c63f2a' });
+  const t = Math.max(0.08, R / 300), red = new THREE.MeshBasicMaterial({ color: '#a3492f' });
   const seg = (w, d, x, z) => { const s = new THREE.Mesh(new THREE.BoxGeometry(w, 0.02, d), red); s.position.set(x, 0.02, z); siteG.add(s); };
   seg(W + t, t, 0, -D / 2); seg(W + t, t, 0, D / 2); seg(t, D + t, -W / 2, 0); seg(t, D + t, W / 2, 0);
   const sh = sun.shadow.camera, e = R * 1.1;
@@ -1876,7 +2103,7 @@ function labelTexture(title, sub, aspect, outer){
   const W = 512, H = Math.max(48, Math.min(1024, Math.round(W / aspect)));
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const x = c.getContext('2d');
-  x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = outer ? '#3a3d42' : '#1c1e21';
+  x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = outer ? '#3a3d42' : '#27241f';
   const lines = title && sub ? 2 : 1;
   let fs = Math.min(H / (lines * 1.35), 120);
   if (title) {
@@ -2628,7 +2855,7 @@ try {
   const t = Number(localStorage.getItem('mass-txt')); if (TXT.some(x => x[0] === t)) txtScale = t;
 } catch (e) {}
 const DRAW = ['rect', 'circle', 'semi', 'outer'];
-const FLOWS = { main: { n: '주 동선', c: '#d9480f', w: 3.4, dash: null }, sub: { n: '부 동선', c: '#2546c9', w: 2.6, dash: [9, 6] }, service: { n: '서비스', c: '#6b6e73', w: 2.2, dash: [2, 6] } };
+const FLOWS = { main: { n: '주 동선', c: '#d9480f', w: 3.4, dash: null }, sub: { n: '부 동선', c: '#2c5a8c', w: 2.6, dash: [9, 6] }, service: { n: '서비스', c: '#6b6e73', w: 2.2, dash: [2, 6] } };
 const isSketch = () => P && P.kind === 'sketch';
 const sStep = () => isSketch() ? 0.25 : studySnap ? P.grid / 2 : 0.1;
 const sn = v => r2(Math.round(v / sStep()) * sStep());
@@ -2804,16 +3031,16 @@ function cardsSvg(px){
     if (tb) {
       const [tx, tz] = boxCenterCanvas(tb);
       const ax = Math.max(x, Math.min(x + w, tx)), az = Math.max(z, Math.min(z + hh, tz));
-      h += `<line x1="${r3(ax)}" y1="${r3(az)}" x2="${r3(tx)}" y2="${r3(tz)}" stroke="${on ? '#2546c9' : '#8b8e95'}" stroke-width="${r3(px(on ? 2 : 1.2))}"${on ? '' : ` stroke-dasharray="${r3(px(4))} ${r3(px(4))}"`} pointer-events="none"/>`;
-      h += `<circle cx="${r3(tx)}" cy="${r3(tz)}" r="${r3(px(on ? 5 : 3.5))}" fill="${on ? '#2546c9' : '#8b8e95'}" stroke="#fff" stroke-width="${r3(px(1.5))}" pointer-events="none"/>`;
+      h += `<line x1="${r3(ax)}" y1="${r3(az)}" x2="${r3(tx)}" y2="${r3(tz)}" stroke="${on ? '#2c5a8c' : '#8b8e95'}" stroke-width="${r3(px(on ? 2 : 1.2))}"${on ? '' : ` stroke-dasharray="${r3(px(4))} ${r3(px(4))}"`} pointer-events="none"/>`;
+      h += `<circle cx="${r3(tx)}" cy="${r3(tz)}" r="${r3(px(on ? 5 : 3.5))}" fill="${on ? '#2c5a8c' : '#8b8e95'}" stroke="#fff" stroke-width="${r3(px(1.5))}" pointer-events="none"/>`;
     }
     h += `<g data-role="card" data-cid="${c.id}">`;
-    h += `<rect x="${r3(x - px(4))}" y="${r3(z - px(4))}" width="${r3(w + px(8))}" height="${r3(hh + px(8) + px(18 * T))}" rx="${r3(px(4))}" fill="#fff" stroke="${on ? '#2546c9' : '#cfccc2'}" stroke-width="${r3(px(on ? 2.6 : 1))}"/>`;
+    h += `<rect x="${r3(x - px(4))}" y="${r3(z - px(4))}" width="${r3(w + px(8))}" height="${r3(hh + px(8) + px(18 * T))}" rx="${r3(px(4))}" fill="#fff" stroke="${on ? '#2c5a8c' : '#cfccc2'}" stroke-width="${r3(px(on ? 2.6 : 1))}"/>`;
     const src = cardSrc(c.ref);
     if (src) h += `<image href="${esc(src)}" x="${r3(x)}" y="${r3(z)}" width="${r3(w)}" height="${r3(hh)}" preserveAspectRatio="xMidYMid slice"/>`;
-    else h += `<rect x="${r3(x)}" y="${r3(z)}" width="${r3(w)}" height="${r3(hh)}" fill="#e4e2db"/><text x="${r3(x + w / 2)}" y="${r3(z + hh / 2)}" font-size="${r3(px(11 * T))}" fill="#7a7c80" text-anchor="middle" dominant-baseline="middle">사진 없음</text>`;
+    else h += `<rect x="${r3(x)}" y="${r3(z)}" width="${r3(w)}" height="${r3(hh)}" fill="#e4e2db"/><text x="${r3(x + w / 2)}" y="${r3(z + hh / 2)}" font-size="${r3(px(11 * T))}" fill="#7a7368" text-anchor="middle" dominant-baseline="middle">사진 없음</text>`;
     const cap = (r ? (r.name || '사진') : '지워진 사진') + (tb ? ` → ${tb.label || '도형'}` : '');
-    h += `<text x="${r3(x)}" y="${r3(z + hh + px(14 * T))}" font-size="${r3(px(11 * T))}" fill="${on ? '#2546c9' : '#55585e'}" font-weight="${on ? 600 : 400}">${esc(cap.length > 26 ? cap.slice(0, 25) + '…' : cap)}</text>`;
+    h += `<text x="${r3(x)}" y="${r3(z + hh + px(14 * T))}" font-size="${r3(px(11 * T))}" fill="${on ? '#2c5a8c' : '#5c564c'}" font-weight="${on ? 600 : 400}">${esc(cap.length > 26 ? cap.slice(0, 25) + '…' : cap)}</text>`;
     h += `</g>`;
   }
   return h;
@@ -2825,14 +3052,14 @@ function cardBadges(px){
     const b = getBox(id); if (!b) continue;
     const a = canvasBox(b), x = a.x1 - px(6), z = a.z0 + px(6), on = selCard && P.cards.find(c => c.id === selCard)?.target === id;
     const wpx = 38 + String(n).length * 6;
-    h += `<g pointer-events="none"><rect x="${r3(x - px(wpx))}" y="${r3(z)}" width="${r3(px(wpx))}" height="${r3(px(18))}" rx="${r3(px(9))}" fill="${on ? '#2546c9' : '#1c1e21'}" opacity=".88"/><text x="${r3(x - px(wpx / 2))}" y="${r3(z + px(12.5))}" font-size="${r3(px(11))}" fill="#fff" text-anchor="middle">사진 ${n}</text></g>`;
+    h += `<g pointer-events="none"><rect x="${r3(x - px(wpx))}" y="${r3(z)}" width="${r3(px(wpx))}" height="${r3(px(18))}" rx="${r3(px(9))}" fill="${on ? '#2c5a8c' : '#27241f'}" opacity=".88"/><text x="${r3(x - px(wpx / 2))}" y="${r3(z + px(12.5))}" font-size="${r3(px(11))}" fill="#fff" text-anchor="middle">사진 ${n}</text></g>`;
   }
   return h;
 }
 function targetGlow(px){
   const c = selCard && P.cards.find(x => x.id === selCard); if (!c || !c.target) return '';
   const b = getBox(c.target); if (!b) return '';
-  return `<path d="${pathFrom(worldPts(b), sheetOx(boxSheetIdx(b)))}" fill="rgba(37,70,201,.14)" stroke="#2546c9" stroke-width="${r3(px(4))}" stroke-linejoin="round" pointer-events="none"/>`;
+  return `<path d="${pathFrom(worldPts(b), sheetOx(boxSheetIdx(b)))}" fill="rgba(37,70,201,.14)" stroke="#2c5a8c" stroke-width="${r3(px(4))}" stroke-linejoin="round" pointer-events="none"/>`;
 }
 /* --- 둥근 블록(스케치)과 점선 테두리 --- */
 function roundD(b, ox, r){
@@ -2859,7 +3086,7 @@ function envSvg(px){
       const r = membersRect(ms), x0 = r.x0 - m, z0 = r.z0 - m, x1 = r.x1 + m, z1 = r.z1 + m, rr = px(8);
       d = `M${r3(x0 + rr)},${r3(z0)}H${r3(x1 - rr)}Q${r3(x1)},${r3(z0)} ${r3(x1)},${r3(z0 + rr)}V${r3(z1 - rr)}Q${r3(x1)},${r3(z1)} ${r3(x1 - rr)},${r3(z1)}H${r3(x0 + rr)}Q${r3(x0)},${r3(z1)} ${r3(x0)},${r3(z1 - rr)}V${r3(z0 + rr)}Q${r3(x0)},${r3(z0)} ${r3(x0 + rr)},${r3(z0)}Z`;
     }
-    h += `<path d="${d}" fill="none" stroke="${on ? '#2546c9' : '#6f7279'}" stroke-opacity="${on ? .9 : .7}" stroke-width="${r3(px(1))}" stroke-dasharray="${r3(px(3))} ${r3(px(2.4))}" pointer-events="none"/>`;
+    h += `<path d="${d}" fill="none" stroke="${on ? '#2c5a8c' : '#6f7279'}" stroke-opacity="${on ? .9 : .7}" stroke-width="${r3(px(1))}" stroke-dasharray="${r3(px(3))} ${r3(px(2.4))}" pointer-events="none"/>`;
   }
   return h;
 }
@@ -2893,7 +3120,7 @@ function envProbeSvg(px){
   const g = gesture; if (!g || g.type !== 'move' || !g.moved || !g.envHit) return '';
   const { rect: C, mode } = g.envHit, stay = mode === 'stay';
   const msg = stay ? '도형 가운데가 이 선 밖으로 나가면 빠져요' : '도형 가운데를 점선 안에 넣으면 들어가요';
-  return `<rect x="${r3(C.x0)}" y="${r3(C.z0)}" width="${r3(C.x1 - C.x0)}" height="${r3(C.z1 - C.z0)}" rx="${r3(px(10))}" fill="none" stroke="#2546c9" stroke-opacity=".75" stroke-width="${r3(px(1.3))}" stroke-dasharray="${r3(px(6))} ${r3(px(4))}" pointer-events="none"/><text x="${r3(C.x0 + px(8))}" y="${r3(C.z0 - px(7))}" font-size="${r3(px(12))}" font-weight="600" fill="#2546c9" pointer-events="none">${msg}</text>`;
+  return `<rect x="${r3(C.x0)}" y="${r3(C.z0)}" width="${r3(C.x1 - C.x0)}" height="${r3(C.z1 - C.z0)}" rx="${r3(px(10))}" fill="none" stroke="#2c5a8c" stroke-opacity=".75" stroke-width="${r3(px(1.3))}" stroke-dasharray="${r3(px(6))} ${r3(px(4))}" pointer-events="none"/><text x="${r3(C.x0 + px(8))}" y="${r3(C.z0 - px(7))}" font-size="${r3(px(12))}" font-weight="600" fill="#2c5a8c" pointer-events="none">${msg}</text>`;
 }
 function envToggle(){
   const bs = selBoxes().filter(b => b.kind === 'solid'); if (!bs.length) return;
@@ -2914,49 +3141,52 @@ function renderStudy(){
   const sketch = isSketch();
   (sketch ? [] : P.sheets).forEach((s, i) => {
     const ox = sheetOx(i), act = s.id === activeSheet && !allView; T = txtScale = tsOf(i);
-    paper += `<rect x="${r3(ox - M)}" y="${r3(-M)}" width="${r3(W + 2 * M)}" height="${r3(D + 2 * M)}" rx="${r3(px(4))}" fill="#fdfcf8" stroke="${act ? '#8e9bd6' : '#d6d3c9'}" stroke-width="${r3(px(act ? 1.8 : 1))}" data-role="sheet" data-sheet="${s.id}"/>`;
+    paper += `<rect x="${r3(ox - M)}" y="${r3(-M)}" width="${r3(W + 2 * M)}" height="${r3(D + 2 * M)}" rx="${r3(px(3))}" fill="#fbf8f1" stroke="${act ? '#7f9cbd' : '#d3c9b6'}" stroke-width="${r3(px(act ? 1.8 : 1))}" data-role="sheet" data-sheet="${s.id}"/>`;
     if (studySnap) {
+      // 격자: 반 칸(아주 옅게) · 한 칸(옅게) · 다섯 칸마다 기준선(도면 블루 기운)
       const fine = k * g / 2 >= 12;
-      let p1 = '', p2 = '';
-      for (let x = -M; x <= W + M + 1e-6; x += g / 2) { const major = Math.abs(x / g - Math.round(x / g)) < 1e-6; if (major) p1 += `M${r3(ox + x)} ${r3(-M)}V${r3(D + M)}`; else if (fine) p2 += `M${r3(ox + x)} ${r3(-M)}V${r3(D + M)}`; }
-      for (let z = -M; z <= D + M + 1e-6; z += g / 2) { const major = Math.abs(z / g - Math.round(z / g)) < 1e-6; if (major) p1 += `M${r3(ox - M)} ${r3(z)}H${r3(ox + W + M)}`; else if (fine) p2 += `M${r3(ox - M)} ${r3(z)}H${r3(ox + W + M)}`; }
-      if (p2) paper += `<path d="${p2}" stroke="#f0eee7" stroke-width="${r3(px(1))}" fill="none" pointer-events="none"/>`;
-      paper += `<path d="${p1}" stroke="#e4e1d7" stroke-width="${r3(px(1))}" fill="none" pointer-events="none"/>`;
+      let p1 = '', p2 = '', p5 = '';
+      const kind = v => { const c = v / g; if (Math.abs(c - Math.round(c)) > 1e-6) return 2; return Math.round(c) % 5 === 0 ? 5 : 1; };
+      for (let x = -M; x <= W + M + 1e-6; x += g / 2) { const t = kind(x), d = `M${r3(ox + x)} ${r3(-M)}V${r3(D + M)}`; if (t === 5) p5 += d; else if (t === 1) p1 += d; else if (fine) p2 += d; }
+      for (let z = -M; z <= D + M + 1e-6; z += g / 2) { const t = kind(z), d = `M${r3(ox - M)} ${r3(z)}H${r3(ox + W + M)}`; if (t === 5) p5 += d; else if (t === 1) p1 += d; else if (fine) p2 += d; }
+      if (p2) paper += `<path d="${p2}" stroke="#f1ece2" stroke-width="${r3(px(1))}" fill="none" pointer-events="none"/>`;
+      paper += `<path d="${p1}" stroke="#e5ddcf" stroke-width="${r3(px(1))}" fill="none" pointer-events="none"/>`;
+      if (p5) paper += `<path d="${p5}" stroke="#c9d1d8" stroke-width="${r3(px(1.1))}" fill="none" pointer-events="none"/>`;
     }
-    if (s.type === 'plan') paper += `<rect x="${r3(ox)}" y="0" width="${r3(W)}" height="${r3(D)}" fill="none" stroke="#d58a7b" stroke-width="${r3(px(1.2))}" stroke-dasharray="${r3(px(2))} ${r3(px(4))}" pointer-events="none"/>`;
+    if (s.type === 'plan') paper += `<rect x="${r3(ox)}" y="0" width="${r3(W)}" height="${r3(D)}" fill="none" stroke="#a3492f" stroke-opacity=".85" stroke-width="${r3(px(1.4))}" stroke-dasharray="${r3(px(7))} ${r3(px(3))} ${r3(px(1.5))} ${r3(px(3))}" pointer-events="none"/>`;
     else { const gl = r3(D * 0.8); paper += `<line x1="${r3(ox - M)}" y1="${gl}" x2="${r3(ox + W + M)}" y2="${gl}" stroke="#8a6f5a" stroke-width="${r3(px(1.6))}" pointer-events="none"/><text x="${r3(ox - M + px(6))}" y="${r3(D * 0.8 - px(6))}" font-size="${r3(px(11 * T))}" fill="#8a6f5a" pointer-events="none">GL</text>`; }
     const sub = s.type === 'plan' ? `${s.level + 1}층 평면` : '입면·단면';
-    paper += `<text x="${r3(ox - M)}" y="${r3(-M - px(10))}" font-size="${r3(px(17 * T))}" font-weight="700" fill="${act ? '#2546c9' : '#1c1e21'}" data-role="sheettitle" data-sheet="${s.id}">${esc(sheetTitle(s))}<tspan font-size="${r3(px(11.5 * T))}" font-weight="400" fill="#7a7c80" dx="${r3(px(8))}">${esc(sub === sheetTitle(s) ? '' : sub)}${sub === sheetTitle(s) ? '' : ' · '}${cellsStr(W)}×${cellsStr(D)}칸</tspan></text>`;
+    paper += `<text x="${r3(ox - M)}" y="${r3(-M - px(10))}" font-size="${r3(px(17 * T))}" font-weight="700" fill="${act ? '#2c5a8c' : '#27241f'}" data-role="sheettitle" data-sheet="${s.id}">${esc(sheetTitle(s))}<tspan font-size="${r3(px(11.5 * T))}" font-weight="400" fill="#7a7368" dx="${r3(px(8))}">${esc(sub === sheetTitle(s) ? '' : sub)}${sub === sheetTitle(s) ? '' : ' · '}${cellsStr(W)}×${cellsStr(D)}칸</tspan></text>`;
   });
   const order = [...P.boxes].sort((a, b) => (a.kind === 'outer') - (b.kind === 'outer'));
   for (const b of order) {
     const ox = sheetOx(boxSheetIdx(b)), s = selSet.has(b.id) && !flowEdit, d = shapeD(b, ox, px); T = txtScale = tsOf(boxSheetIdx(b));
     if (b.kind === 'solid') {
       const fill = catInfo(b.cat).hatch ? 'url(#hatch)' : colorOf(b);
-      shapes += `<path d="${d}" fill="${fill}" stroke="${s ? '#2546c9' : '#2a2c30'}" stroke-width="${r3(px(s ? 2.4 : sketch ? 1.3 : 1.6))}" stroke-linejoin="round" data-role="body" data-id="${b.id}"/>`;
+      shapes += `<path d="${d}" fill="${fill}" stroke="${s ? '#2c5a8c' : '#2b2823'}" stroke-width="${r3(px(s ? 2.4 : sketch ? 1.3 : 1.6))}" stroke-linejoin="round" data-role="body" data-id="${b.id}"/>`;
       shapes += labelSvg(b, px, ox);
-      if (flowEdit) bound += `<path d="${d}" fill="none" stroke="#3a3c40" stroke-width="${r3(px(1.3))}" stroke-linejoin="round"/>`;
+      if (flowEdit) bound += `<path d="${d}" fill="none" stroke="#3a362f" stroke-width="${r3(px(1.3))}" stroke-linejoin="round"/>`;
     } else {
       const dash = `stroke-dasharray="${r3(px(3.2))} ${r3(px(2.6))}"`;
-      shapes += `<path d="${d}" fill="none" stroke="${s ? '#2546c9' : '#7b7e85'}" stroke-opacity="${s ? 1 : .8}" stroke-width="${r3(px(s ? 1.6 : 1))}" ${dash} pointer-events="none"/>`;
+      shapes += `<path d="${d}" fill="none" stroke="${s ? '#2c5a8c' : '#6e685e'}" stroke-opacity="${s ? 1 : .8}" stroke-width="${r3(px(s ? 1.6 : 1))}" ${dash} pointer-events="none"/>`;
       shapes += `<path d="${d}" fill="none" stroke="transparent" stroke-width="${r3(px(20))}" pointer-events="stroke" data-role="body" data-id="${b.id}"/>`;
       const t = roleMode ? (b.lock ? '잠김' : '') : (b.label || '') + (b.note ? (b.label ? ' · ' : '') + b.note : '') + (b.lock ? ' · 잠김' : '');
       const a = aabb(b);
-      if (t) shapes += `<text x="${r3(a.x0 + ox + px(8))}" y="${r3(a.z0 - px(7))}" font-size="${r3(px(12.5 * T))}" font-weight="600" fill="${b.lock ? '#a07a1e' : '#55585e'}" data-role="body" data-id="${b.id}">${esc(t)}</text>`;
-      if (flowEdit) bound += `<path d="${d}" fill="none" stroke="#2a2c30" stroke-width="${r3(px(1.2))}" ${dash}/>`;
+      if (t) shapes += `<text x="${r3(a.x0 + ox + px(8))}" y="${r3(a.z0 - px(7))}" font-size="${r3(px(12.5 * T))}" font-weight="600" fill="${b.lock ? '#a07a1e' : '#5c564c'}" data-role="body" data-id="${b.id}">${esc(t)}</text>`;
+      if (flowEdit) bound += `<path d="${d}" fill="none" stroke="#2b2823" stroke-width="${r3(px(1.2))}" ${dash}/>`;
     }
   }
   const envH = envSvg(px);
   if (flowEdit) bound += envH;
   for (const n of (roleMode ? [] : P.notes)) {
     const ox = sheetOx(itemSheetIdx(n)), s = selSet.has(n.id) && !flowEdit; T = txtScale = tsOf(itemSheetIdx(n));
-    if (s) shapes += `<rect x="${r3(ox + n.x - px(4))}" y="${r3(n.z - noteH(n) - px(3))}" width="${r3(noteW(n) + px(8))}" height="${r3(noteH(n) * 1.35 + px(6))}" fill="none" stroke="#2546c9" stroke-width="${r3(px(1.5))}" rx="${r3(px(4))}" pointer-events="none"/>`;
-    shapes += `<text x="${r3(ox + n.x)}" y="${r3(n.z)}" font-size="${r3(px(14 * n.size * T))}" font-weight="${n.size > 1 ? 600 : 400}" fill="#1c1e21" data-role="body" data-id="${n.id}">${esc(n.text || '텍스트')}</text>`;
+    if (s) shapes += `<rect x="${r3(ox + n.x - px(4))}" y="${r3(n.z - noteH(n) - px(3))}" width="${r3(noteW(n) + px(8))}" height="${r3(noteH(n) * 1.35 + px(6))}" fill="none" stroke="#2c5a8c" stroke-width="${r3(px(1.5))}" rx="${r3(px(4))}" pointer-events="none"/>`;
+    shapes += `<text x="${r3(ox + n.x)}" y="${r3(n.z)}" font-size="${r3(px(14 * n.size * T))}" font-weight="${n.size > 1 ? 600 : 400}" fill="#27241f" data-role="body" data-id="${n.id}">${esc(n.text || '텍스트')}</text>`;
   }
   if (flowShow || flowEdit) {
     for (const f of P.flows) {
       const st = FLOWS[f.type], d = flowPath(f), on = flowEdit && f.id === selFlow;
-      if (on) flows += `<path d="${d}" fill="none" stroke="#2546c9" stroke-opacity=".22" stroke-width="${r3(px(14))}" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`;
+      if (on) flows += `<path d="${d}" fill="none" stroke="#2c5a8c" stroke-opacity=".22" stroke-width="${r3(px(14))}" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`;
       flows += `<path d="${d}" fill="none" stroke="${st.c}" stroke-width="${r3(px(st.w))}" stroke-linecap="round" stroke-linejoin="round"${st.dash ? ` stroke-dasharray="${r3(px(st.dash[0]))} ${r3(px(st.dash[1]))}"` : ''} marker-end="url(#ar-${f.type})"${f.both ? ` marker-start="url(#ar-${f.type})"` : ''} pointer-events="none"/>`;
       if (flowEdit) flows += `<path d="${d}" fill="none" stroke="transparent" stroke-width="${r3(px(22))}" stroke-linecap="round" pointer-events="stroke" data-role="flow" data-fid="${f.id}"/>`;
     }
@@ -2966,33 +3196,33 @@ function renderStudy(){
   if (!flowEdit && !ro && sb.length === 1 && !selNotes().length && !sb[0].lock) {
     const b = sb[0], ox = sheetOx(boxSheetIdx(b)), hs = px(11), hit = px(26);
     const at = (u, v) => { const [x, z] = fromLocal(b, u, v); return [x + ox, z]; };
-    if (b.shape !== 'rect' || b.ang) over += `<path d="${pathFrom([[0, 0], [1, 0], [1, 1], [0, 1]].map(([u, v]) => fromLocal(b, u, v)), ox)}" fill="none" stroke="#2546c9" stroke-width="${r3(px(1))}" stroke-dasharray="${r3(px(3))} ${r3(px(3))}" pointer-events="none"/>`;
+    if (b.shape !== 'rect' || b.ang) over += `<path d="${pathFrom([[0, 0], [1, 0], [1, 1], [0, 1]].map(([u, v]) => fromLocal(b, u, v)), ox)}" fill="none" stroke="#2c5a8c" stroke-width="${r3(px(1))}" stroke-dasharray="${r3(px(3))} ${r3(px(3))}" pointer-events="none"/>`;
     if (rotMode) { T = tsOf(boxSheetIdx(b));
       const c = at(.5, .5), t = at(.5, 0), dx = t[0] - c[0], dz = t[1] - c[1], L = Math.hypot(dx, dz) || 1;
       const hx = t[0] + dx / L * px(40), hz = t[1] + dz / L * px(40);
-      over += `<line x1="${r3(t[0])}" y1="${r3(t[1])}" x2="${r3(hx)}" y2="${r3(hz)}" stroke="#2546c9" stroke-width="${r3(px(1.6))}" pointer-events="none"/>`;
+      over += `<line x1="${r3(t[0])}" y1="${r3(t[1])}" x2="${r3(hx)}" y2="${r3(hz)}" stroke="#2c5a8c" stroke-width="${r3(px(1.6))}" pointer-events="none"/>`;
       over += `<circle cx="${r3(hx)}" cy="${r3(hz)}" r="${r3(px(24))}" fill="transparent" data-role="handle" data-h="rot"/>`;
-      over += `<circle cx="${r3(hx)}" cy="${r3(hz)}" r="${r3(px(10))}" fill="#2546c9" stroke="#fff" stroke-width="${r3(px(2.5))}" pointer-events="none"/>`;
-      over += `<text x="${r3(hx + px(16))}" y="${r3(hz + px(4))}" font-size="${r3(px(12 * T))}" font-family="IBM Plex Mono, monospace" fill="#2546c9" pointer-events="none">${b.ang}°</text>`;
+      over += `<circle cx="${r3(hx)}" cy="${r3(hz)}" r="${r3(px(10))}" fill="#2c5a8c" stroke="#fff" stroke-width="${r3(px(2.5))}" pointer-events="none"/>`;
+      over += `<text x="${r3(hx + px(16))}" y="${r3(hz + px(4))}" font-size="${r3(px(12 * T))}" font-family="IBM Plex Mono, monospace" fill="#2c5a8c" pointer-events="none">${b.ang}°</text>`;
     } else {
       for (const [key, u, v] of [['nw', 0, 0], ['n', .5, 0], ['ne', 1, 0], ['e', 1, .5], ['se', 1, 1], ['s', .5, 1], ['sw', 0, 1], ['w', 0, .5]]) {
         const [x, z] = at(u, v);
         over += `<rect x="${r3(x - hit / 2)}" y="${r3(z - hit / 2)}" width="${r3(hit)}" height="${r3(hit)}" fill="transparent" data-role="handle" data-h="${key}"/>`;
-        over += `<rect x="${r3(x - hs / 2)}" y="${r3(z - hs / 2)}" width="${r3(hs)}" height="${r3(hs)}" rx="${r3(px(2))}" fill="#fff" stroke="#2546c9" stroke-width="${r3(px(2))}" pointer-events="none"/>`;
+        over += `<rect x="${r3(x - hs / 2)}" y="${r3(z - hs / 2)}" width="${r3(hs)}" height="${r3(hs)}" rx="${r3(px(2))}" fill="#fff" stroke="#2c5a8c" stroke-width="${r3(px(2))}" pointer-events="none"/>`;
       }
     }
   } else if (!flowEdit && (selSet.size > 1 || (sb.length && sb[0].lock))) {
     let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
     for (const b of sb) { const a = canvasBox(b); x0 = Math.min(x0, a.x0); z0 = Math.min(z0, a.z0); x1 = Math.max(x1, a.x1); z1 = Math.max(z1, a.z1); }
     for (const n of selNotes()) { const ox = sheetOx(itemSheetIdx(n)); x0 = Math.min(x0, ox + n.x); z0 = Math.min(z0, n.z - noteH(n)); x1 = Math.max(x1, ox + n.x + noteW(n)); z1 = Math.max(z1, n.z + noteH(n) * 0.3); }
-    if (isFinite(x0)) over += `<rect x="${r3(x0 - px(5))}" y="${r3(z0 - px(5))}" width="${r3(x1 - x0 + px(10))}" height="${r3(z1 - z0 + px(10))}" fill="none" stroke="#2546c9" stroke-width="${r3(px(1.3))}" stroke-dasharray="${r3(px(5))} ${r3(px(4))}" pointer-events="none"/>`;
+    if (isFinite(x0)) over += `<rect x="${r3(x0 - px(5))}" y="${r3(z0 - px(5))}" width="${r3(x1 - x0 + px(10))}" height="${r3(z1 - z0 + px(10))}" fill="none" stroke="#2c5a8c" stroke-width="${r3(px(1.3))}" stroke-dasharray="${r3(px(5))} ${r3(px(4))}" pointer-events="none"/>`;
   }
   const gs = gesture;
   if (gs && gs.type === 'draw') {
     const x0 = Math.min(gs.x0, gs.x1), z0 = Math.min(gs.z0, gs.z1), w = Math.abs(gs.x1 - gs.x0), d = Math.abs(gs.z1 - gs.z0);
     if (w > 0 && d > 0) {
       const tb = { x: x0, z: z0, w, d, shape: gs.tool === 'circle' ? 'circle' : gs.tool === 'semi' ? 'semi' : 'rect', rot: 0, ang: 0 };
-      over += `<path d="${pathFrom(worldPts(tb), gs.ox)}" fill="${gs.tool === 'outer' ? 'none' : 'rgba(37,70,201,.08)'}" stroke="#2546c9" stroke-width="${r3(px(1.8))}"${gs.tool === 'outer' ? ` stroke-dasharray="${r3(px(7))} ${r3(px(5))}"` : ''} pointer-events="none"/>`;
+      over += `<path d="${pathFrom(worldPts(tb), gs.ox)}" fill="${gs.tool === 'outer' ? 'none' : 'rgba(37,70,201,.08)'}" stroke="#2c5a8c" stroke-width="${r3(px(1.8))}"${gs.tool === 'outer' ? ` stroke-dasharray="${r3(px(7))} ${r3(px(5))}"` : ''} pointer-events="none"/>`;
     }
   }
   if (gs && gs.type === 'flow' && gs.pts.length > 1) {
@@ -3001,13 +3231,13 @@ function renderStudy(){
   }
   if (gs && gs.type === 'marquee' && gs.dragged) {
     const x0 = Math.min(gs.w0.x, gs.w1.x), z0 = Math.min(gs.w0.z, gs.w1.z);
-    over += `<rect x="${r3(x0)}" y="${r3(z0)}" width="${r3(Math.abs(gs.w1.x - gs.w0.x))}" height="${r3(Math.abs(gs.w1.z - gs.w0.z))}" fill="rgba(37,70,201,.07)" stroke="#2546c9" stroke-width="${r3(px(1))}" pointer-events="none"/>`;
+    over += `<rect x="${r3(x0)}" y="${r3(z0)}" width="${r3(Math.abs(gs.w1.x - gs.w0.x))}" height="${r3(Math.abs(gs.w1.z - gs.w0.z))}" fill="rgba(37,70,201,.07)" stroke="#2c5a8c" stroke-width="${r3(px(1))}" pointer-events="none"/>`;
   }
   const cardsH = cardsSvg(px), badges = cardBadges(px), glow = targetGlow(px);
   let h = `<defs>${defs}</defs><g transform="translate(${r3(sv.tx)},${r3(sv.ty)}) scale(${r3(k)})">${paper}`;
   h += flowEdit ? `<g opacity=".3" pointer-events="none">${shapes}${cardsH}</g><g pointer-events="none">${bound}</g>` : fbEdit ? `<g pointer-events="none" opacity=".82">${shapes + envH + badges + cardsH}</g>` : shapes + envH + envProbeSvg(px) + glow + badges + cardsH;
   h += `<g${flowEdit ? '' : ' pointer-events="none"'}>${flows}</g>${fbEdit ? '' : over}${fbSvg(px)}</g>`;
-  if (linkMode) { const r = pc.getBoundingClientRect(); h += `<rect x="0" y="0" width="${r.width}" height="${r.height}" fill="none" stroke="#2546c9" stroke-width="6" pointer-events="none"/>`; }
+  if (linkMode) { const r = pc.getBoundingClientRect(); h += `<rect x="0" y="0" width="${r.width}" height="${r.height}" fill="none" stroke="#2c5a8c" stroke-width="6" pointer-events="none"/>`; }
   if (!P.boxes.length && !P.notes.length && !gs) {
     const r = pc.getBoundingClientRect();
     const msg = ro ? '아직 아무것도 그리지 않은 스터디예요' : '‘사각형’을 고르고 캔버스를 드래그해서 공간을 그려 보세요';
@@ -3723,8 +3953,10 @@ function studyUI(){
   $('#fixBtn').hidden = !mis || !studySnap;
   $('#fixBtn').textContent = `어긋난 ${mis}개 맞추기`;
   const s = calc(P), over = P.bcrLimit && s.bcr > P.bcrLimit + 1e-9;
-  $('#sSum').textContent = `건폐율 ${f1(s.bcr)}%` + (P.bcrLimit ? ` / ${f2(P.bcrLimit)}` : '');
-  $('#sSum').classList.toggle('over', !!over);
+  const overF = P.farLimit && s.far > P.farLimit + 1e-9;
+  const cell = (k, v, lim, bad) => `<span class="m${bad ? ' over' : ''}"><i>${k}</i><span class="vv"><b>${v}</b>${lim ? `<small>/ ${lim}</small>` : ''}</span></span>`;
+  $('#sSum').innerHTML = cell('건폐율', `${f1(s.bcr)}%`, P.bcrLimit ? f2(P.bcrLimit) : '', over) + cell('용적률', `${f1(s.far)}%`, P.farLimit ? f2(P.farLimit) : '', overF) + cell('연면적', `${f1(s.gfa)}㎡`, '', false);
+  $('#sSum').classList.toggle('over', !!(over || overF));
   studyBars();
   renderCtx();
   renderStudy();
