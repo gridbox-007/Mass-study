@@ -1,0 +1,20 @@
+name: keepalive
+# Supabase 무료 프로젝트는 7일 동안 아무도 안 쓰면 잠들어요. 3일마다 한 번 살짝 불러서 깨워 둬요.
+# 연결 정보는 index.html 위쪽에 적은 값을 그대로 읽어 와요. 따로 고칠 건 없어요.
+on:
+  schedule:
+    - cron: "17 3 */3 * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ping Supabase
+        run: |
+          URL=$(python3 -c "import re;t=open('index.html',encoding='utf-8').read();m=re.search(r'SUPABASE_URL\s*[:=]\s*[\"\'“”‘’]?\s*(https?://[^\s\"\'“”‘’,;<]+)',t);print(m.group(1).rstrip('/') if m else '')")
+          KEY=$(python3 -c "import re;t=open('index.html',encoding='utf-8').read();m=re.search(r'SUPABASE_(?:ANON|PUBLISHABLE)(?:_DEFAULT)?_KEY\s*[:=]\s*[\"\'“”‘’]?\s*([A-Za-z0-9._-]{20,})',t);print(m.group(1) if m else '')")
+          if [ -z "$URL" ] || echo "$URL" | grep -q abcdefgh; then echo "index.html에 Supabase 주소를 먼저 넣어 주세요"; exit 1; fi
+          code=$(curl -s -o /dev/null -w "%{http_code}" "$URL/rest/v1/ms_docs?select=path&limit=1" -H "apikey: $KEY")
+          echo "응답 코드: $code"
+          [ "$code" = "200" ]
