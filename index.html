@@ -582,6 +582,15 @@ body.sketchmode #pc{background:#fbfaf6}
 body.study #cv, body.study #sheet, body.study #hint, body.study .stats, body.study .views{display:none !important}
 body.exact #studyUI, body.exact #stools, body.exact #menuBtn, body.exact #sheetBar, body.exact #flowBar{display:none !important}
 body.study .row2{display:none}
+@media (max-width:640px){
+  #topArea .bar{flex-wrap:wrap;row-gap:6px}
+  #topArea .bar .name{flex:1 1 calc(100% - 150px);order:0}
+  #topArea .bar #backBtn{order:0} #topArea .bar #menuBtn{order:1}
+  #topArea .bar > :not(#backBtn):not(.name):not(#menuBtn){order:2}
+  #topArea .bar #saveBtn{flex:1 1 auto}
+  #topArea .bar #syncPill{display:none}
+  body.study.menuOpen .row2{top:calc(env(safe-area-inset-top) + 106px) !important}
+}
 body.study.menuOpen .row2{display:flex;position:absolute;right:max(10px, env(safe-area-inset-right));top:calc(env(safe-area-inset-top) + 56px);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.14);z-index:8}
 body.study.menuOpen .row2 .tools2{flex-direction:column;align-items:stretch}
 body.study.menuOpen .row2 .tools2 button{height:42px}
@@ -635,8 +644,8 @@ body.study.menuOpen .row2 .tools2 button{height:42px}
 .mbox h2{margin:0;font-size:18px}
 .mbox p{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fgrid label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--mute)}
-.fgrid input[type=number]{height:42px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-family:var(--mono);font-size:15px;color:var(--ink);background:#fff}
+.fgrid label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--mute);min-width:0}
+.fgrid input[type=number]{width:100%;min-width:0;box-sizing:border-box;height:42px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-family:var(--mono);font-size:15px;color:var(--ink);background:#fff}
 .check{display:flex !important;flex-direction:row !important;align-items:center;gap:8px;grid-column:1/-1;font-size:14px !important;color:var(--ink) !important}
 .check input{width:20px;height:20px}
 .check[hidden]{display:none !important}
@@ -3001,7 +3010,9 @@ function renderStudy(){
   if (linkMode) { const r = pc.getBoundingClientRect(); h += `<rect x="0" y="0" width="${r.width}" height="${r.height}" fill="none" stroke="#2546c9" stroke-width="6" pointer-events="none"/>`; }
   if (!P.boxes.length && !P.notes.length && !gs) {
     const r = pc.getBoundingClientRect();
-    h += `<text x="${r.width / 2}" y="${r.height - $('#sbottom').offsetHeight - 40}" text-anchor="middle" font-size="${15 * T}" fill="#8a8c90" pointer-events="none">${ro ? '아직 아무것도 그리지 않은 스터디예요' : '‘사각형’을 고르고 캔버스를 드래그해서 공간을 그려 보세요'}</text>`;
+    const msg = ro ? '아직 아무것도 그리지 않은 스터디예요' : '‘사각형’을 고르고 캔버스를 드래그해서 공간을 그려 보세요';
+    const fs = Math.min(15 * T, (r.width - 28) / (msg.length * 0.92)); // 좁은 화면에서는 글자를 줄여 한 줄에 맞춤
+    h += `<text x="${r.width / 2}" y="${r.height - $('#sbottom').offsetHeight - 40}" text-anchor="middle" font-size="${r3(fs)}" fill="#8a8c90" pointer-events="none">${msg}</text>`;
   }
   pc.innerHTML = h;
   $('#zoomBtn').textContent = `${Math.round(sv.k / sv.kBase * 100)}%`;
@@ -3130,7 +3141,7 @@ pc.addEventListener('pointerdown', e => {
   if (role === 'sheet' && el.dataset.sheet !== activeSheet) { activeSheet = el.dataset.sheet; studyBars(); }
   if (!ro && e.shiftKey) { gesture = { type: 'marquee', w0: w, w1: w, add: true, cx: e.clientX, cy: e.clientY, dragged: false }; return; }
   // 빈 곳: 끌면 화면 이동, 꾹 누르고 끌면 범위 선택, 짧게 누르면 선택 해제
-  const gg = { type: 'pan', soft: true, x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty, w0: w };
+  const gg = { type: 'pan', soft: true, x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty, w0: w, onSheet: !!(e.target && e.target.closest && e.target.closest('[data-role=sheet]')) };
   if (!ro) gg.lp = setTimeout(() => { if (gesture === gg && !gg.panMoved) { gesture = { type: 'marquee', w0: gg.w0, w1: gg.w0, add: multiPick, cx: gg.x0, cy: gg.y0, dragged: false }; if (navigator.vibrate) try { navigator.vibrate(12); } catch (err) {} toast('범위를 끌어서 여러 개를 고르세요'); } }, 480);
   gesture = gg;
 });
@@ -3253,7 +3264,15 @@ function endStudyPointer(e){
   const cancelled = e.type === 'pointercancel';
   if (g.type === 'none') return;
   if (g.type === 'fbdraw') { if (!cancelled) { const m = fbMarkFrom(g, false); if (m) { m.id = uid(); fbPush(); myFb.marks.push(m); fbChanged(); return; } } renderStudy(); return; }
-  if (g.type === 'pan') { clearTimeout(g.lp); if (g.soft && !g.panMoved && !cancelled) { clearSel(); selCard = null; rotMode = false; linkMode = false; studyUI(); } return; }
+  if (g.type === 'pan') {
+    clearTimeout(g.lp);
+    if (g.soft && !g.panMoved && !cancelled) {
+      clearSel(); selCard = null; rotMode = false; linkMode = false; studyUI();
+      // 대지 빈 곳을 두 번 톡 → 대지와 격자 설정 창
+      if (g.onSheet && !isSketch() && !edRO()) { const now = performance.now(); if (lastTap.id === '__site' && now - lastTap.t < 380) { lastTap = { t: 0, id: null }; $('#setBtn').click(); } else lastTap = { t: now, id: '__site' }; }
+    }
+    return;
+  }
   if (g.type === 'tapsel') {
     clearTimeout(g.lp);
     if (cancelled) return;
