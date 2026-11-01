@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f4f2ee">
+<title>매스 스터디</title>
+<script>
+  // ===============================================================
+  // ▼ Supabase 연결 정보 (안내서 3단계에서 복사한 값 두 개를 붙여넣기)
+  //   비워두면 '체험 모드'로 동작해요 (이 기기에만 저장)
+  window.MS_CONFIG = {
+    SUPABASE_URL: "",
+    SUPABASE_ANON_KEY: ""
+  };
+  // ===============================================================
+</script>
+<style>
+  :root{
+    --bg:#f4f2ee; --panel:#ffffff; --ink:#1d1c1a; --sub:#77736c; --line:#dedad3;
+    --accent:#2f5d50; --accent-soft:#e3ece8; --danger:#b4432f; --radius:14px;
+    --shadow:0 6px 24px rgba(30,28,24,.10);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif;
+    -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+  button,input,select{font:inherit;color:inherit}
+  button{cursor:pointer;border:0;background:none}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:999px;
+    background:var(--panel);border:1px solid var(--line);font-size:15px;white-space:nowrap;min-height:42px}
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.danger{color:var(--danger)}
+  .btn.small{padding:6px 12px;font-size:13px;min-height:34px}
+  .btn:disabled{opacity:.4}
+  .icon-btn{width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:18px}
+  .icon-btn:active{background:rgba(0,0,0,.06)}
+  .icon-btn:disabled{opacity:.3}
+  input[type=text],input[type=number],input[type=password]{width:100%;padding:12px 14px;border-radius:12px;
+    border:1px solid var(--line);background:#fff;font-size:16px;outline:none}
+  input:focus{border-color:var(--accent)}
+  .wrap{max-width:960px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 18px 80px}
+  header.top{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  header.top h1{font-size:22px;margin:0;flex:1;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--panel);
+    border:1px solid var(--line);font-size:13px;color:var(--sub)}
+  .code{font-family:ui-monospace,Menlo,monospace;letter-spacing:.08em;color:var(--ink)}
+  .banner{background:#fff6dc;border:1px solid #f0dfa6;color:#6b5512;padding:10px 14px;border-radius:12px;font-size:13px;margin-bottom:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .card{background:var(--panel);border-radius:var(--radius);padding:14px;border:1px solid var(--line);cursor:pointer;position:relative}
+  .card:active{transform:scale(.99)}
+  .card h3{margin:0 0 6px;font-size:16px}
+  .card .meta{font-size:12px;color:var(--sub)}
+  .card .thumb{height:120px;border-radius:10px;background:#faf9f6;margin-bottom:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .card .thumb svg{width:100%;height:100%}
+  .mine{position:absolute;top:10px;right:10px;font-size:11px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:999px}
+  .section-title{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px}
+  .section-title h2{font-size:15px;margin:0;color:var(--sub);font-weight:600}
+  .tabs{display:flex;gap:6px;background:#e9e6e0;padding:4px;border-radius:999px;width:max-content;margin-bottom:6px}
+  .tabs button{padding:8px 18px;border-radius:999px;font-size:15px;color:var(--sub)}
+  .tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .empty{color:var(--sub);font-size:14px;padding:30px 10px;text-align:center;border:1px dashed var(--line);border-radius:var(--radius)}
+  .folders{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+  .folders .chip{cursor:pointer;font-size:14px;padding:8px 14px}
+  .folders .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:12px}
+  .imgs .im{aspect-ratio:1;border-radius:10px;overflow:hidden;background:#e9e6e0;cursor:pointer;position:relative}
+  .imgs img{width:100%;height:100%;object-fit:cover;display:block}
+  .imgs .by{position:absolute;left:6px;bottom:6px;font-size:11px;background:rgba(0,0,0,.5);color:#fff;padding:1px 6px;border-radius:6px}
+  /* modal */
+  .scrim{position:fixed;inset:0;background:rgba(20,18,15,.38);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .modal{background:#fff;border-radius:20px;padding:22px;width:100%;max-width:420px;box-shadow:var(--shadow)}
+  .modal h3{margin:0 0 6px;font-size:18px}
+  .modal p{margin:0 0 14px;color:var(--sub);font-size:14px;line-height:1.5}
+  .modal label{display:block;font-size:13px;color:var(--sub);margin:10px 0 6px}
+  .modal .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
+  .lightbox{position:fixed;inset:0;background:rgba(10,10,10,.92);z-index:60;display:flex;flex-direction:column}
+  .lightbox img{flex:1;min-height:0;object-fit:contain;width:100%}
+  .lightbox .bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;color:#fff;gap:8px}
+  .toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;
+    padding:10px 18px;border-radius:999px;font-size:14px;z-index:80;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
+  .toast.show{opacity:1}
+  /* editor */
+  .editor{position:fixed;inset:0;display:flex;flex-direction:column;background:#fbfaf7}
+  .ed-top{display:flex;align-items:center;gap:6px;padding:max(8px,env(safe-area-inset-top)) 10px 8px;background:var(--panel);border-bottom:1px solid var(--line);z-index:5}
+  .ed-top .name{flex:1;min-width:60px;border:0;background:transparent;font-size:17px;font-weight:600;padding:8px}
+  .ed-top .status{font-size:12px;color:var(--sub);white-space:nowrap}
+  .stage{flex:1;position:relative;overflow:hidden}
+  .stage svg.cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none;display:block}
+  .toolbar{position:absolute;left:50%;transform:translateX(-50%);bottom:max(14px,env(safe-area-inset-bottom));display:flex;gap:4px;
+    background:var(--panel);border-radius:18px;padding:6px;box-shadow:var(--shadow);border:1px solid var(--line);align-items:center;max-width:calc(100% - 20px);overflow-x:auto}
+  .toolbar .sep{width:1px;height:28px;background:var(--line);margin:0 4px;flex:none}
+  .tool{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 10px;border-radius:12px;font-size:11px;color:var(--sub);flex:none;min-width:52px}
+  .tool svg{width:24px;height:24px}
+  .tool:active,.tool.on{background:var(--accent-soft);color:var(--accent)}
+  .tool select{border:0;background:transparent;font-size:13px;color:var(--ink);padding:2px}
+  .inspector{position:absolute;top:12px;right:12px;width:260px;background:var(--panel);border-radius:16px;box-shadow:var(--shadow);border:1px solid var(--line);padding:14px;z-index:4}
+  .inspector .row{display:flex;gap:8px;align-items:center;margin-top:8px}
+  .inspector .row label{font-size:12px;color:var(--sub);width:34px;flex:none}
+  .inspector input{padding:8px 10px;font-size:15px}
+  .inspector .area{font-size:12px;color:var(--sub);margin-top:8px}
+  .swatches{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .swatches button{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+  .swatches button.on{box-shadow:0 0 0 2px var(--ink)}
+  .drawer{position:absolute;top:0;bottom:0;left:0;width:min(360px,88vw);background:var(--panel);box-shadow:var(--shadow);z-index:6;display:flex;flex-direction:column;border-right:1px solid var(--line)}
+  .drawer .head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
+  .drawer .body{flex:1;overflow-y:auto;padding:12px 14px}
+  .readonly-bar{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:999px;padding:8px 8px 8px 16px;
+    display:flex;gap:10px;align-items:center;font-size:14px;box-shadow:var(--shadow);z-index:4;white-space:nowrap}
+  .readonly-bar .btn{min-height:34px;padding:6px 14px;font-size:13px}
+  @media (max-width:640px){
+    .inspector{left:10px;right:10px;width:auto;top:auto;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 76px)}
+    .ed-top .status{display:none}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+
+<script type="module">
+// =================================================================
+// 공통 도우미
+// =================================================================
+const $app = document.getElementById('app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'x'+Math.random().toString(36).slice(2)+Date.now().toString(36));
+const fmtDate = s => { const d = new Date(s); return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+const fmtCode = c => c ? c.slice(0,3)+'-'+c.slice(3) : '';
+const ls = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
+  del(k){ try { localStorage.removeItem(k); } catch {} }
+};
+let toastTimer;
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2400); }
+async function copyText(text){
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {} ta.remove(); return ok; }
+}
+async function sha256(text){
+  if (crypto.subtle) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  let h = 0; for (const ch of text) h = (h*31 + ch.charCodeAt(0)) | 0; return 'f'+(h>>>0).toString(16);
+}
+
+// 모달
+function modal({title, text='', fields=[], ok='확인', cancel='취소', danger=false, dismissable=true}){
+  return new Promise(resolve => {
+    const scrim = document.createElement('div'); scrim.className = 'scrim';
+    scrim.innerHTML = `<div class="modal"><h3>${esc(title)}</h3>${text?`<p>${text}</p>`:''}
+      ${fields.map((f,i)=>`<label>${esc(f.label)}</label><input type="${f.type||'text'}" data-i="${i}" value="${esc(f.value||'')}" placeholder="${esc(f.placeholder||'')}" maxlength="${f.max||60}">`).join('')}
+      <div class="actions">${cancel?`<button class="btn" data-a="cancel">${esc(cancel)}</button>`:''}<button class="btn ${danger?'danger':'primary'}" data-a="ok">${esc(ok)}</button></div></div>`;
+    document.body.appendChild(scrim);
+    const inputs = [...scrim.querySelectorAll('input')];
+    setTimeout(()=>inputs[0]?.focus(), 50);
+    const done = v => { scrim.remove(); resolve(v); };
+    scrim.addEventListener('click', e => {
+      const a = e.target.closest('[data-a]')?.dataset.a;
+      if (a === 'ok') { const vals = inputs.map(i=>i.value.trim()); if (fields.some((f,i)=>f.required && !vals[i])) { inputs.find((x,i)=>fields[i].required && !vals[i])?.focus(); return; } done(fields.length ? vals : true); }
+      else if (a === 'cancel') done(null);
+      else if (e.target === scrim && dismissable && cancel) done(undefined);  // 바깥 눌러 닫기
+    });
+    inputs.forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') scrim.querySelector('[data-a=ok]').click(); }));
+  });
+}
+
+// =================================================================
+// 나(기기) 정보: 닉네임 + 기기 열쇠
+// =================================================================
+const me = { nick: ls.get('ms_nick',''), token: ls.get('ms_token',''), hash: '' };
+(function restoreFromLink(){
+  const q = new URLSearchParams(location.search);
+  if (q.get('key') && q.get('key').length >= 24) {
+    me.token = q.get('key'); ls.set('ms_token', me.token);
+    if (q.get('nick')) { me.nick = q.get('nick'); ls.set('ms_nick', me.nick); }
+    history.replaceState(null, '', location.pathname + location.hash);
+    setTimeout(()=>toast('열쇠를 불러왔어요. 내 것들을 다시 수정할 수 있어요'), 300);
+  }
+})();
+if (!me.token) { me.token = uid().replace(/-/g,'') + uid().replace(/-/g,'').slice(0,8); ls.set('ms_token', me.token); }
+me.hash = await sha256(me.token);
+const isMine = row => row && row.owner_token_hash === me.hash;
+const keyLink = () => `${location.origin}${location.pathname}?key=${encodeURIComponent(me.token)}&nick=${encodeURIComponent(me.nick)}`;
+
+async function ensureNick(){
+  while (!me.nick) {
+    const r = await modal({ title:'반가워요!', text:'조원들에게 보일 이름을 정해 주세요.', fields:[{label:'이름(닉네임)', placeholder:'예: 지민', required:true, max:20}], ok:'시작하기', cancel:null, dismissable:false });
+    if (r && r[0]) { me.nick = r[0]; ls.set('ms_nick', me.nick); }
+  }
+}
+
+// =================================================================
+// 데이터 계층: Supabase 또는 체험 모드(localStorage)
+// =================================================================
+const CFG = window.MS_CONFIG || {};
+const ONLINE = !!(CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY);
+let api;
+
+const PROJECT_COLS = 'id,code,name,owner_name,owner_token_hash,created_at';
+
+if (ONLINE) {
+  const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+  const sb = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, { auth: { persistSession:false } });
+  const chk = ({data, error}) => { if (error) throw new Error(error.message); return data; };
+  api = {
+    async listProjects(){ return chk(await sb.from('projects').select(PROJECT_COLS).order('created_at',{ascending:false})); },
+    async getProject(code){ return chk(await sb.from('projects').select(PROJECT_COLS).eq('code', code).maybeSingle()); },
+    async createProject(name){ return chk(await sb.rpc('create_project',{p_name:name, p_owner_name:me.nick, p_token:me.token})); },
+    async renameProject(id, name){ chk(await sb.rpc('rename_project',{p_id:id, p_name:name, p_token:me.token})); },
+    async deleteProject(id){
+      const paths = chk(await sb.rpc('delete_project',{p_id:id, p_token:me.token})) || [];
+      if (paths.length) await sb.storage.from('refs').remove(paths);
+    },
+    async listFolders(pid){ return chk(await sb.from('folders').select('*').eq('project_id', pid).order('created_at')); },
+    async createFolder(pid, name){ return chk(await sb.rpc('create_folder',{p_project:pid, p_name:name, p_owner_name:me.nick, p_token:me.token})); },
+    async deleteFolder(id){ chk(await sb.rpc('delete_folder',{p_id:id, p_token:me.token})); },
+    async listImages(pid){ return chk(await sb.from('images').select('*').eq('project_id', pid).order('created_at',{ascending:false})); },
+    async uploadImage(pid, fid, blob){
+      const path = `${pid}/${fid}/${uid()}.jpg`;
+      chk(await sb.storage.from('refs').upload(path, blob, { contentType:'image/jpeg', upsert:false }));
+      try { return chk(await sb.rpc('add_image',{p_project:pid, p_folder:fid, p_path:path, p_owner_name:me.nick, p_token:me.token})); }
+      catch (e) { await sb.storage.from('refs').remove([path]); throw e; }
+    },
+    async deleteImage(id){
+      const path = chk(await sb.rpc('delete_image',{p_id:id, p_token:me.token}));
+      if (path) await sb.storage.from('refs').remove([path]);
+    },
+    imageUrl(row){ return sb.storage.from('refs').getPublicUrl(row.path).data.publicUrl; },
+    async listPlans(pid){ return chk(await sb.from('plans').select('*').eq('project_id', pid).order('updated_at',{ascending:false})); },
+    async getPlan(id){ return chk(await sb.from('plans').select('*').eq('id', id).maybeSingle()); },
+    async savePlan({id=null, projectId, name, data}){ return chk(await sb.rpc('save_plan',{p_id:id, p_project:projectId, p_name:name, p_data:data, p_owner_name:me.nick, p_token:me.token})); },
+    async deletePlan(id){ chk(await sb.rpc('delete_plan',{p_id:id, p_token:me.token})); },
+  };
+} else {
+  // ---------- 체험 모드 ----------
+  const KEY = 'ms_local_db';
+  const load = () => ls.get(KEY, {projects:[], folders:[], images:[], plans:[]});
+  const save = db => { if (!ls.set(KEY, db)) throw new Error('이 기기 저장 공간이 가득 찼어요'); };
+  const now = () => new Date().toISOString();
+  const ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const own = row => { if (!isMine(row)) throw new Error('만든 사람만 할 수 있어요'); };
+  api = {
+    async listProjects(){ return load().projects.slice().sort((a,b)=>b.created_at.localeCompare(a.created_at)); },
+    async getProject(code){ return load().projects.find(p=>p.code===code) || null; },
+    async createProject(name){
+      const db = load(); let code;
+      do { code = Array.from({length:6},()=>ALPHA[Math.floor(Math.random()*32)]).join(''); } while (db.projects.some(p=>p.code===code));
+      const row = { id:uid(), code, name, owner_name:me.nick, owner_token_hash:me.hash, created_at:now() };
+      db.projects.push(row); save(db); return row;
+    },
+    async renameProject(id, name){ const db = load(); const p = db.projects.find(x=>x.id===id); own(p); p.name = name; save(db); },
+    async deleteProject(id){
+      const db = load(); own(db.projects.find(x=>x.id===id));
+      db.images.filter(i=>i.project_id===id).forEach(i=>ls.del('ms_img_'+i.id));
+      for (const t of ['folders','images','plans']) db[t] = db[t].filter(r=>r.project_id!==id);
+      db.projects = db.projects.filter(p=>p.id!==id); save(db);
+    },
+    async listFolders(pid){ return load().folders.filter(f=>f.project_id===pid); },
+    async createFolder(pid, name){ const db = load(); const row = {id:uid(), project_id:pid, name, owner_name:me.nick, owner_token_hash:me.hash, created_at:now()}; db.folders.push(row); save(db); return row; },
+    async deleteFolder(id){ const db = load(); own(db.folders.find(f=>f.id===id)); if (db.images.some(i=>i.folder_id===id)) throw new Error('폴더 안의 이미지를 먼저 지워 주세요'); db.folders = db.folders.filter(f=>f.id!==id); save(db); },
+    async listImages(pid){ return load().images.filter(i=>i.project_id===pid).sort((a,b)=>b.created_at.localeCompare(a.created_at)); },
+    async uploadImage(pid, fid, blob){
+      const dataUrl = await new Promise((res,rej)=>{ const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(blob); });
+      const row = {id:uid(), project_id:pid, folder_id:fid, path:'local', owner_name:me.nick, owner_token_hash:me.hash, created_at:now()};
+      if (!ls.set('ms_img_'+row.id, dataUrl)) throw new Error('체험 모드 저장 공간이 가득 찼어요 (실제 사이트에선 1GB까지 가능)');
+      const db = load(); db.images.push(row); save(db); return row;
+    },
+    async deleteImage(id){ const db = load(); own(db.images.find(i=>i.id===id)); db.images = db.images.filter(i=>i.id!==id); ls.del('ms_img_'+id); save(db); },
+    imageUrl(row){ return ls.get('ms_img_'+row.id, ''); },
+    async listPlans(pid){ return load().plans.filter(p=>p.project_id===pid).sort((a,b)=>b.updated_at.localeCompare(a.updated_at)); },
+    async getPlan(id){ return load().plans.find(p=>p.id===id) || null; },
+    async savePlan({id=null, projectId, name, data}){
+      const db = load();
+      if (!id) { const row = {id:uid(), project_id:projectId, name, data, owner_name:me.nick, owner_token_hash:me.hash, created_at:now(), updated_at:now()}; db.plans.push(row); save(db); return row; }
+      const p = db.plans.find(x=>x.id===id); if (!p || !isMine(p)) throw new Error('원본은 작성자만 수정할 수 있어요. 복제해서 써 주세요');
+      Object.assign(p, {name, data, updated_at:now()}); save(db); return p;
+    },
+    async deletePlan(id){ const db = load(); own(db.plans.find(p=>p.id===id)); db.plans = db.plans.filter(p=>p.id!==id); save(db); },
+  };
+}
+
+// 이미지 압축: 긴 변 1600px, 약 300KB 이하 JPEG
+async function compressImage(file){
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res,rej)=>{ const i = new Image(); i.onload=()=>res(i); i.onerror=()=>rej(new Error('이미지를 읽지 못했어요')); i.src = url; });
+    let scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.naturalWidth*scale)); c.height = Math.max(1, Math.round(img.naturalHeight*scale));
+      const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,c.width,c.height); ctx.drawImage(img,0,0,c.width,c.height);
+      for (const q of [0.82, 0.7, 0.58]) {
+        const blob = await new Promise(r=>c.toBlob(r,'image/jpeg',q));
+        if (blob && blob.size <= 320*1024) return blob;
+      }
+      scale *= 0.8;
+    }
+    throw new Error('이미지가 너무 커요');
+  } finally { URL.revokeObjectURL(url); }
+}
+
+// =================================================================
+// 내 초안 (이 기기에만 저장, '프로젝트에 저장'해야 공유됨)
+// =================================================================
+const drafts = {
+  all(){ return ls.get('ms_drafts', {}); },
+  get(id){ return this.all()[id] || null; },
+  put(d){ const a = this.all(); a[d.id] = d; if (!ls.set('ms_drafts', a)) toast('이 기기 저장 공간이 부족해요'); },
+  del(id){ const a = this.all(); delete a[id]; ls.set('ms_drafts', a); },
+  forProject(pid){ return Object.values(this.all()).filter(d=>d.projectId===pid).sort((a,b)=>b.updatedAt-a.updatedAt); },
+  byPlan(planId){ return Object.values(this.all()).find(d=>d.linkedPlanId===planId) || null; },
+};
+
+// =================================================================
+// 도형 그리기 (편집기·썸네일 공용)
+// =================================================================
+const COLORS = ['#f2d7c9','#d6e6dc','#d7e0ef','#efe3b8','#e6d6ea','#e2e2de'];
+const STROKE = '#2a2925';
+function shapePath(s){
+  const {x,y,w,h} = s;
+  if (s.shape === 'semi') {
+    switch (s.dir || 'up') {
+      case 'up':    return `M${x},${y+h} A${w/2},${h} 0 0 1 ${x+w},${y+h} Z`;
+      case 'down':  return `M${x},${y} A${w/2},${h} 0 0 0 ${x+w},${y} Z`;
+      case 'left':  return `M${x+w},${y} A${w},${h/2} 0 0 0 ${x+w},${y+h} Z`;
+      case 'right': return `M${x},${y} A${w},${h/2} 0 0 1 ${x},${y+h} Z`;
+    }
+  }
+  if (s.shape === 'circle') return `M${x},${y+h/2} A${w/2},${h/2} 0 1 1 ${x+w},${y+h/2} A${w/2},${h/2} 0 1 1 ${x},${y+h/2} Z`;
+  return `M${x},${y} H${x+w} V${y+h} H${x} Z`;
+}
+const fmtN = n => (Math.round(n*100)/100).toString();
+function areaOf(s){
+  // 반원(반타원)·원(타원) 모두 π·w·h/4 (반원은 바운딩 박스가 지름×반지름이라 같은 식)
+  if (s.shape === 'semi' || s.shape === 'circle') return Math.PI * s.w * s.h / 4;
+  return s.w * s.h;
+}
+// z = 화면 1px당 확대율(선 굵기·글자 크기를 화면 기준으로 유지)
+function shapesSVG(shapes, z, {sel=null, labels=true}={}){
+  let out = '';
+  const ordered = [...shapes.filter(s=>s.kind==='outline'), ...shapes.filter(s=>s.kind!=='outline')];
+  for (const s of ordered) {
+    const isSel = s.id === sel;
+    if (s.kind === 'outline') {
+      out += `<path data-id="${s.id}" d="${shapePath(s)}" fill="rgba(42,41,37,0.025)" stroke="${isSel?'#2f5d50':STROKE}" stroke-width="${(isSel?2.2:1.6)/z}" stroke-dasharray="${7/z} ${5/z}"/>`;
+    } else {
+      out += `<path data-id="${s.id}" d="${shapePath(s)}" fill="${s.color||COLORS[0]}" stroke="${isSel?'#2f5d50':STROKE}" stroke-width="${(isSel?2.4:1.4)/z}"/>`;
+      if (labels && s.w*z > 34 && s.h*z > 22) {
+        const cx = s.x + s.w/2, cy = s.y + s.h/2, fs = 13/z;
+        const showDim = s.h*z > 40;
+        out += `<text x="${cx}" y="${cy + (showDim? -fs*0.25 : fs*0.35)}" font-size="${fs}" text-anchor="middle" fill="${STROKE}" font-weight="600" pointer-events="none">${esc(s.label||'')}</text>`;
+        if (showDim) out += `<text x="${cx}" y="${cy + fs*1.05}" font-size="${fs*0.82}" text-anchor="middle" fill="#6d6a63" pointer-events="none">${fmtN(s.w)}×${fmtN(s.h)} · ${fmtN(areaOf(s))}㎡</text>`;
+      }
+    }
+  }
+  return out;
+}
+function boundsOf(shapes){
+  if (!shapes.length) return {x:0,y:0,w:30,h:20};
+  let x1=Infinity,y1=Infinity,x2=-Infinity,y2=-Infinity;
+  for (const s of shapes){ x1=Math.min(x1,s.x); y1=Math.min(y1,s.y); x2=Math.max(x2,s.x+s.w); y2=Math.max(y2,s.y+s.h); }
+  return {x:x1,y:y1,w:x2-x1,h:y2-y1};
+}
+function thumbSVG(data){
+  const shapes = data?.shapes || [];
+  if (!shapes.length) return `<span style="color:#aaa;font-size:12px">빈 플랜</span>`;
+  const b = boundsOf(shapes), pad = Math.max(b.w,b.h)*0.08;
+  const z = 180 / Math.max(b.w+pad*2, b.h+pad*2);
+  return `<svg viewBox="${b.x-pad} ${b.y-pad} ${b.w+pad*2} ${b.h+pad*2}" preserveAspectRatio="xMidYMid meet">${shapesSVG(shapes, z, {labels:false})}</svg>`;
+}
+
+// =================================================================
+// 라우터
+// =================================================================
+let cleanup = null;
+async function route(){
+  if (cleanup) { cleanup(); cleanup = null; }
+  const parts = location.hash.replace(/^#\/?/,'').split('/').filter(Boolean);
+  try {
+    if (parts[0] === 'p' && parts[1]) {
+      const code = parts[1].toUpperCase().replace(/-/g,'');
+      if (parts[2] === 'e' && parts[3]) return await viewEditor(code, {draftId: parts[3]});
+      if (parts[2] === 'v' && parts[3]) return await viewEditor(code, {planId: parts[3]});
+      return await viewProject(code, parts[2] === 'refs' ? 'refs' : 'plans');
+    }
+    return await viewHome();
+  } catch (e) {
+    console.error(e);
+    $app.innerHTML = `<div class="wrap"><div class="empty">문제가 생겼어요: ${esc(e.message)}<br><br><a href="#/">처음으로</a></div></div>`;
+  }
+}
+window.addEventListener('hashchange', route);
+const go = h => { if (location.hash === h) route(); else location.hash = h; };
+
+// =================================================================
+// 홈: 프로젝트 목록
+// =================================================================
+function settingsModal(){
+  const scrim = document.createElement('div'); scrim.className = 'scrim';
+  scrim.innerHTML = `<div class="modal"><h3>내 정보</h3>
+    <p>이 기기는 <b>기기 열쇠</b>로 내 프로젝트·플랜·이미지를 알아봐요. 브라우저 기록이 지워지면 열쇠도 사라지니, 아래 링크를 나와의 채팅에 저장해 두면 언제든 다시 불러올 수 있어요. <b>열쇠 링크는 다른 사람에게 보내지 마세요.</b></p>
+    <label>이름(닉네임)</label><input type="text" id="nk" value="${esc(me.nick)}" maxlength="20">
+    <div class="actions" style="justify-content:space-between">
+      <button class="btn" data-a="key">🔑 열쇠 링크 복사</button>
+      <button class="btn primary" data-a="save">저장</button>
+    </div>
+    <p style="margin:14px 0 0;font-size:12px">${ONLINE ? '온라인 모드 · 조원들과 공유돼요' : '체험 모드 · 이 기기에만 저장돼요'}</p></div>`;
+  document.body.appendChild(scrim);
+  scrim.addEventListener('click', async e => {
+    const a = e.target.closest('[data-a]')?.dataset.a;
+    if (a === 'key') { await copyText(keyLink()); toast('열쇠 링크를 복사했어요. 나와의 채팅에 붙여넣어 두세요'); }
+    else if (a === 'save') { const v = scrim.querySelector('#nk').value.trim(); if (v) { me.nick = v; ls.set('ms_nick', v); } scrim.remove(); route(); }
+    else if (e.target === scrim) scrim.remove();
+  });
+}
+
+async function viewHome(){
+  document.title = '매스 스터디';
+  $app.innerHTML = `<div class="wrap"><div class="empty">불러오는 중…</div></div>`;
+  const projects = await api.listProjects();
+  const render = (q='') => {
+    const qq = q.trim().toUpperCase().replace(/-/g,'');
+    const list = projects.filter(p => !qq || p.code.includes(qq) || p.name.toUpperCase().includes(qq));
+    $app.innerHTML = `<div class="wrap">
+      <header class="top"><h1>매스 스터디</h1><button class="chip" id="me">👤 ${esc(me.nick)}</button></header>
+      ${ONLINE ? '' : `<div class="banner">체험 모드예요. 지금 만드는 내용은 이 기기에만 저장돼요. Supabase를 연결하면 조원들과 공유돼요.</div>`}
+      <div style="display:flex;gap:8px"><input type="text" id="q" placeholder="프로젝트 이름이나 코드로 찾기" value="${esc(q)}"><button class="btn primary" id="new">＋ 새 프로젝트</button></div>
+      <div class="section-title"><h2>프로젝트 ${list.length}개</h2></div>
+      ${list.length ? `<div class="grid">${list.map(p=>`
+        <div class="card" data-code="${p.code}">${isMine(p)?'<span class="mine">내 프로젝트</span>':''}
+          <h3>${esc(p.name)}</h3><div class="meta"><span class="code">${fmtCode(p.code)}</span> · ${esc(p.owner_name)} · ${fmtDate(p.created_at)}</div></div>`).join('')}</div>`
+        : `<div class="empty">${projects.length ? '찾는 프로젝트가 없어요' : '아직 프로젝트가 없어요. 과제 하나당 프로젝트 하나를 만들어 보세요.'}</div>`}
+    </div>`;
+    const qi = $app.querySelector('#q');
+    qi.addEventListener('input', () => { const pos = qi.selectionStart; render(qi.value); const n = $app.querySelector('#q'); n.focus(); n.setSelectionRange(pos,pos); });
+    $app.querySelector('#me').onclick = settingsModal;
+    $app.querySelector('#new').onclick = async () => {
+      const r = await modal({ title:'새 프로젝트', text:'과제 단위의 공동 작업 공간이에요. 만들면 고유 코드가 붙어요.', fields:[{label:'프로젝트 이름', placeholder:'예: 3주차 주거 매스 스터디', required:true}], ok:'만들기' });
+      if (!r) return;
+      try { const p = await api.createProject(r[0]); go('#/p/'+p.code); } catch(e){ toast(e.message); }
+    };
+    $app.querySelectorAll('.card').forEach(c => c.onclick = () => go('#/p/'+c.dataset.code));
+  };
+  render();
+}
+
+// =================================================================
+// 프로젝트: 플랜 / 레퍼런스
+// =================================================================
+async function viewProject(code, tab){
+  $app.innerHTML = `<div class="wrap"><div class="empty">불러오는 중…</div></div>`;
+  const project = await api.getProject(code);
+  if (!project) { $app.innerHTML = `<div class="wrap"><div class="empty">코드 <b class="code">${esc(fmtCode(code))}</b> 프로젝트를 찾을 수 없어요.<br><br><a href="#/">처음으로</a></div></div>`; return; }
+  document.title = project.name + ' · 매스 스터디';
+  const mine = isMine(project);
+  const head = `<header class="top">
+      <button class="icon-btn" onclick="location.hash='#/'" aria-label="뒤로">←</button>
+      <h1>${esc(project.name)}</h1>
+      <button class="chip" id="share" title="링크 복사">🔗 <span class="code">${fmtCode(project.code)}</span></button>
+      ${mine ? `<button class="icon-btn" id="more" aria-label="설정">⋯</button>` : ''}
+    </header>
+    <div class="tabs"><button data-t="plans" class="${tab==='plans'?'on':''}">플랜</button><button data-t="refs" class="${tab==='refs'?'on':''}">레퍼런스</button></div>`;
+
+  const bindHead = () => {
+    $app.querySelector('#share').onclick = async () => { await copyText(`${location.origin}${location.pathname}#/p/${project.code}`); toast('프로젝트 링크를 복사했어요'); };
+    $app.querySelectorAll('.tabs button').forEach(b => b.onclick = () => go(`#/p/${project.code}${b.dataset.t==='refs'?'/refs':''}`));
+    const more = $app.querySelector('#more');
+    if (more) more.onclick = async () => {
+      const r = await modal({ title:'프로젝트 설정', fields:[{label:'이름', value:project.name, required:true}], ok:'이름 저장', cancel:'프로젝트 삭제', text:'바깥을 누르면 닫혀요.' });
+      if (r) { try { await api.renameProject(project.id, r[0]); route(); } catch(e){ toast(e.message); } }
+      else if (r === null) {
+        // '프로젝트 삭제'는 취소 버튼 자리 → 한 번 더 확인
+        const ok = await modal({ title:'정말 삭제할까요?', text:`<b>${esc(project.name)}</b>의 플랜과 레퍼런스 이미지가 모두 지워지고 되돌릴 수 없어요.`, ok:'삭제', danger:true });
+        if (ok) { try { await api.deleteProject(project.id); toast('삭제했어요'); go('#/'); } catch(e){ toast(e.message); } }
+      }
+    };
+  };
+
+  if (tab === 'plans') {
+    const plans = await api.listPlans(project.id);
+    const myDrafts = drafts.forProject(project.id);
+    $app.innerHTML = `<div class="wrap">${head}
+      <div class="section-title"><h2>내 초안 · 이 기기에만 있어요</h2><button class="btn primary small" id="newplan">＋ 새 플랜</button></div>
+      ${myDrafts.length ? `<div class="grid">${myDrafts.map(d=>`
+        <div class="card" data-draft="${d.id}"><div class="thumb">${thumbSVG(d.data)}</div>
+          <h3>${esc(d.name)}</h3><div class="meta">${d.linkedPlanId ? (d.dirty ? '수정 중 · 아직 공유 안 됨' : '공유된 플랜과 같음') : '공유 안 됨'} · ${fmtDate(d.updatedAt)}</div></div>`).join('')}</div>`
+        : `<div class="empty">새 플랜을 만들어 보세요. '프로젝트에 저장'을 눌러야 조원들에게 보여요.</div>`}
+      <div class="section-title"><h2>프로젝트에 공유된 플랜 ${plans.length}개</h2></div>
+      ${plans.length ? `<div class="grid">${plans.map(p=>`
+        <div class="card" data-plan="${p.id}">${isMine(p)?'<span class="mine">내 플랜</span>':''}<div class="thumb">${thumbSVG(p.data)}</div>
+          <h3>${esc(p.name)}</h3><div class="meta">${esc(p.owner_name)} · ${fmtDate(p.updated_at)}</div></div>`).join('')}</div>`
+        : `<div class="empty">아직 공유된 플랜이 없어요.</div>`}
+    </div>`;
+    bindHead();
+    $app.querySelector('#newplan').onclick = () => {
+      const n = drafts.forProject(project.id).length + 1;
+      const d = { id: uid(), projectId: project.id, projectCode: project.code, name: `플랜 ${n}`, data: {v:1, grid:1, shapes:[]}, linkedPlanId:null, dirty:true, updatedAt: Date.now() };
+      drafts.put(d); go(`#/p/${project.code}/e/${d.id}`);
+    };
+    $app.querySelectorAll('[data-draft]').forEach(c => c.onclick = () => go(`#/p/${project.code}/e/${c.dataset.draft}`));
+    $app.querySelectorAll('[data-plan]').forEach(c => c.onclick = () => {
+      const p = plans.find(x=>x.id===c.dataset.plan);
+      if (isMine(p)) {
+        let d = drafts.byPlan(p.id);
+        if (!d || !d.dirty) { d = { id: d?.id || uid(), projectId: project.id, projectCode: project.code, name: p.name, data: p.data, linkedPlanId: p.id, dirty:false, updatedAt: Date.now() }; drafts.put(d); }
+        else toast('이 기기에서 수정하던 내용을 열었어요');
+        go(`#/p/${project.code}/e/${d.id}`);
+      } else go(`#/p/${project.code}/v/${p.id}`);
+    });
+  } else {
+    await renderRefs({ project, mount: (html) => { $app.innerHTML = `<div class="wrap">${head}${html}</div>`; bindHead(); return $app; } });
+  }
+}
+
+// 레퍼런스 화면 (프로젝트 탭 + 편집기 서랍에서 공용)
+async function renderRefs({ project, mount, compact=false }){
+  let folders = await api.listFolders(project.id);
+  let images = await api.listImages(project.id);
+  let cur = ls.get('ms_folder_'+project.id, null);
+  if (!folders.some(f=>f.id===cur)) cur = folders[0]?.id || null;
+  const draw = () => {
+    const f = folders.find(x=>x.id===cur);
+    const list = images.filter(i=>i.folder_id===cur);
+    const root = mount(`
+      <div class="section-title" style="margin-top:${compact?0:22}px"><h2>폴더</h2><button class="btn small" id="newf">＋ 폴더</button></div>
+      ${folders.length ? `<div class="folders">${folders.map(x=>`<button class="chip ${x.id===cur?'on':''}" data-f="${x.id}">${esc(x.name)} <span style="opacity:.6">${images.filter(i=>i.folder_id===x.id).length}</span></button>`).join('')}</div>` : `<div class="empty">폴더를 만들어 레퍼런스를 모아 보세요. 예: 사례, 대지 사진, 스케치</div>`}
+      ${f ? `<div class="section-title"><h2>${esc(f.name)} · ${esc(f.owner_name)}</h2>
+        <div style="display:flex;gap:6px">${isMine(f)?`<button class="btn small danger" id="delf">폴더 삭제</button>`:''}
+        <label class="btn small primary" style="cursor:pointer">＋ 이미지<input type="file" id="up" accept="image/*" multiple hidden></label></div></div>
+        ${list.length ? `<div class="imgs">${list.map(i=>`<div class="im" data-i="${i.id}"><img loading="lazy" src="${esc(api.imageUrl(i))}" alt=""><span class="by">${esc(i.owner_name)}</span></div>`).join('')}</div>` : `<div class="empty">이미지가 없어요. 사진은 자동으로 작게 줄여서 올라가요.</div>`}` : ''}
+    `);
+    root.querySelector('#newf').onclick = async () => {
+      const r = await modal({ title:'새 폴더', fields:[{label:'폴더 이름', placeholder:'예: 해외 사례', required:true, max:40}], ok:'만들기' });
+      if (!r) return;
+      try { const nf = await api.createFolder(project.id, r[0]); folders.push(nf); cur = nf.id; ls.set('ms_folder_'+project.id, cur); draw(); } catch(e){ toast(e.message); }
+    };
+    root.querySelectorAll('[data-f]').forEach(b => b.onclick = () => { cur = b.dataset.f; ls.set('ms_folder_'+project.id, cur); draw(); });
+    const del = root.querySelector('#delf');
+    if (del) del.onclick = async () => {
+      if (!(await modal({ title:'폴더를 삭제할까요?', text: list.length ? '폴더 안의 이미지를 먼저 지워야 해요.' : '', ok:'삭제', danger:true }))) return;
+      try { await api.deleteFolder(cur); folders = folders.filter(x=>x.id!==cur); cur = folders[0]?.id || null; draw(); } catch(e){ toast(e.message); }
+    };
+    const up = root.querySelector('#up');
+    if (up) up.onchange = async () => {
+      const files = [...up.files]; let done = 0, fail = 0;
+      for (const file of files) {
+        toast(`올리는 중… ${done+1}/${files.length}`);
+        try { const blob = await compressImage(file); const row = await api.uploadImage(project.id, cur, blob); images.unshift(row); done++; }
+        catch(e){ fail++; console.error(e); toast(e.message); }
+      }
+      draw(); if (done) toast(`${done}장 올렸어요${fail?` (${fail}장 실패)`:''}`);
+    };
+    root.querySelectorAll('[data-i]').forEach(el => el.onclick = () => {
+      const im = images.find(x=>x.id===el.dataset.i);
+      const lb = document.createElement('div'); lb.className = 'lightbox';
+      lb.innerHTML = `<div class="bar"><span>${esc(im.owner_name)} · ${fmtDate(im.created_at)}</span><span style="display:flex;gap:8px">${isMine(im)?`<button class="btn small danger" data-a="del">삭제</button>`:''}<button class="btn small" data-a="x">닫기</button></span></div><img src="${esc(api.imageUrl(im))}" alt="">`;
+      document.body.appendChild(lb);
+      lb.addEventListener('click', async e => {
+        const a = e.target.closest('[data-a]')?.dataset.a;
+        if (a === 'del') {
+          if (!(await modal({ title:'이미지를 삭제할까요?', ok:'삭제', danger:true }))) return;
+          try { await api.deleteImage(im.id); images = images.filter(x=>x.id!==im.id); lb.remove(); draw(); } catch(err){ toast(err.message); }
+        } else if (a === 'x' || e.target.tagName === 'IMG') lb.remove();
+      });
+    });
+  };
+  draw();
+}
+
+// =================================================================
+// 편집기
+// =================================================================
+const ICON = {
+  rect:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2.4"><rect x="3.5" y="5.5" width="17" height="13"/></svg>',
+  semi:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2.4"><path d="M3 17 A9 9 0 0 1 21 17 Z"/></svg>',
+  circle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2.4"><circle cx="12" cy="12" r="8.5"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="#d6e6dc" stroke="currentColor" stroke-width="1.8"><rect x="4.5" y="6.5" width="15" height="11"/></svg>',
+  refs:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg>',
+  fit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+};
+
+async function viewEditor(code, {draftId, planId}){
+  const project = await api.getProject(code);
+  if (!project) { go('#/'); return; }
+  let draft = null, plan = null, readOnly = false;
+  if (draftId) { draft = drafts.get(draftId); if (!draft) { toast('초안을 찾을 수 없어요'); go('#/p/'+code); return; } }
+  else { plan = await api.getPlan(planId); if (!plan) { toast('플랜을 찾을 수 없어요'); go('#/p/'+code); return; } readOnly = true; }
+
+  const src = draft ? draft.data : plan.data;
+  const E = {
+    name: draft ? draft.name : plan.name,
+    shapes: JSON.parse(JSON.stringify(src.shapes || [])),
+    grid: src.grid || 1,
+    sel: null, view: {x:0, y:0, z:20}, hist: [], hi: -1, drag: null,
+  };
+  document.title = E.name + ' · 매스 스터디';
+
+  $app.innerHTML = `<div class="editor">
+    <div class="ed-top">
+      <button class="icon-btn" id="back" aria-label="뒤로">←</button>
+      <input class="name" id="nm" value="${esc(E.name)}" maxlength="60" ${readOnly?'readonly':''}>
+      ${readOnly ? `<span class="status">${esc(plan.owner_name)}의 플랜</span>` : `
+        <span class="status" id="st"></span>
+        <button class="icon-btn" id="undo" aria-label="되돌리기">↶</button>
+        <button class="icon-btn" id="redo" aria-label="다시하기">↷</button>
+        <button class="btn primary small" id="push">프로젝트에 저장</button>`}
+    </div>
+    <div class="stage" id="stage">
+      <svg class="cv" id="cv" xmlns="http://www.w3.org/2000/svg"><g id="gridg"></g><g id="world"></g><g id="handles"></g></svg>
+      ${readOnly ? `<div class="readonly-bar">보기 전용 · 원본은 작성자만 수정해요 <button class="btn primary" id="dup">복제해서 내 초안으로</button></div>` : ''}
+      <div id="insp"></div>
+      <div class="toolbar">
+        ${readOnly ? '' : `
+        <button class="tool" data-add="rect">${ICON.rect}외곽</button>
+        <button class="tool" data-add="semi">${ICON.semi}반원</button>
+        <button class="tool" data-add="circle">${ICON.circle}원</button>
+        <span class="sep"></span>
+        <button class="tool" data-add="box">${ICON.box}상자</button>
+        <span class="sep"></span>
+        <label class="tool">격자<select id="grid">${[0.5,1,2,3,5,10].map(g=>`<option value="${g}" ${g===E.grid?'selected':''}>${g}m</option>`).join('')}</select></label>`}
+        <button class="tool" id="refsbtn">${ICON.refs}레퍼런스</button>
+        <button class="tool" id="fitbtn">${ICON.fit}맞춤</button>
+      </div>
+      <div id="drawer"></div>
+    </div>
+  </div>`;
+
+  const svg = $app.querySelector('#cv'), world = $app.querySelector('#world'), gridg = $app.querySelector('#gridg'), handles = $app.querySelector('#handles');
+  const stage = $app.querySelector('#stage');
+  const snap = v => Math.round(v / E.grid) * E.grid;
+  const byId = id => E.shapes.find(s=>s.id===id);
+  const snapshot = () => JSON.stringify({shapes:E.shapes, grid:E.grid});
+
+  // ---- 기록 / 저장 ----
+  let saveTimer, pending = false;
+  function commit(){
+    const s = snapshot();
+    if (E.hist[E.hi] === s) return;
+    E.hist = E.hist.slice(0, E.hi+1); E.hist.push(s); if (E.hist.length > 200) E.hist.shift(); E.hi = E.hist.length-1;
+    updateUndo(); scheduleSave();
+  }
+  function scheduleSave(){
+    if (readOnly) return;
+    pending = true; setStatus('저장 중…'); clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveDraft, 400);
+  }
+  function saveDraft(){
+    pending = false;
+    draft.name = E.name; draft.data = {v:1, grid:E.grid, shapes:E.shapes}; draft.dirty = true; draft.updatedAt = Date.now();
+    drafts.put(draft); setStatus(draft.linkedPlanId ? '이 기기에 저장됨 · 공유 전' : '이 기기에 저장됨');
+  }
+  function setStatus(t){ const el = $app.querySelector('#st'); if (el) el.textContent = t; }
+  function restore(i){ const o = JSON.parse(E.hist[i]); E.shapes = o.shapes; E.grid = o.grid; E.hi = i; if (!byId(E.sel)) E.sel = null;
+    const gs = $app.querySelector('#grid'); if (gs) gs.value = E.grid; render(); updateUndo(); scheduleSave(); }
+  function updateUndo(){ const u = $app.querySelector('#undo'), r = $app.querySelector('#redo'); if (u) u.disabled = E.hi <= 0; if (r) r.disabled = E.hi >= E.hist.length-1; }
+  E.hist = [snapshot()]; E.hi = 0;
+
+  // ---- 화면 ↔ 도면 좌표 ----
+  const rectOf = () => svg.getBoundingClientRect();
+  const toWorld = (cx, cy) => { const r = rectOf(); return { x: (cx - r.left - E.view.x)/E.view.z, y: (cy - r.top - E.view.y)/E.view.z }; };
+  function fit(){
+    const r = rectOf(); const b = boundsOf(E.shapes);
+    const pad = 60, bottomBar = 90;
+    const z = Math.min((r.width - pad*2)/Math.max(b.w, E.grid*4), (r.height - pad*2 - bottomBar)/Math.max(b.h, E.grid*4));
+    E.view.z = Math.max(2, Math.min(200, z));
+    E.view.x = r.width/2 - (b.x + b.w/2)*E.view.z;
+    E.view.y = (r.height - bottomBar)/2 - (b.y + b.h/2)*E.view.z;
+    render();
+  }
+
+  // ---- 그리기 ----
+  function renderGrid(){
+    const r = rectOf(), {x:vx, y:vy, z} = E.view;
+    const wx1 = -vx/z, wy1 = -vy/z, wx2 = (r.width - vx)/z, wy2 = (r.height - vy)/z;
+    let g = E.grid; while (g*z < 8) g *= 2;
+    const major = g * 5;
+    let out = `<rect x="0" y="0" width="${r.width}" height="${r.height}" fill="#fbfaf7"/>`;
+    for (let x = Math.floor(wx1/g)*g; x <= wx2; x += g) { const sx = x*z+vx; const m = Math.abs(x/major - Math.round(x/major)) < 1e-6; out += `<line x1="${sx}" y1="0" x2="${sx}" y2="${r.height}" stroke="${m?'#d9d4ca':'#ece8e1'}" stroke-width="1"/>`; }
+    for (let y = Math.floor(wy1/g)*g; y <= wy2; y += g) { const sy = y*z+vy; const m = Math.abs(y/major - Math.round(y/major)) < 1e-6; out += `<line x1="0" y1="${sy}" x2="${r.width}" y2="${sy}" stroke="${m?'#d9d4ca':'#ece8e1'}" stroke-width="1"/>`; }
+    // 축척 표시
+    const barM = major, barPx = barM * z;
+    out += `<g transform="translate(16,${r.height - (readOnly?24:110)})"><line x1="0" y1="0" x2="${barPx}" y2="0" stroke="#77736c" stroke-width="2"/><line x1="0" y1="-4" x2="0" y2="4" stroke="#77736c" stroke-width="2"/><line x1="${barPx}" y1="-4" x2="${barPx}" y2="4" stroke="#77736c" stroke-width="2"/><text x="${barPx/2}" y="-8" font-size="11" text-anchor="middle" fill="#77736c">${fmtN(barM)}m</text></g>`;
+    gridg.innerHTML = out;
+  }
+  function render(){
+    renderGrid();
+    const {x, y, z} = E.view;
+    world.setAttribute('transform', `translate(${x},${y}) scale(${z})`);
+    world.innerHTML = shapesSVG(E.shapes, z, {sel:E.sel});
+    handles.setAttribute('transform', `translate(${x},${y}) scale(${z})`);
+    const s = byId(E.sel);
+    if (s && !readOnly) {
+      const hs = 6/z, hit = 18/z;
+      const pts = { nw:[s.x,s.y], n:[s.x+s.w/2,s.y], ne:[s.x+s.w,s.y], e:[s.x+s.w,s.y+s.h/2], se:[s.x+s.w,s.y+s.h], s:[s.x+s.w/2,s.y+s.h], sw:[s.x,s.y+s.h], w:[s.x,s.y+s.h/2] };
+      handles.innerHTML = `<rect x="${s.x}" y="${s.y}" width="${s.w}" height="${s.h}" fill="none" stroke="#2f5d50" stroke-width="${1/z}" stroke-dasharray="${3/z} ${3/z}" pointer-events="none"/>` +
+        Object.entries(pts).map(([k,[px,py]]) => `<g data-h="${k}"><circle cx="${px}" cy="${py}" r="${hit}" fill="transparent"/><rect x="${px-hs}" y="${py-hs}" width="${hs*2}" height="${hs*2}" rx="${2/z}" fill="#fff" stroke="#2f5d50" stroke-width="${1.6/z}"/></g>`).join('');
+    } else handles.innerHTML = '';
+    renderInspector();
+  }
+
+  // ---- 선택한 도형 설정 창 ----
+  let inspFor = null;
+  function renderInspector(){
+    const box = $app.querySelector('#insp');
+    const s = byId(E.sel);
+    if (!s || readOnly) { box.innerHTML = ''; inspFor = null; return; }
+    if (inspFor === s.id && box.firstChild) {
+      // 입력 중 깜빡임 방지: 값만 갱신
+      const a = document.activeElement;
+      for (const k of ['w','h','x','y']) { const el = box.querySelector(`[data-k=${k}]`); if (el && el !== a) el.value = fmtN(s[k]); }
+      const ar = box.querySelector('.area'); if (ar) ar.textContent = `면적 ${fmtN(areaOf(s))}㎡`;
+      return;
+    }
+    inspFor = s.id;
+    const isBox = s.kind === 'box';
+    box.innerHTML = `<div class="inspector">
+      <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:14px">${isBox?'상자':({rect:'외곽 · 사각형',semi:'외곽 · 반원',circle:'외곽 · 원'}[s.shape])}</b>
+        <button class="icon-btn" data-a="close" style="width:32px;height:32px;font-size:15px">✕</button></div>
+      ${isBox ? `<div class="row" style="margin-top:10px"><input type="text" data-k="label" value="${esc(s.label||'')}" placeholder="용도 (예: 거실, 침실)" maxlength="30"></div>` : ''}
+      <div class="row"><label>가로</label><input type="number" data-k="w" step="${E.grid}" min="${E.grid}" value="${fmtN(s.w)}"><label>세로</label><input type="number" data-k="h" step="${E.grid}" min="${E.grid}" value="${fmtN(s.h)}"></div>
+      <div class="row"><label>X</label><input type="number" data-k="x" step="${E.grid}" value="${fmtN(s.x)}"><label>Y</label><input type="number" data-k="y" step="${E.grid}" value="${fmtN(s.y)}"></div>
+      <div class="area">면적 ${fmtN(areaOf(s))}㎡</div>
+      ${isBox ? `<div class="swatches">${COLORS.map(c=>`<button data-c="${c}" style="background:${c}" class="${s.color===c?'on':''}"></button>`).join('')}</div>` : ''}
+      <div class="row" style="margin-top:12px;flex-wrap:wrap">
+        ${s.shape==='semi' ? `<button class="btn small" data-a="rot">↻ 방향</button>` : ''}
+        <button class="btn small" data-a="front">맨 앞</button>
+        <button class="btn small" data-a="dup">복제</button>
+        <button class="btn small danger" data-a="del">삭제</button>
+      </div></div>`;
+    box.querySelectorAll('input').forEach(inp => {
+      const k = inp.dataset.k;
+      inp.addEventListener('input', () => {
+        const cur = byId(E.sel); if (!cur) return;
+        if (k === 'label') { cur.label = inp.value; render(); return; }
+        const v = parseFloat(inp.value); if (isNaN(v)) return;
+        if ((k==='w'||k==='h') && v < 0.1) return;
+        cur[k] = v; render();
+      });
+      inp.addEventListener('change', () => {
+        const cur = byId(E.sel); if (!cur) return;
+        if (k !== 'label') { const v = parseFloat(inp.value); cur[k] = isNaN(v) ? cur[k] : (k==='w'||k==='h') ? Math.max(0.1, v) : v; inp.value = fmtN(cur[k]); }
+        render(); commit();
+      });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
+    });
+    box.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { byId(E.sel).color = b.dataset.c; inspFor = null; render(); commit(); });
+    box.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
+      const cur = byId(E.sel); const a = b.dataset.a;
+      if (a === 'close') { E.sel = null; render(); return; }
+      if (a === 'del') { E.shapes = E.shapes.filter(x=>x.id!==cur.id); E.sel = null; }
+      if (a === 'dup') { const c = {...cur, id:uid(), x: cur.x + E.grid*2, y: cur.y + E.grid*2}; E.shapes.push(c); E.sel = c.id; }
+      if (a === 'front') { E.shapes = E.shapes.filter(x=>x.id!==cur.id); E.shapes.push(cur); }
+      if (a === 'rot') { // 90° 회전: 방향 바꾸고 가로·세로 교환, 중심 유지
+        const order = ['up','right','down','left']; const cx = cur.x+cur.w/2, cy = cur.y+cur.h/2;
+        cur.dir = order[(order.indexOf(cur.dir||'up')+1)%4];
+        [cur.w, cur.h] = [cur.h, cur.w];
+        cur.x = snap(cx - cur.w/2); cur.y = snap(cy - cur.h/2); }
+      inspFor = null; render(); commit();
+    });
+  }
+
+  // ---- 도형 추가 ----
+  let addCount = 0;
+  function addShape(type){
+    const r = rectOf(); const c = toWorld(r.left + r.width/2, r.top + (r.height-90)/2);
+    const g = E.grid, off = (addCount++ % 5) * g;
+    const size = { rect:[20,14], semi:[14,7], circle:[12,12], box:[6,4] }[type];
+    let w = Math.max(g, snap(size[0])), h = Math.max(g, snap(size[1]));
+    // 화면에 비해 너무 크거나 작으면 보이는 크기에 맞춤
+    const visW = (r.width)/E.view.z;
+    if (w > visW*0.8 || w < visW*0.05) { const k = (visW*(type==='box'?0.15:0.4))/w; w = Math.max(g, snap(w*k)); h = Math.max(g, snap(h*k)); }
+    const s = { id:uid(), kind: type==='box'?'box':'outline', shape: type==='box'?'rect':type, x: snap(c.x - w/2) + off, y: snap(c.y - h/2) + off, w, h };
+    if (type === 'semi') s.dir = 'up';
+    if (type === 'box') { s.label = ''; s.color = COLORS[E.shapes.filter(x=>x.kind==='box').length % COLORS.length]; }
+    E.shapes.push(s); E.sel = s.id; inspFor = null; render(); commit();
+  }
+
+  // ---- 터치·마우스 조작 ----
+  const pointers = new Map();
+  let pinch = null;
+  svg.addEventListener('pointerdown', e => {
+    svg.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if (pointers.size === 2) {
+      if (E.drag && E.drag.moved && E.drag.type !== 'pan') commit();
+      E.drag = null;
+      const [a, b] = [...pointers.values()];
+      pinch = { d: Math.hypot(a.x-b.x, a.y-b.y), cx:(a.x+b.x)/2, cy:(a.y+b.y)/2, v:{...E.view} };
+      return;
+    }
+    if (pointers.size > 2) return;
+    const w = toWorld(e.clientX, e.clientY);
+    const hEl = e.target.closest('[data-h]'), sEl = e.target.closest('[data-id]');
+    if (!readOnly && hEl && byId(E.sel)) {
+      E.drag = { type:'resize', h:hEl.dataset.h, start:w, orig:{...byId(E.sel)}, moved:false };
+    } else if (!readOnly && sEl) {
+      if (E.sel !== sEl.dataset.id) { E.sel = sEl.dataset.id; inspFor = null; }
+      E.drag = { type:'move', start:w, orig:{...byId(E.sel)}, moved:false };
+      render();
+    } else {
+      E.drag = { type:'pan', sx:e.clientX, sy:e.clientY, v:{...E.view}, moved:false };
+    }
+  });
+  svg.addEventListener('pointermove', e => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if (pinch && pointers.size >= 2) {
+      const [a, b] = [...pointers.values()];
+      const d = Math.hypot(a.x-b.x, a.y-b.y), cx = (a.x+b.x)/2, cy = (a.y+b.y)/2;
+      const r = rectOf();
+      const z = Math.max(2, Math.min(300, pinch.v.z * d / pinch.d));
+      const wx = (pinch.cx - r.left - pinch.v.x)/pinch.v.z, wy = (pinch.cy - r.top - pinch.v.y)/pinch.v.z;
+      E.view = { z, x: cx - r.left - wx*z, y: cy - r.top - wy*z };
+      render(); return;
+    }
+    const D = E.drag; if (!D) return;
+    if (D.type === 'pan') {
+      const dx = e.clientX - D.sx, dy = e.clientY - D.sy;
+      if (Math.abs(dx)+Math.abs(dy) > 4) D.moved = true;
+      E.view.x = D.v.x + dx; E.view.y = D.v.y + dy; render(); return;
+    }
+    const w = toWorld(e.clientX, e.clientY), dx = w.x - D.start.x, dy = w.y - D.start.y;
+    const s = byId(E.sel); if (!s) return;
+    const o = D.orig, g = E.grid;
+    if (D.type === 'move') {
+      const nx = snap(o.x + dx), ny = snap(o.y + dy);
+      if (nx !== s.x || ny !== s.y) { s.x = nx; s.y = ny; D.moved = true; render(); }
+    } else {
+      let x1 = o.x, y1 = o.y, x2 = o.x + o.w, y2 = o.y + o.h;
+      if (D.h.includes('w')) x1 = Math.min(snap(o.x + dx), x2 - g);
+      if (D.h.includes('e')) x2 = Math.max(snap(x2 + dx), x1 + g);
+      if (D.h.includes('n')) y1 = Math.min(snap(o.y + dy), y2 - g);
+      if (D.h.includes('s')) y2 = Math.max(snap(y2 + dy), y1 + g);
+      if (x1 !== s.x || y1 !== s.y || x2-x1 !== s.w || y2-y1 !== s.h) { Object.assign(s, {x:x1, y:y1, w:x2-x1, h:y2-y1}); D.moved = true; render(); }
+    }
+  });
+  const endPointer = e => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    if (pinch) {
+      if (pointers.size < 2) { pinch = null;
+        if (pointers.size === 1) { const [p] = [...pointers.values()]; E.drag = { type:'pan', sx:p.x, sy:p.y, v:{...E.view}, moved:true }; } }
+      return;
+    }
+    const D = E.drag; E.drag = null;
+    if (!D) return;
+    if (D.type === 'pan' && !D.moved && E.sel) { E.sel = null; render(); }
+    if ((D.type === 'move' || D.type === 'resize') && D.moved) commit();
+  };
+  svg.addEventListener('pointerup', endPointer);
+  svg.addEventListener('pointercancel', endPointer);
+  svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    const r = rectOf();
+    // 핀치(ctrl) 또는 일반 마우스 휠 → 확대/축소, 트랙패드 두 손가락 이동 → 화면 이동
+    if (e.ctrlKey || (!e.deltaX && !e.shiftKey)) {
+      const k = Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015));
+      const z = Math.max(2, Math.min(300, E.view.z * k));
+      const wx = (e.clientX - r.left - E.view.x)/E.view.z, wy = (e.clientY - r.top - E.view.y)/E.view.z;
+      E.view = { z, x: e.clientX - r.left - wx*z, y: e.clientY - r.top - wy*z };
+    } else { E.view.x -= e.deltaX; E.view.y -= e.deltaY; }
+    render();
+  }, {passive:false});
+  // iOS 사파리 제스처(페이지 확대) 막기
+  const stopGesture = e => e.preventDefault();
+  document.addEventListener('gesturestart', stopGesture);
+
+  // 키보드 (아이패드 키보드·PC)
+  const onKey = e => {
+    if (e.target.tagName === 'INPUT') return;
+    const mod = e.metaKey || e.ctrlKey;
+    if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); if (e.shiftKey) { if (E.hi < E.hist.length-1) restore(E.hi+1); } else if (E.hi > 0) restore(E.hi-1); }
+    else if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); if (E.hi < E.hist.length-1) restore(E.hi+1); }
+    else if ((e.key === 'Backspace' || e.key === 'Delete') && E.sel && !readOnly) { E.shapes = E.shapes.filter(x=>x.id!==E.sel); E.sel = null; render(); commit(); }
+    else if (E.sel && !readOnly && e.key.startsWith('Arrow')) {
+      e.preventDefault(); const s = byId(E.sel); const g = E.grid;
+      if (e.key==='ArrowLeft') s.x -= g; if (e.key==='ArrowRight') s.x += g; if (e.key==='ArrowUp') s.y -= g; if (e.key==='ArrowDown') s.y += g;
+      render(); commit();
+    } else if (e.key === 'Escape') { E.sel = null; render(); }
+  };
+  document.addEventListener('keydown', onKey);
+  let lastSize = null;
+  const onResize = () => { const r = rectOf(); if (lastSize) { E.view.x += (r.width - lastSize.w)/2; E.view.y += (r.height - lastSize.h)/2; } lastSize = {w:r.width, h:r.height}; render(); };
+  window.addEventListener('resize', onResize);
+  cleanup = () => { document.removeEventListener('keydown', onKey); window.removeEventListener('resize', onResize); document.removeEventListener('gesturestart', stopGesture); clearTimeout(saveTimer); if (!readOnly && pending) saveDraft(); };
+
+  // ---- 버튼 ----
+  $app.querySelector('#back').onclick = () => go('#/p/'+project.code);
+  $app.querySelector('#fitbtn').onclick = fit;
+  $app.querySelectorAll('[data-add]').forEach(b => b.onclick = () => addShape(b.dataset.add));
+  const gs = $app.querySelector('#grid');
+  if (gs) gs.onchange = () => { E.grid = parseFloat(gs.value); inspFor = null; render(); commit(); };
+  const nm = $app.querySelector('#nm');
+  if (!readOnly) {
+    nm.addEventListener('change', () => { E.name = nm.value.trim() || '이름 없는 플랜'; nm.value = E.name; saveDraft(); });
+    nm.addEventListener('keydown', e => { if (e.key === 'Enter') nm.blur(); });
+    $app.querySelector('#undo').onclick = () => { if (E.hi > 0) restore(E.hi-1); };
+    $app.querySelector('#redo').onclick = () => { if (E.hi < E.hist.length-1) restore(E.hi+1); };
+    $app.querySelector('#push').onclick = async (ev) => {
+      const btn = ev.currentTarget; btn.disabled = true;
+      clearTimeout(saveTimer); pending = false;
+      E.name = nm.value.trim() || '이름 없는 플랜';
+      try {
+        const row = await api.savePlan({ id: draft.linkedPlanId, projectId: project.id, name: E.name, data: {v:1, grid:E.grid, shapes:E.shapes} });
+        draft.linkedPlanId = row.id; draft.name = E.name; draft.data = {v:1, grid:E.grid, shapes:E.shapes}; draft.dirty = false; draft.updatedAt = Date.now();
+        drafts.put(draft); setStatus('프로젝트에 공유됨'); toast('프로젝트에 저장했어요. 조원들도 볼 수 있어요');
+      } catch(e){ toast(e.message); }
+      btn.disabled = false;
+    };
+    setStatus(draft.linkedPlanId ? (draft.dirty ? '공유 전 수정 있음' : '프로젝트에 공유됨') : '공유 전 · 이 기기에만 있음');
+    updateUndo();
+  } else {
+    $app.querySelector('#dup').onclick = () => {
+      const d = { id: uid(), projectId: project.id, projectCode: project.code, name: `${plan.name} (${plan.owner_name} 복제)`, data: JSON.parse(JSON.stringify(plan.data)), linkedPlanId:null, dirty:true, updatedAt: Date.now() };
+      drafts.put(d); toast('내 초안으로 복제했어요'); go(`#/p/${project.code}/e/${d.id}`);
+    };
+  }
+  // 레퍼런스 서랍
+  $app.querySelector('#refsbtn').onclick = async () => {
+    const dr = $app.querySelector('#drawer');
+    if (dr.firstChild) { dr.innerHTML = ''; return; }
+    dr.innerHTML = `<div class="drawer"><div class="head"><b>레퍼런스</b><button class="icon-btn" id="xdr">✕</button></div><div class="body" id="drb">불러오는 중…</div></div>`;
+    dr.querySelector('#xdr').onclick = () => dr.innerHTML = '';
+    await renderRefs({ project, compact:true, mount: html => { const b = dr.querySelector('#drb'); b.innerHTML = html; return b; } });
+  };
+
+  requestAnimationFrame(() => { fit(); const r = rectOf(); lastSize = {w:r.width, h:r.height}; });
+}
+
+// =================================================================
+await ensureNick();
+route();
+</script>
+</body>
+</html>
