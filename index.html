@@ -4,12 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>매스 스터디</title>
-<!-- ▼▼▼ 여기 두 줄만 내 Supabase 값으로 바꾸세요 (README 3단계) ▼▼▼ -->
-<script>
-window.MS_CONFIG = {
-  SUPABASE_URL: "https://abcdefgh.supabase.co",
-  SUPABASE_ANON_KEY: "sb_publishable_xxxxxxxx"
-};
+<!-- ▼▼▼ 아래 두 줄의 = 뒤만 내 Supabase 값으로 바꾸세요 (따옴표 없이 붙여넣기) ▼▼▼ -->
+<script type="text/plain" id="ms-config">
+SUPABASE_URL = https://qcgbvmhpthsfmzbjmtju.supabase.co
+SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
 </script>
 <!-- ▲▲▲ 여기까지 ▲▲▲ -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,8 +20,18 @@ window.MS_CONFIG = {
 /* 매스 스터디 · Supabase 연결 (깃허브 배포용)
    사이트 본문은 claude.ai 아티팩트와 똑같고, 저장소·사용자·사진만 이 부분이 대신 맡아요. */
 (() => {
-  const C = window.MS_CONFIG || {};
-  if (!C.SUPABASE_URL || !C.SUPABASE_ANON_KEY || /xxxx|abcdefgh/.test(C.SUPABASE_URL + C.SUPABASE_ANON_KEY)) return; // 비어 있으면 이 기기에만 저장
+  // 연결 정보 읽기: 따옴표가 둥근 따옴표(“ ”)로 바뀌었거나 빠져도 읽히게 느슨하게 읽음
+  const C = Object.assign({}, window.MS_CONFIG || {});
+  const raw = (document.getElementById('ms-config') || {}).textContent || '';
+  const pick = re => { const m = raw.match(re); return m ? m[1] : ''; };
+  C.SUPABASE_URL = C.SUPABASE_URL || pick(/SUPABASE_URL\s*[:=]\s*["'“”‘’]?\s*(https?:\/\/[^\s"'“”‘’,;<]+)/);
+  C.SUPABASE_ANON_KEY = C.SUPABASE_ANON_KEY || pick(/SUPABASE_(?:ANON|PUBLISHABLE)(?:_DEFAULT)?_KEY\s*[:=]\s*["'“”‘’]?\s*([A-Za-z0-9._-]{20,})/);
+  C.SUPABASE_URL = String(C.SUPABASE_URL || '').trim().replace(/\/(rest\/v1)?\/?$/, '');
+  const fail = msg => { window.MS_DIAG = '공유 저장소에 연결되지 않아 이 브라우저에만 저장돼요. ' + msg; };
+  if (!C.SUPABASE_URL || /abcdefgh/.test(C.SUPABASE_URL)) { fail('index.html 위쪽 SUPABASE_URL에 내 Supabase 주소(https://….supabase.co)를 넣어 주세요.'); return; }
+  if (!/^https:\/\/[a-z0-9-]+\.supabase\.(co|in)$/i.test(C.SUPABASE_URL) && !C.createClient) { fail(`주소 모양이 이상해요: ${C.SUPABASE_URL} · Project URL은 https://영문.supabase.co 형태예요.`); return; }
+  if (!C.SUPABASE_ANON_KEY || /xxxx/.test(C.SUPABASE_ANON_KEY)) { fail('index.html 위쪽 SUPABASE_ANON_KEY에 Publishable 키(sb_publishable_…) 또는 anon 키를 넣어 주세요.'); return; }
+  if (/^sb_secret_/.test(C.SUPABASE_ANON_KEY)) { fail('secret 키를 넣으셨어요. 이 키는 지우고 Supabase에서 새로 발급한 뒤, Publishable 키를 넣어 주세요.'); return; }
   const LS_KEY = 'ms-key', LS_NAME = 'ms-name', BUCKET = 'ms-img';
   const parentOf = p => p.split('/').slice(0, -1).join('/');
   const idOf = p => p.split('/').pop();
@@ -214,8 +222,24 @@ window.MS_CONFIG = {
   /* ---------- 시작 ---------- */
   let ready = null;
   async function init(){
-    const mod = C.createClient ? { createClient: C.createClient } : await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    let mod;
+    try { mod = C.createClient ? { createClient: C.createClient } : await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'); }
+    catch (e) { throw fail('Supabase 프로그램을 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.'), e; }
     sb = mod.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+    // 연결 점검: 어느 단계가 막혔는지 화면에 알려 줌
+    let r;
+    try { r = await sb.from('ms_docs').select('path').limit(1); }
+    catch (e) { fail('Supabase 주소에 닿지 않아요. SUPABASE_URL을 다시 복사해 넣거나, Supabase에서 프로젝트가 Paused면 Restore를 눌러 주세요.'); throw e; }
+    if (r && r.error) {
+      const t = `${r.error.code || ''} ${r.error.message || ''} ${r.status || ''}`;
+      if (/PGRST205|42P01|does not exist|schema cache/i.test(t)) fail('데이터베이스 설정이 아직 없어요. README 2단계: supabase-setup.sql 전체를 SQL Editor에 붙여넣고 Run 해 주세요.');
+      else if (/401|403|api key|apikey|jwt|unauthor/i.test(t)) fail('키가 맞지 않아요. Supabase → Project Settings → API Keys에서 Publishable 키(또는 anon public)를 다시 복사해 넣어 주세요.');
+      else if (/Failed to fetch|NetworkError|Load failed/i.test(t)) fail('Supabase 주소에 닿지 않아요. SUPABASE_URL을 다시 확인하거나, 프로젝트가 Paused면 Restore를 눌러 주세요.');
+      else fail('Supabase가 오류를 보냈어요: ' + t.trim().slice(0, 120));
+      throw r.error;
+    }
+    const f = await sb.rpc('ms_mine_stamp', { p_key: 'x'.repeat(24) });
+    if (f && f.error) { fail('데이터베이스 설정이 끝나지 않았어요. supabase-setup.sql 전체를 다시 붙여넣고 Run 해 주세요. (' + (f.error.code || f.error.message || '') + ')'); throw f.error; }
     const fromUrl = keyFromUrl();
     KEY = fromUrl || lsGet(LS_KEY);
     let fresh = false;
@@ -231,7 +255,8 @@ window.MS_CONFIG = {
     if (fromUrl && !fresh) setTimeout(() => window.MS_UI && window.MS_UI.toast(`${NAME} 님의 열쇠로 열었어요`), 1500);
     return { db, user, assets, downloads };
   }
-  window.claude = { use: n => { ready = ready || init(); return ready.then(api => api[n] || null).catch(e => { console.error(e); return null; }); } };
+  window.MS_GH = true;
+  window.claude = { use: n => { ready = ready || init(); return ready.then(api => api[n] || null).catch(e => { console.error(e); if (!window.MS_DIAG) fail('연결 중 문제가 생겼어요: ' + ((e && e.message) || e)); return null; }); } };
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4352,7 +4377,7 @@ async function boot(){
   if (localMode) { me = 'local'; readOnly = false; }
   store = db ? makeDbStore() : makeLocalStore();
   const n = $('#modeNote');
-  if (localMode) { n.hidden = false; n.textContent = window.MS_CONFIG ? '공유 저장소에 연결되지 않아 이 브라우저에만 저장돼요. index.html 위쪽의 Supabase 연결 정보를 확인하고, 인터넷 연결을 확인해 주세요.' : '공유 저장소에 연결되지 않아 이 브라우저에만 저장돼요. claude.ai에 로그인한 상태로 열면 조원들과 팀 공유·댓글·레퍼런스를 쓸 수 있어요.'; }
+  if (localMode) { n.hidden = false; n.textContent = window.MS_DIAG ? window.MS_DIAG : window.MS_GH ? '공유 저장소에 연결되지 않아 이 브라우저에만 저장돼요. index.html 위쪽의 Supabase 연결 정보를 확인하고, 인터넷 연결을 확인해 주세요.' : '공유 저장소에 연결되지 않아 이 브라우저에만 저장돼요. claude.ai에 로그인한 상태로 열면 조원들과 팀 공유·댓글·레퍼런스를 쓸 수 있어요.'; }
   else if (readOnly) { n.hidden = false; n.textContent = '보기 전용으로 열렸어요. 내 작업을 만들려면 공유한 사람에게 편집 권한을 요청하세요.'; }
   $('#pngBtn').hidden = !downloads;
   startHome(); startRefs();
