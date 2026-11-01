@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>매스 스터디</title>
 <!-- ▼▼▼ 아래 두 줄의 = 뒤만 내 Supabase 값으로 바꾸세요 (따옴표 없이 붙여넣기) ▼▼▼ -->
 <script type="text/plain" id="ms-config">
@@ -283,7 +283,7 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
   color-scheme: light;
 }
 *{box-sizing:border-box}
-html,body{height:100%;margin:0}
+html,body{height:100%;margin:0;overflow-x:hidden;overscroll-behavior:none;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -623,6 +623,8 @@ body.study.menuOpen .row2 .tools2 button{height:42px}
 @media (max-width:420px){.stepper button{width:30px}.seg button{padding:0 8px;font-size:13px}.views button,.tools2 button{padding:0 8px}.modeSeg button{padding:0 9px}}
 @media (prefers-reduced-motion:no-preference){.views button,.seg button,.tb{transition:background .15s}}
 
+/* 손가락으로 쓸 때: 입력 칸 글자가 16px보다 작으면 iOS가 화면을 확대하므로 16px로 맞춤 */
+@media (pointer:coarse){ input,select,textarea{font-size:16px !important} }
 /* 치수 모드: 층 고르기 · 편집 창 머리 */
 .floorbar{display:flex;gap:4px;align-items:center;overflow-x:auto;scrollbar-width:none;padding:3px;background:var(--panel);border:1px solid var(--line);border-radius:10px;align-self:flex-start;max-width:100%}
 .floorbar::-webkit-scrollbar{display:none}
@@ -4694,6 +4696,15 @@ $('#backBtn').onclick = async () => {
   const t = teamIdx.find(x => x.pid === curPid);
   go(t && projOf(t.project) ? 'pj-' + t.project : 'team');
 };
+
+/* ---------------- 화면 확대 막기 (모바일) ----------------
+   iOS 사파리는 viewport의 확대 금지를 무시해요. 두 번 톡 확대는 touch-action으로,
+   두 손가락 확대는 사파리 제스처를 막아서 없애요. 캔버스(#pc, #cv)는 자체 확대·이동을 그대로 써요. */
+['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+document.addEventListener('touchmove', e => { if (e.touches.length > 1 && !(e.target.closest && e.target.closest('#pc, #cv'))) e.preventDefault(); }, { passive: false });
+document.addEventListener('dblclick', e => { if (!(e.target.closest && e.target.closest('input, textarea'))) e.preventDefault(); }, { passive: false });
+// 옆으로 밀렸으면 되돌림
+window.addEventListener('scroll', () => { if (window.scrollX) window.scrollTo(0, window.scrollY); }, { passive: true });
 
 /* ---------------- 시작 ---------------- */
 async function boot(){
