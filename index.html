@@ -924,6 +924,29 @@ html,body{overflow:hidden}
 .card .row button{height:40px}
 .htabs .sbtn{width:46px;height:46px;color:var(--ink)}
 .htabs .sbtn svg{width:25px;height:25px}
+.card .row button.trash{border:1px solid var(--line) !important;background:var(--panel) !important;border-radius:6px !important}
+.card .row button.trash:hover{border-color:var(--warn) !important}
+.card .row button.ic2{flex:0 0 46px;min-width:46px;height:40px}
+.card .row button.ic2 svg{width:22px;height:22px}
+/* 점선 꺾기: 도형 도구와 따로, 점선 테두리 느낌 */
+.stools .tgrp.envg{border:1.5px dashed #8b8172;background:#fbf8f1}
+.stools .tgrp.envg button{display:inline-flex;align-items:center;gap:6px;color:#5e5446}
+.stools .tgrp.envg button.on{color:var(--sel-ink)}
+/* 스터디 넓은 화면: 목록·이름·스터디/치수는 왼쪽, 되돌리기~메뉴는 오른쪽. 더 넓어지면 도구(선택~동선 그리기)가 그 사이 위쪽 줄로 올라감 */
+@media (min-width:900px){
+  body.study #topArea .bar{justify-content:flex-start}
+  body.study #topArea .bar #tUndo{margin-left:auto}
+}
+@media (min-width:1380px){
+  body.study #topArea{flex-direction:row;flex-wrap:wrap;align-items:center;column-gap:6px}
+  body.study #topArea > *{order:10;flex:1 1 100%}
+  body.study #topArea > .bar{display:contents}
+  body.study #topArea .bar > *{pointer-events:auto;order:5;flex:none}
+  body.study #topArea .bar #backBtn{order:1}
+  body.study #topArea .bar .name{order:2;flex:1 1 140px;min-width:140px;max-width:300px}
+  body.study #topArea .bar #uiModeSeg{order:3}
+  body.study #topArea > #stools{order:4;flex:0 0 auto;margin:0 4px}
+}
 </style>
 <script type="importmap">
 {"imports":{
@@ -1042,7 +1065,9 @@ html,body{overflow:hidden}
         <button data-tool="circle">원형</button>
         <button data-tool="semi">반원</button>
         <button data-tool="tri">삼각형</button>
-        <button data-tool="outer">점선 꺾기</button>
+      </div>
+      <div class="tgrp envg" role="group" aria-label="점선">
+        <button data-tool="outer" title="점선 테두리를 가로질러 그어서 꺾기"><svg viewBox="0 0 22 20" width="20" height="18" aria-hidden="true"><path d="M3 3h9.5v6.5H19V17H3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2" stroke-linejoin="round"/><path d="M14.5 2.5c0 4 1 5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".55"/></svg>점선 꺾기</button>
       </div>
       <div class="tgrp aux" role="group" aria-label="보조 도구">
         <button data-tool="text" class="ticon" aria-label="텍스트" title="텍스트"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4.5 5h11M10 5v11M7.6 16h4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
@@ -1908,7 +1933,7 @@ function card({ name, data, status, statusCls, cells, note, actions, open, cls, 
   const acts = document.createElement('div'); acts.className = 'row';
   const shown = actions.length > 3 ? actions.slice(0, 2) : actions, more = actions.length > 3 ? actions.slice(2) : [];
   const ICON_ACT = { '복제': ['ic2', IC.copy], '공유 내리기': ['ic2', IC.unshare] };
-  for (const [label, fn, bcls] of shown) { const b = document.createElement('button'); if (ICON_ACT[label]) { b.className = ICON_ACT[label][0]; b.innerHTML = ICON_ACT[label][1]; b.setAttribute('aria-label', name + ' ' + label); b.title = label; } else if (label === '삭제') { b.className = 'trash'; b.innerHTML = IC.trash; b.setAttribute('aria-label', name + ' 삭제'); b.title = '삭제'; } else { b.textContent = label; if (bcls) b.className = bcls; } b.onclick = fn; acts.appendChild(b); }
+  for (const [label, fn, bcls] of shown) { const b = document.createElement('button'); if (ICON_ACT[label] && bcls !== 'txt') { b.className = ICON_ACT[label][0]; b.innerHTML = ICON_ACT[label][1]; b.setAttribute('aria-label', name + ' ' + label); b.title = label; } else if (label === '삭제') { b.className = 'trash'; b.innerHTML = IC.trash; b.setAttribute('aria-label', name + ' 삭제'); b.title = '삭제'; } else { b.textContent = label; if (bcls) b.className = bcls; } b.onclick = fn; acts.appendChild(b); }
   if (more.length) {
     const b = document.createElement('button'); b.textContent = '더보기'; b.setAttribute('aria-label', name + ' 더보기');
     b.onclick = async () => { const k = await pickBox(name, '', more.map(([l], i) => ({ id: String(i), label: l })), null); if (k !== undefined && k !== null) more[Number(k)][1](); };
@@ -2024,7 +2049,7 @@ function renderHome(){
     for (const p of mine) tl.appendChild(projectCard(p));
     if (others.length) { sec('참여할 수 있는 프로젝트'); for (const p of others) tl.appendChild(projectCard(p)); }
     const ex = exampleItems();
-    if (ex.length && !q) { sec('둘러보기용 예시'); for (const t of ex) tl.appendChild(card({ name: t.name, data: t, status: '예시', statusCls: 'private', cells: [['연면적', `${f1(t.gfa || 0)}㎡`], ['용적률', `${f1(t.far || 0)}%`]], actions: [['보기', () => go('v-' + t.pid), 'main'], ...(readOnly ? [] : [['복제', () => copyFromTeam(t)]])], open: () => go('v-' + t.pid) })); }
+    if (ex.length && !q) { sec('둘러보기용 예시'); for (const t of ex) tl.appendChild(card({ name: t.name, data: t, status: '예시', statusCls: 'private', cells: [['연면적', `${f1(t.gfa || 0)}㎡`], ['용적률', `${f1(t.far || 0)}%`]], actions: [['보기', () => go('v-' + t.pid), 'main'], ...(readOnly ? [] : [['복제', () => copyFromTeam(t), 'txt']])], open: () => go('v-' + t.pid) })); }
     if (!tl.children.length) { const d = document.createElement('div'); d.className = 'empty'; d.textContent = q ? `‘${q}’에 맞는 프로젝트가 없어요.` : '아직 프로젝트가 없어요.'; tl.appendChild(d); }
     return;
   }
@@ -2039,7 +2064,7 @@ function renderHome(){
   for (const t of items) {
     const mine = t.owner === me, nf = fbCountFor(t.owner, t.pid);
     const acts = mine ? [['고치기', () => go('d-' + t.pid), 'main'], ['보기', () => go('v-' + t.pid)], ['공유 내리기', () => unpublish(t.pid, t.name)]]
-      : [['보기', () => go('v-' + t.pid), 'main'], ...(readOnly || !member ? [] : [['복제', () => copyFromTeam(t)]])];
+      : [['보기', () => go('v-' + t.pid), 'main'], ...(readOnly || !member ? [] : [['복제', () => copyFromTeam(t), 'txt']])];
     if (!readOnly && member) acts.push([isPinned(t.pid) ? '고정 풀기' : '고정', () => togglePin(t.pid)]);
     tl.appendChild(card({ name: t.name || '이름 없음', data: t, status: mine ? '내 작업물' : '', statusCls: 'mine', cls: mine ? 'mine' : '', pinned: isPinned(t.pid),
       cells: [['작성', mine ? '나' : who(t.owner)], ['저장', ago(t.publishedAt)], ['피드백', nf ? `${nf}명` : '없음']],
