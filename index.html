@@ -325,7 +325,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .hint{position:absolute;left:50%;transform:translateX(-50%);font-size:13px;background:rgba(28,30,33,.82);color:#fff;padding:6px 12px;border-radius:99px;white-space:nowrap;pointer-events:none;max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis}
 .modeSeg{display:flex;border:1px solid var(--ink);border-radius:8px;overflow:hidden;flex:none}
 .modeSeg button{border:0;padding:0 12px;height:40px;font-weight:600;font-size:13.5px}
-
 .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(0,0,0,.06);padding:10px max(10px, env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 10px) max(10px, env(safe-area-inset-left))}
 .sheet-in{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:9px}
 .toolrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -433,7 +432,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .sTag.top{transform:translateX(-50%);font-size:15px;padding:6px 12px;border-radius:99px}
 #pc .dropHi{stroke:#2c5a8c !important;stroke-width:6px !important;vector-effect:non-scaling-stroke}
 .hsearch input{width:100%;border:1px solid var(--line);padding:0 14px;font-size:16px}
-.crumb{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.crumb{display:flex;gap:8px;flex-wrap:wrap}
 .dock{position:absolute;z-index:5;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;gap:8px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,.12);left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 60px);height:min(46vh,380px);border-radius:14px 14px 0 0}
 @media (min-width:900px){.dock{left:auto;right:max(10px, env(safe-area-inset-right));top:var(--dockTop,150px);bottom:calc(env(safe-area-inset-bottom) + 64px);width:300px;height:auto;border-radius:12px}}
 .dock .dh{display:flex;align-items:center;gap:8px}
@@ -481,7 +480,6 @@ body.exact #tUndo, body.exact #tRedo{display:none !important}
 .cmsw button.on{outline:3px solid var(--accent);outline-offset:2px}
 .sheetbar .vsep{height:24px;align-self:center}
 .sheetbar .all.on{color:#fff}
-
 .pinmark{position:absolute;right:8px;top:8px;font-size:11.5px;padding:2px 7px;border:1px solid #d9a93b;font-weight:600}
 .gsec{grid-column:1/-1}
 .tfilter{display:flex;gap:4px;flex-wrap:wrap}
@@ -505,7 +503,7 @@ body.fbmode #stools, body.fbmode #ctx{display:none !important}
 .newcard .plus::after{transform:translate(-50%,-50%) rotate(90deg)}
 .savebtn{height:42px;padding:0 14px;border:1px solid var(--accent);font-weight:700;white-space:nowrap;position:relative}
 .savebtn.dirty::after{content:'';position:absolute;right:-3px;top:-3px;width:11px;height:11px;border-radius:50%;border:2px solid var(--paper)}
-body.sketchmode #uiModeSeg, body.sketchmode #sheetBar, body.sketchmode #snapBtn, body.sketchmode #fixBtn, body.sketchmode #sSum, body.sketchmode #setBtn, body.sketchmode [data-tool=outer]{display:none !important}
+body.sketchmode #uiModeSeg, body.sketchmode #sheetBar, body.sketchmode #snapBtn, body.sketchmode #fixBtn, body.sketchmode #sSum, body.sketchmode #setBtn{display:none !important}
 body.sketchmode #pc{background:#f7f3ea}
 #lockBtn{display:none !important}
 body.study #cv, body.study #sheet, body.study #hint, body.study .stats, body.study .views{display:none !important}
@@ -814,7 +812,6 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-f
 .pen:hover{background:var(--sel-t)}
 .stools .tgrp button.ticon{display:inline-flex;align-items:center;justify-content:center;padding:0 11px}
 .card .row button{flex:1 1 0}
-.card .row .trash{flex:0 0 32px !important;min-width:32px !important;padding:0 !important}
 .pcard{overflow:hidden}
 .pthumbs{overflow:hidden}
 .pthumbs .pt{position:relative;overflow:hidden}
@@ -828,13 +825,12 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-f
 .tfbtn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid var(--line);border-radius:99px;background:var(--sheet);font-size:13px;color:var(--ink);flex:none}
 .tfbtn.on{border-color:var(--sel);color:var(--sel)}
 /* ================= 2차 디자인 ================= */
-:root{ --sel:#8a5a3b; --sel-t:#f1e5d8; --sel-ink:#fff8ef; }
+:root{--sel-t:#f1e5d8;--sel-ink:#fff8ef}
 /* 선택된 버튼은 먹색 대신 따뜻한 갈색 */
 .stools .tgrp button.on,.modeSeg button.on,.views button.on,.tfilter button.on,.tabs button.on,.seg button.on,.seg.light button.on,
 .sheetbar .all.on,.sheetbar button.on,.floorbar button.on,.ctx button.on,.ctx .ib.on,.pop .ib.on,.tb.on,.fbrow button.on{background:var(--sel) !important;border-color:var(--sel) !important;color:var(--sel-ink) !important}
 .sbottom .bgrp button[aria-pressed="true"],.sheetbar .fold[aria-pressed="true"]{background:var(--sel-t);color:var(--sel)}
 .htabs button.on{border-bottom-color:var(--sel);color:var(--ink)}
-.modeSeg{border-color:var(--sel)}
 .ctx .ib.open{background:var(--sel-t) !important;box-shadow:inset 0 0 0 1.5px #d2b79c}
 .cc.on{border-color:var(--sel) !important;box-shadow:inset 0 0 0 1.5px var(--sel)}
 /* 홈 머리: 이름·설명은 조금 아래로·작게, 오른쪽 위에는 언제나 도움말·이름·새 작업물 */
@@ -854,12 +850,12 @@ html,body{overflow:hidden}
 /* 탭은 크게, 찾기는 돋보기 */
 .htabs{align-items:center}
 .htabs button[data-tab]{font-size:16px;padding:10px 12px 9px}
-.htabs .sbtn{margin-left:auto;width:38px;height:38px;border:0;border-radius:50%;background:transparent;color:var(--mute);display:inline-flex;align-items:center;justify-content:center;border-bottom:0 !important}
+.htabs .sbtn{margin-left:auto;border:0;border-radius:50%;background:transparent;color:var(--mute);display:inline-flex;align-items:center;justify-content:center;border-bottom:0 !important}
 .htabs .sbtn:hover,.htabs .sbtn.on{color:var(--ink);background:var(--sel-t)}
 .hsearch{animation:none}
 /* 크기 차이: 섹션 제목은 작고 굵게, 카드 버튼은 낮게 */
 .gsec{font-size:12.5px;letter-spacing:.01em;color:var(--mute);font-weight:600}
-.card .row button{height:32px;font-size:12.5px}
+.card .row button{font-size:12.5px}
 .tbh .nm{font-size:15.5px}
 /* 스터디 모드 넓은 화면: 위쪽 줄(목록~메뉴)과 아래 상태줄은 오른쪽으로. 좁아지면 지금처럼 한 줄로 밀어서 봄 */
 @media (min-width:900px){
@@ -897,6 +893,37 @@ html,body{overflow:hidden}
 .tour .card2 .tn button{height:34px;padding:0 12px;border-radius:7px;border:1px solid var(--line);background:var(--sheet);font-size:13.5px}
 .tour .card2 .tn button.p{background:var(--sel);border-color:var(--sel);color:var(--sel-ink);font-weight:600}
 @media (prefers-reduced-motion:reduce){.tour .ring{transition:none}}
+/* ================= 4차 다듬기 ================= */
+:root{ --sel:#6f4529; --sel-strong:#4f2f1b; --sel-sheet:#8a5a3b; }
+.modeSeg button.on,.stools .tgrp button.on,.views button.on,#htabs button.on{background:var(--sel-strong) !important;border-color:var(--sel-strong) !important;color:var(--sel-ink) !important}
+#htabs button.on{background:none !important;color:var(--ink) !important;border-bottom-color:var(--sel-strong) !important}
+.modeSeg{border-color:var(--sel-strong)}
+.sheetbar button.on,.sheetbar .all.on{background:var(--sel-sheet) !important;border-color:var(--sel-sheet) !important}
+.banner .btn{color:var(--ink);font-weight:700;background:#faf7ef}
+.pen,.trash{min-width:40px !important;height:40px !important}
+.pen svg,.trash svg{width:21px;height:21px}
+.card .row .trash svg,.card .row .ic2 svg{width:19px;height:19px}
+.card .row .trash{padding:0 !important}
+.card .row button.ic2{flex:0 0 38px;min-width:38px;padding:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink)}
+.crumb{align-items:center}
+.crumb .pen{margin-left:auto}
+.leTag{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.leTag .lbl{width:100%}
+.leTag button{height:32px;padding:0 9px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:12.5px}
+.leTag button.on{background:var(--sel);border-color:var(--sel);color:var(--sel-ink)}
+#leNote{resize:none;min-height:52px;border:1px solid var(--line);border-radius:7px;padding:8px 10px;font:inherit;font-size:15px;line-height:1.45;background:#fff}
+.infoPop{position:absolute;z-index:6;max-width:280px;background:var(--panel);border:1px solid var(--ink);border-radius:10px;padding:10px 12px;box-shadow:0 10px 30px rgba(39,36,31,.18);display:flex;flex-direction:column;gap:4px;pointer-events:none}
+.infoPop b{font-size:15px}
+.infoPop p{margin:0;font-size:13.5px;line-height:1.5;white-space:pre-wrap}
+.infoPop .m{font-size:12px;color:var(--mute)}
+.mbox .mhead{display:flex;align-items:center;gap:8px}
+.mbox .mhead h2{flex:1}
+#shGround,#shAddHalf{padding:0 10px;font-size:13px;height:38px}
+.card .row .trash{flex:0 0 46px !important;min-width:46px !important;height:40px !important}
+.card .row .trash svg{width:24px !important;height:24px !important}
+.card .row button{height:40px}
+.htabs .sbtn{width:46px;height:46px;color:var(--ink)}
+.htabs .sbtn svg{width:25px;height:25px}
 </style>
 <script type="importmap">
 {"imports":{
@@ -979,7 +1006,8 @@ html,body{overflow:hidden}
     <img class="ghost" id="ghost" alt="" hidden>
     <div class="lblEd" id="lblEd" hidden>
       <input id="leLabel" maxlength="24" placeholder="용도 (예: 도서관)" aria-label="용도">
-      <input id="leNote" maxlength="40" placeholder="한 줄 메모 (예: 2층에서 시연 관람)" aria-label="메모">
+      <textarea id="leNote" maxlength="80" rows="2" placeholder="설명 (예: 2층에서 시연 관람)" aria-label="설명"></textarea>
+      <div class="leTag" id="leTag" role="group" aria-label="공간 성격"><span class="lbl">공간 성격</span><button data-t="">없음</button><button data-t="shared">공유 (거실처럼)</button><button data-t="private">개인 (방처럼)</button></div>
       <div class="dims" id="leDims">
         <label>가로<input id="leW" type="number" inputmode="decimal" step="any"><span class="u" id="leWu">칸</span></label>
         <label>세로<input id="leD" type="number" inputmode="decimal" step="any"><span class="u" id="leDu">칸</span></label>
@@ -1014,7 +1042,7 @@ html,body{overflow:hidden}
         <button data-tool="circle">원형</button>
         <button data-tool="semi">반원</button>
         <button data-tool="tri">삼각형</button>
-        <button data-tool="outer">점선 외곽</button>
+        <button data-tool="outer">점선 꺾기</button>
       </div>
       <div class="tgrp aux" role="group" aria-label="보조 도구">
         <button data-tool="text" class="ticon" aria-label="텍스트" title="텍스트"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4.5 5h11M10 5v11M7.6 16h4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
@@ -1181,7 +1209,7 @@ html,body{overflow:hidden}
         <div class="acts">
           <button data-act="rotL" class="single-only ibtn" aria-label="왼쪽으로 45° 회전" title="왼쪽으로 45°"><svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true"><path d="M5.2 8.2A5.6 5.6 0 1 1 6 14.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.4 4.6v3.9h3.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <button data-act="rotR" class="single-only ibtn" aria-label="오른쪽으로 45° 회전" title="오른쪽으로 45°"><svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true"><path d="M14.8 8.2A5.6 5.6 0 1 0 14 14.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M15.6 4.6v3.9h-3.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <button data-act="dup">복제</button>
+          <button data-act="dup" class="ibtn" aria-label="복제" title="복제"><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><rect x="6.5" y="6.5" width="9.5" height="9.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 4H5.6c-.9 0-1.6.7-1.6 1.6v7.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
         </div>
         <div class="sw" id="sw"><span class="lbl">공간 종류</span></div>
       </div>
@@ -1281,27 +1309,27 @@ html,body{overflow:hidden}
 
 <div class="modal" id="sheetModal" hidden>
   <div class="mbox" role="dialog" aria-labelledby="shTitle">
-    <h2 id="shTitle">대지 추가</h2>
+    <div class="mhead"><h2 id="shTitle">대지 추가</h2><button class="trash" id="shDel" aria-label="대지 지우기" title="대지 지우기"></button></div>
     <div class="seg light" id="shType" style="align-self:flex-start">
       <button data-t="plan">위층</button>
       <button data-t="base">지하층</button>
-      <button data-t="half">반 층 (n.5층)</button>
       <button data-t="section">입면·단면</button>
     </div>
-    <label class="lbl" id="shHalfRow" for="shHalfOf" style="display:flex;flex-direction:column;gap:4px">어느 층 사이에 둘까요?<select id="shHalfOf" style="height:42px;border:1px solid var(--line);border-radius:8px;padding:0 8px;background:#fff;color:var(--ink)"></select></label>
     <div class="fgrid" style="grid-template-columns:1fr">
       <label for="shName">대지 이름<input id="shName" maxlength="20" style="height:42px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:16px;color:var(--ink);background:#fff"></label>
       <label class="check" for="shCopy" id="shCopyRow"><input id="shCopy" type="checkbox" checked> 아래층 점선 외곽 그대로 가져오기</label>
     </div>
     <div style="display:flex;flex-direction:column;gap:6px">
       <span class="lbl">이 대지의 글자 크기 (용도·메모·대지 이름)</span>
-      <div class="seg light" id="shTs" style="align-self:flex-start">
-        <button data-ts="0.9">작게</button><button data-ts="1.15">보통</button><button data-ts="1.45">크게</button>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="seg light" id="shTs">
+          <button data-ts="0.9">작게</button><button data-ts="1.15">보통</button><button data-ts="1.45">크게</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end"><button class="btn" id="shGround" hidden title="이 층을 1층(지면)으로 정하면 아래층은 지하가 돼요">1층으로 지정</button><button class="btn" id="shAddHalf" hidden>+ n.5층 추가</button></div>
       </div>
     </div>
     <p id="shInfo"></p>
     <div class="mact" style="flex-wrap:wrap">
-      <button class="trash" id="shDel" aria-label="대지 지우기" title="대지 지우기"></button>
       <button class="btn" id="shLeft">← 앞으로</button>
       <button class="btn" id="shRight">뒤로 →</button>
       <span class="spacer"></span>
@@ -1580,13 +1608,13 @@ function normBox0(b, grid){
     pts: b.shape === 'poly' && Array.isArray(b.pts) ? b.pts.slice(0, 200).filter(q => Array.isArray(q) && q.length >= 2 && Number.isFinite(+q[0]) && Number.isFinite(+q[1])).map(q => [Math.min(1, Math.max(0, r3n(+q[0]))), Math.min(1, Math.max(0, r3n(+q[1])))]) : undefined,
     c: COLORS.includes(b.c) ? b.c : COLORS[0],
     label: String(b.label || '').slice(0, 24),
-    note: String(b.note || '').slice(0, 40),
+    note: String(b.note || '').slice(0, 80),
     lock: false,
     env: b.env ? String(b.env).slice(0, 40) : '',
     group: b.group ? String(b.group).slice(0, 40) : ''
   };
 }
-const SNAPKEYS = ['siteW', 'siteD', 'grid', 'floorH', 'floorHs', 'site', 'bcrLimit', 'farLimit', 'snap', 'boxes', 'notes', 'sheets', 'flows', 'cards', 'cats'];
+const SNAPKEYS = ['siteW', 'siteD', 'grid', 'floorH', 'floorHs', 'site', 'envShapes', 'bcrLimit', 'farLimit', 'snap', 'boxes', 'notes', 'sheets', 'flows', 'cards', 'cats'];
 // 층 이름: 지하는 '지하 1층', 반 층은 '1.5층'
 function levelName(L){ if (L < 0) return `지하 ${-Math.floor(L)}층`; const n = Math.floor(L); return L - n > 1e-6 ? `${n + 1}.5층` : `${n + 1}층`; }
 const isHalf = L => Math.abs(L - Math.round(L)) > 1e-6;
@@ -1640,9 +1668,16 @@ function normalize(d){
     const pts = d.site.pts.slice(0, 60).filter(q => Array.isArray(q) && Number.isFinite(+q[0]) && Number.isFinite(+q[1])).map(q => [r2(+q[0]), r2(+q[1]), Math.max(-100, Math.min(100, r2(+q[2] || 0)))]);
     if (pts.length >= 3) o.site = { pts };
   }
+  // 손으로 그린 점선 테두리 모양: { 점선id: { sheet, pts } } (대지 기준 좌표)
+  o.envShapes = {};
+  if (d.envShapes && typeof d.envShapes === 'object') for (const [k, v] of Object.entries(d.envShapes).slice(0, 80)) {
+    const pts = v && Array.isArray(v.pts) ? v.pts.slice(0, 600).filter(q => Array.isArray(q) && Number.isFinite(+q[0]) && Number.isFinite(+q[1])).map(q => [r2(+q[0]), r2(+q[1])]) : [];
+    const ref = {}; if (v.ref && typeof v.ref === 'object') for (const [id, r] of Object.entries(v.ref).slice(0, 120)) if (Array.isArray(r) && r.length === 4 && r.every(Number.isFinite)) ref[String(id).slice(0, 40)] = r.map(r2);
+    if (pts.length >= 3 && o.boxes.some(b => b.env === k)) o.envShapes[String(k).slice(0, 30)] = { sheet: String(v.sheet || ''), pts, ref, m: Math.max(0, Math.min(10, Number(v.m) || 0)) };
+  }
   return ensureSheets(o);
 }
-function snapshotOf(p){ const s = {}; for (const k of SNAPKEYS) s[k] = clone(p[k]); return s; }
+function snapshotOf(p){ const s = {}; for (const k of SNAPKEYS) { if (k === 'envShapes' && !Object.keys(p[k] || {}).length) continue; s[k] = clone(p[k]); } return s; }
 const sigOf = p => hash(p.name + JSON.stringify(snapshotOf(p)));
 function rasterArea(shapes, grid, minus = []){
   if (!shapes.length) return 0;
@@ -1872,7 +1907,8 @@ function card({ name, data, status, statusCls, cells, note, actions, open, cls, 
   if (note) { const n = document.createElement('div'); n.className = 'tbn'; n.textContent = note; tb.appendChild(n); }
   const acts = document.createElement('div'); acts.className = 'row';
   const shown = actions.length > 3 ? actions.slice(0, 2) : actions, more = actions.length > 3 ? actions.slice(2) : [];
-  for (const [label, fn, bcls] of shown) { const b = document.createElement('button'); if (label === '삭제') { b.className = 'trash'; b.innerHTML = IC.trash; b.setAttribute('aria-label', name + ' 삭제'); b.title = '삭제'; } else { b.textContent = label; if (bcls) b.className = bcls; } b.onclick = fn; acts.appendChild(b); }
+  const ICON_ACT = { '복제': ['ic2', IC.copy], '공유 내리기': ['ic2', IC.unshare] };
+  for (const [label, fn, bcls] of shown) { const b = document.createElement('button'); if (ICON_ACT[label]) { b.className = ICON_ACT[label][0]; b.innerHTML = ICON_ACT[label][1]; b.setAttribute('aria-label', name + ' ' + label); b.title = label; } else if (label === '삭제') { b.className = 'trash'; b.innerHTML = IC.trash; b.setAttribute('aria-label', name + ' 삭제'); b.title = '삭제'; } else { b.textContent = label; if (bcls) b.className = bcls; } b.onclick = fn; acts.appendChild(b); }
   if (more.length) {
     const b = document.createElement('button'); b.textContent = '더보기'; b.setAttribute('aria-label', name + ' 더보기');
     b.onclick = async () => { const k = await pickBox(name, '', more.map(([l], i) => ({ id: String(i), label: l })), null); if (k !== undefined && k !== null) more[Number(k)][1](); };
@@ -2215,11 +2251,34 @@ function disposeGroup(g){
     g.remove(o);
   }
 }
+let groundMesh = null, sitePlMesh = null;
+// 지하가 있으면 땅을 반투명하게 하고, 파낸 자리(흙벽 + 지면선 GL)를 그려서 땅 아래 층이 잘 보이게
+function underView(){
+  const ub = P.boxes.filter(b => !b.sheet && b.lv < 0), has = ub.length > 0, focus = has && selBoxes().some(b => !b.sheet && b.lv < 0);
+  const op = !has ? 1 : focus ? 0.22 : 0.5;
+  for (const m of [groundMesh, sitePlMesh]) if (m) { m.material.opacity = op; m.material.depthWrite = op === 1; m.renderOrder = op === 1 ? 0 : 5; m.material.needsUpdate = true; }
+  if (controls) controls.maxPolarAngle = has ? Math.PI * 0.64 : Math.PI / 2; // 지하가 있으면 땅 아래에서 올려다보기도 가능
+  if (!has) return;
+  let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity, y0 = 0;
+  for (const b of ub) { const a = aabb(b); x0 = Math.min(x0, a.x0); z0 = Math.min(z0, a.z0); x1 = Math.max(x1, a.x1); z1 = Math.max(z1, a.z1); y0 = Math.min(y0, elevOf(b.lv)); }
+  const pad = Math.max(0.4, P.grid * 0.2); x0 -= pad; z0 -= pad; x1 += pad; z1 += pad; y0 -= 0.3;
+  const w = x1 - x0, d = z1 - z0, h = -y0, cx = -P.siteW / 2 + (x0 + x1) / 2, cz = -P.siteD / 2 + (z0 + z1) / 2;
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const pit = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: '#8a6f5a', transparent: true, opacity: focus ? 0.07 : 0.12, side: THREE.BackSide, depthWrite: false }));
+  pit.position.set(cx, y0 / 2, cz); pit.userData.ownMat = true; pit.renderOrder = 4; boxG.add(pit);
+  const ed = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: '#8a6f5a', transparent: true, opacity: 0.55 }));
+  ed.position.copy(pit.position); ed.userData.ownMat = true; boxG.add(ed);
+  // 지면선(GL ±0): 파낸 자리 둘레에 벽돌색 굵은 선
+  const t = Math.max(0.06, Math.max(P.siteW, P.siteD) / 400), gl = new THREE.MeshBasicMaterial({ color: '#a3492f' });
+  for (const [L, px, pz, ry] of [[w, cx, cz - d / 2, 0], [w, cx, cz + d / 2, 0], [d, cx - w / 2, cz, Math.PI / 2], [d, cx + w / 2, cz, Math.PI / 2]]) {
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(L + t, t, t), gl); bar.position.set(px, 0.02, pz); bar.rotation.y = ry; bar.userData.ownMat = true; boxG.add(bar);
+  }
+}
 function buildSite(){
   disposeGroup(siteG);
   const W = P.siteW, D = P.siteD, g = P.grid, ox = -W / 2, oz = -D / 2;
   const R = Math.max(W, D);
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(R * 8, R * 8), new THREE.MeshStandardMaterial({ color: '#dddbd3', roughness: 1 }));
+  const ground = groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(R * 8, R * 8), new THREE.MeshStandardMaterial({ color: '#dddbd3', roughness: 1, transparent: true, depthWrite: true }));
   ground.userData.ownMat = true; ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; siteG.add(ground);
   // 대지 면: 경계선 다각형이면 꼭짓점 높이대로 기울어진 땅, 아니면 평평한 사각 대지
   const sp = P.site ? P.site.pts : [[0, 0, 0], [W, 0, 0], [W, D, 0], [0, D, 0]];
@@ -2231,7 +2290,7 @@ function buildSite(){
     pos.setXYZ(i, ox + x, hgt + 0.004, oz + z);
   }
   sg.computeVertexNormals(); // 양면 재질이라 면 방향은 신경 쓰지 않아도 됨
-  const sitePl = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: '#f5f1e6', roughness: 1, side: THREE.DoubleSide }));
+  const sitePl = sitePlMesh = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: '#f5f1e6', roughness: 1, side: THREE.DoubleSide, transparent: true }));
   sitePl.userData.ownMat = true; sitePl.receiveShadow = true; siteG.add(sitePl);
   const m = Math.ceil(Math.max(g * 3, R * 0.25) / g) * g;
   const x0 = -m, x1 = W + m, z0 = -m, z1 = D + m;
@@ -2295,11 +2354,14 @@ function labelTexture(title, sub, aspect, outer){
   texCache.set(key, tex);
   return tex;
 }
-function boxMesh(b, totalRooms){
+function boxMesh(b, totalRooms, rank = 0){
   const H = boxH(b), isSel = selSet.has(b.id), out = outside(b), outer = b.kind === 'outer';
   const geo = shapeGeo(b, H);
   const mesh = new THREE.Mesh(geo, outer ? (isSel ? outerFillSel : outerFill) : b.cat === 'void' ? (isSel ? outerFillSel : voidMat) : solidMat(colorOf(b), isSel));
-  mesh.position.set(-P.siteW / 2 + b.x + b.w / 2, elevOf(b.lv) + H / 2, -P.siteD / 2 + b.z + b.d / 2);
+  // 스터디 보드에서 아래 레이어일수록 아주 조금 작고(옆) 바닥이 살짝 떠 있게: 겹친 면이 깨져 보이지 않음
+  const rk = Math.min(rank, 80), ins = rk * 0.0035, lift = 0.004 + rk * 0.0015, drop = rk * 0.0015, Hs = Math.max(0.05, H - lift - drop);
+  mesh.scale.set(Math.max(0.6, (b.w - 2 * ins) / b.w), Hs / H, Math.max(0.6, (b.d - 2 * ins) / b.d));
+  mesh.position.set(-P.siteW / 2 + b.x + b.w / 2, elevOf(b.lv) + lift + Hs / 2, -P.siteD / 2 + b.z + b.d / 2);
   mesh.rotation.y = -rad(b.ang || 0);
   mesh.castShadow = !outer && b.cat !== 'void'; mesh.receiveShadow = !outer; mesh.userData.id = b.id; mesh.renderOrder = outer ? 2 : 0;
   const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), outer ? (isSel ? dashSel : b.lock ? dashLock : out ? dashOut : dashMat) : (isSel ? edgeSel : b.lock ? edgeLock : out ? edgeOut : edgeMat));
@@ -2322,7 +2384,7 @@ function boxMesh(b, totalRooms){
   let sub;
   if (uiMode === 'study') {
     sub = outer ? '' : `${cellsStr(b.w)}×${cellsStr(b.d)}칸` + (totalRooms ? ` · ${Math.round(shapeArea(b) * b.fl / totalRooms * 100)}%` : '');
-  } else sub = f1(shapeArea(b)) + '㎡' + (b.fl > 1 ? ` ×${b.fl}` : '');
+  } else sub = (b.lv < 0 ? levelName(b.lv) + ' · ' : '') + f1(shapeArea(b)) + '㎡' + (b.fl > 1 ? ` ×${b.fl}` : '');
   if (b.lock) sub = (sub ? sub + ' · ' : '') + '잠김';
   if (b.label || sub) {
     let pw, pd, cu, cv;
@@ -2355,7 +2417,9 @@ function buildBoxes(){
   if (uiMode === 'study') return;
   disposeGroup(boxG); boxMeshes = [];
   const totalRooms = P.boxes.filter(b => b.kind === 'solid' && !b.sheet).reduce((s, b) => s + shapeArea(b) * b.fl, 0);
-  for (const b of P.boxes.filter(b => !b.sheet)) { const m = boxMesh(b, totalRooms); boxG.add(m); boxMeshes.push(m); }
+  const list = P.boxes.filter(b => !b.sheet);
+  list.forEach((b, i) => { const m = boxMesh(b, totalRooms, list.length - 1 - i); boxG.add(m); boxMeshes.push(m); });
+  underView();
   buildHandles();
   requestRender();
 }
@@ -2650,6 +2714,7 @@ function refreshUI(){
       chip('건폐율' + (P.bcrLimit ? ' / ' + f2(P.bcrLimit) + '%' : ''), f1(s.bcr) + '%', bcrOver),
       chip('용적률' + (P.farLimit ? ' / ' + f2(P.farLimit) + '%' : ''), f1(s.far) + '%', farOver),
       chip('최고', s.floors + '층'),
+      ...(s.under ? [chip('지하', s.under + '개 층')] : []),
       chip('대지', `${cellsStr(P.siteW)}×${cellsStr(P.siteD)}칸`),
       chip('1칸', f2(P.grid) + 'm')
     );
@@ -2662,6 +2727,7 @@ function refreshUI(){
       chip('용적률' + (P.farLimit ? ' / ' + f2(P.farLimit) + '%' : ''), f1(s.far) + '%', farOver)
     );
     if (s.hasBoth) st.append(chip('실 면적 합', f1(s.rooms) + '㎡'));
+    if (s.under) st.append(chip('지하 (용적률 제외)', `${s.under}개 층 · ${f1(s.gfaB)}㎡`));
     st.append(chip('최고 높이', s.floors + '층 · ' + f1(s.height) + 'm'), chip('격자 · 층고', (P.snap ? f2(P.grid) : '자유') + ' · ' + f2(P.floorH) + 'm'));
   }
   // 보기 전용 배너
@@ -2988,22 +3054,23 @@ const TOURS = {
   home: [
     [null, '매스 스터디 둘러보기', '비율로 먼저 쌓아 보고, 치수로 다듬고, 조원과 돌려 보는 작업대예요. 다음을 눌러 하나씩 볼게요.'],
     ['.newcard', '새로 시작하기', '스케치는 대지 없이 자유롭게, 스터디는 대지와 격자 위에서 칸 단위 비율로 쌓아요.'],
-    ['#mineList .card:not(.newcard)', '작업물 카드', '위는 실제 화면 미리보기, 아래 표제란에 종류·수정 시각·공개 상태가 있어요. 내 작업은 나만 봐요.'],
+    ['#mineList .card:not(.newcard)', '작업물 카드', '위는 실제 화면 미리보기, 아래 표제란에 종류·수정 시각·공개 상태가 있어요. 아이콘으로 복제·삭제해요. 내 작업은 나만 봐요.'],
     ['#htabs [data-tab=team]', '프로젝트', '과제마다 프로젝트를 만들고 조원이 참여해요. 작업 화면에서 ‘프로젝트에 저장’한 것만 공유돼요.'],
     ['#htabs [data-tab=refs]', '레퍼런스', '사진을 폴더별로 모아 두고, 작업 화면 옆에 띄워 공간에 연결할 수 있어요.'],
     ['#searchBtn', '찾기', '돋보기를 누르면 이름·용도·작성자로 찾을 수 있어요.']
   ],
   study: [
-    ['#stools', '도구', '선택, 도형(사각형·원형·반원·삼각형), 점선 외곽, 텍스트, 동선 그리기예요. 점선 외곽은 손으로 그리고 시작점까지 이으면 모양이 돼요.'],
-    ['#pc', '캔버스 조작', '끌면 화면 이동, 짧게 톡 하면 선택, 두 번 톡 하면 크기·이름 쓰기, 꾹 누르고 끌면 도형 이동이에요. 빈 곳을 꾹 누르고 끌면 범위 선택: 오른쪽으로 끌면 완전히 들어온 것만, 왼쪽으로 끌면 걸친 것도 골라요.'],
-    ['#sheetBar', '대지(층)', '+ 대지로 위층·지하층·반 층을 더해요. 순서를 바꾸면 3D 층도 바뀌어요. 반 층은 접었다 펼 수 있어요.'],
+    ['#stools', '도구', '선택, 도형(사각형·원형·반원·삼각형), 점선 꺾기, 텍스트, 동선 그리기예요. 점선 꺾기는 점선 테두리를 가로질러 선을 그으면 도형에 맞춰 접혀요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 반원을 따라 그리면 반원대로요. 도형을 옮기면 꺾은 점선도 따라 늘고 줄어요.'],
+    ['#pc', '캔버스 조작', '끌면 화면 이동, 짧게 톡 하면 선택, 두 번 톡 하면 이름·설명·공간 성격(공유·개인) 쓰기, 꾹 누르고 끌면 도형 이동이에요. 빈 곳을 꾹 누르고 끌면 범위 선택: 오른쪽으로 끌면 완전히 들어온 것만, 왼쪽으로 끌면 걸친 것도 골라요.'],
+    ['#sheetBar', '대지(층)', '+ 대지로 위층·지하층을 더해요. 층 탭을 두 번 누르면 이름·글자 크기와 함께 ‘1층으로 지정’(그 아래 층은 지하가 돼요)과 ‘n.5층 추가’가 있어요. n.5층은 대지 오른쪽 위 아이콘으로 접었다 펴요.'],
     ['#sbottom', '아래 상태줄', '배율·격자, 보기 방식, 레퍼런스, 그리고 건폐율·용적률·연면적이 한도와 함께 보여요.'],
     ['#saveBtn', '프로젝트에 저장', '눌러야 조원에게 보여요. 저장 전에는 나만 봐요.'],
     ['#menuBtn', '메뉴', '대지 크기·경계선과 높낮이, 플랜 저장, 댓글, 내보내기(PNG)가 여기 있어요.']
   ],
   exact: [
     ['#uiModeSeg', '치수 모드', '미터 단위로 다듬고 3D로 확인해요. 스터디 모드와 같은 작업이에요.'],
-    ['#floorBar', '층 고르기', '층을 누르면 그 층 상자가 전부 선택돼요. 층고를 바꾸거나 한 층씩 올리고 내릴 수 있어요.'],
+    ['#floorBar', '층 고르기', '층을 누르면 그 층 상자가 전부 선택돼요. 층고를 바꾸거나 한 층씩 올리고 내릴 수 있어요. 지하층을 고르면 땅이 더 투명해져요.'],
+    ['#stats', '지하 보기', '지하층이 있으면 땅이 반투명해지고 파낸 자리와 지면선(GL, 벽돌색)이 보여요. 화면을 아래로 돌리면 땅 밑에서 올려다볼 수도 있어요. 지하 면적은 따로 보이고 용적률에서는 빠져요.'],
     ['#r2Btn', '보기 · 자료', '투시·아이소·평면·입면과 레퍼런스·플랜·대지·댓글·내보내기를 접었다 펴요.'],
     ['#sheet', '편집 창', '상자를 고르면 열려요. 높이(m)·층수·45° 회전, 화살표 이동(평면 기준)이 있어요. × 또는 아래로 끌어 닫아요.']
   ]
@@ -3106,7 +3173,7 @@ $('#xGo').onclick = async () => {
       toast('화면을 PNG로 저장했어요'); return;
     }
     const back = uiMode; if (back !== 'study') { setUiMode('study', true); await new Promise(r => setTimeout(r, 250)); }
-    const keepOpen = halfOpen; if (P.sheets.some((s, i) => xPick.has(s.id) && !sheetVis(i))) { halfOpen = true; LAY = null; }
+    const keepOpen = new Set(halfOpen); if (P.sheets.some((s, i) => xPick.has(s.id) && !sheetVis(i))) { for (const id of xPick) halfOpen.add(id); LAY = null; }
     let n = 0;
     for (const [i, s] of P.sheets.entries()) {
       if (!xPick.has(s.id)) continue;
@@ -3114,7 +3181,7 @@ $('#xGo').onclick = async () => {
       if (await saveBlob(await svgToPng(txt, W, H, '#fbf8f1'), `${fileBase()}_${sheetTitle(s)}.png`)) n++;
       await new Promise(r => setTimeout(r, 350));
     }
-    if (halfOpen !== keepOpen) { halfOpen = keepOpen; LAY = null; renderStudy(); }
+    if (halfOpen.size !== keepOpen.size) { halfOpen = keepOpen; LAY = null; renderStudy(); }
     if (back !== 'study') setUiMode(back, true);
     toast(`대지 ${n}장을 PNG로 저장했어요`);
   } catch (e) { toast('이미지를 만들지 못했어요. 잠시 후 다시 해 주세요'); }
@@ -3297,20 +3364,20 @@ let LAY = null, layFrozen = false;
 function computeLayout(){
   const n = P.sheets.length, base = SGAP(), L = new Array(n).fill(0), Rr = new Array(n).fill(0);
   for (const c of P.cards) { const i = P.sheets.findIndex(s => s.id === c.sheet); if (i < 0) continue; L[i] = Math.max(L[i], -c.x); Rr[i] = Math.max(Rr[i], c.x + c.w - P.siteW); }
-  // 평면·단면 대지는 한 줄로, 반 층(n.5층) 대지는 펼쳤을 때 n층과 n+1층 사이 '위쪽'에 놓임. 접으면 숨기고 n층·n+1층에 희미하게 겹쳐 보여 줌
+  // 평면·단면 대지는 한 줄로, 반 층(n.5층) 대지는 펼쳤을 때 n층 위쪽(왼쪽 끝이 n층 가운데 세로선)에 놓임. 접으면 숨기고 n층·n+1층에 희미하게 겹쳐 보여 줌
   const ox = new Array(n).fill(0), oy = new Array(n).fill(0), vis = new Array(n).fill(true), row = [], halves = [];
   P.sheets.forEach((s, i) => (s.type === 'plan' && isHalf(s.level) ? halves : row).push(i));
   let prev = -1;
   for (const i of row) { if (prev >= 0) ox[i] = ox[prev] + P.siteW + Math.max(base, Rr[prev] + L[i] + P.grid * 2.5); prev = i; }
   const rowAt = lv => row.find(j => P.sheets[j].type === 'plan' && P.sheets[j].level === lv);
   for (const i of halves) {
-    if (!halfOpen) { vis[i] = false; continue; }
-    const lv = P.sheets[i].level, lo = rowAt(Math.floor(lv)), hi = rowAt(Math.floor(lv) + 1), a = lo ?? hi ?? row[0] ?? i, c = hi ?? lo ?? row[0] ?? i;
-    ox[i] = (ox[a] + ox[c]) / 2; oy[i] = -(P.siteD + P.grid * 2 + Math.max(base * 0.7, P.grid * 3));
+    if (!halfOpen.has(P.sheets[i].id)) { vis[i] = false; continue; }
+    const lv = P.sheets[i].level, a = rowAt(Math.floor(lv)) ?? rowAt(Math.floor(lv) + 1) ?? row[0] ?? i;
+    ox[i] = ox[a] + P.siteW / 2 + P.grid; oy[i] = -(P.siteD + P.grid * 2 + Math.max(base * 0.7, P.grid * 3));
   }
   return { ox, oy, vis };
 }
-let halfOpen = false;
+let halfOpen = new Set(); // 펼친 반 층(n.5층) 대지 id
 function lay(){ if (!LAY || !layFrozen) LAY = computeLayout(); return LAY; }
 const sheetOx = i => lay().ox[i] || 0;
 const sheetOy = i => (lay().oy || [])[i] || 0;
@@ -3402,7 +3469,7 @@ function fitSheet(i, animate){
   allView = false;
   const r = pc.getBoundingClientRect(); if (!r.width || !r.height) return;
   i = Math.max(0, Math.min(P.sheets.length - 1, i));
-  if (!sheetVis(i)) { halfOpen = true; LAY = null; } // 접힌 반 층을 고르면 펼침
+  if (!sheetVis(i)) { halfOpen.add(P.sheets[i].id); LAY = null; } // 접힌 반 층을 고르면 펼침
   activeSheet = P.sheets[i].id;
   const t = viewFor(...sheetRect(i)); sv.kBase = t.k; sFitted = true; sAuto = true;
   if (animate) animateTo(t); else { Object.assign(sv, t); renderStudy(); }
@@ -3587,19 +3654,107 @@ function envGroups(exclude){
   return m;
 }
 function membersRect(ms){ let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity; for (const b of ms) { const a = canvasBox(b); x0 = Math.min(x0, a.x0); z0 = Math.min(z0, a.z0); x1 = Math.max(x1, a.x1); z1 = Math.max(z1, a.z1); } return { x0, z0, x1, z1 }; }
+// 그린 점선 모양(대지 좌표) → 화면 좌표. 멤버 가운데가 모두 그 안에 있을 때만 유효
+// 꺾은 점선은 도형을 따라 늘었다 줄었다: 꼭짓점의 x·z를 꺾을 때 가장 가까웠던 도형 모서리에 붙여 두고, 그 모서리가 움직인 만큼 옮김
+function envShapeCanvas(es, ms){
+  const i = P.sheets.findIndex(s => s.id === es.sheet); if (i < 0) return null;
+  const ox = sheetOx(i), oy = sheetOy(i), ref = es.ref || {}, cur = new Map(), old = [];
+  for (const b of ms) { const r = ref[b.id]; if (!r) continue; const a = canvasBox(b); cur.set(b.id, [a.x0 - ox, a.z0 - oy, a.x1 - ox, a.z1 - oy]); old.push([b.id, r]); }
+  const mg = es.m || 7 / sv.k;
+  if (!old.length) return fitAround(es.pts.map(q => q.slice()), ms, ox, oy, mg);
+  // 같은 x(또는 z)에 있는 꼭짓점끼리는 한 모서리선으로 같이 움직임 → 꺾인 선이 비뚤어지지 않음
+  const gap = (a0, a1, b0, b1) => a1 < b0 ? b0 - a1 : a0 > b1 ? a0 - b1 : 0;
+  const mapAxis = ax => {
+    const groups = new Map();
+    for (const q of es.pts) { const k = q[ax].toFixed(3), g = groups.get(k); if (g) { g.lo = Math.min(g.lo, q[1 - ax]); g.hi = Math.max(g.hi, q[1 - ax]); } else groups.set(k, { v: q[ax], lo: q[1 - ax], hi: q[1 - ax] }); }
+    const out = new Map();
+    for (const [k, g] of groups) {
+      const cs = [];
+      for (const [id, r] of old) for (const j of [0, 2]) cs.push({ sc: Math.abs(g.v - r[j + ax]) + 0.35 * gap(g.lo, g.hi, r[1 - ax], r[3 - ax]), e: r[j + ax], nv: g.v + cur.get(id)[j + ax] - r[j + ax] });
+      const mn = Math.min(...cs.map(c => c.sc)), tied = cs.filter(c => c.sc <= mn + 1e-3);
+      // 바깥 테두리처럼 여러 도형에 같이 맞닿은 선은 더 바깥으로 간 도형을 따라감 (늘어남)
+      out.set(k, g.v >= tied[0].e ? Math.max(...tied.map(c => c.nv)) : Math.min(...tied.map(c => c.nv)));
+    }
+    return out;
+  };
+  const mx = mapAxis(0), mz = mapAxis(1), P0 = es.pts, n = P0.length;
+  const out = P0.map(([x, z]) => [mx.get(x.toFixed(3)), mz.get(z.toFixed(3))]);
+  // 곡선(둥근 모서리·반원)은 양 끝점이 움직인 만큼 사이를 고르게 옮겨서 모양이 찌그러지지 않게
+  const axisEdge = (i, j) => Math.abs(P0[i][0] - P0[j][0]) < 1e-3 || Math.abs(P0[i][1] - P0[j][1]) < 1e-3;
+  const curved = P0.map((_, i) => !axisEdge((i - 1 + n) % n, i) && !axisEdge(i, (i + 1) % n));
+  if (curved.some(Boolean) && !curved.every(Boolean)) {
+    let st = curved.findIndex(c => !c);
+    for (let k = 0; k < n; k++) {
+      const i = (st + k) % n; if (curved[i] || !curved[(i + 1) % n]) continue;
+      let j = (i + 1) % n; const run = []; while (curved[j]) { run.push(j); j = (j + 1) % n; }
+      const L = [0]; let prev = i; for (const r of [...run, j]) { L.push(L[L.length - 1] + Math.hypot(P0[r][0] - P0[prev][0], P0[r][1] - P0[prev][1])); prev = r; }
+      const T = L[L.length - 1] || 1, d0 = [out[i][0] - P0[i][0], out[i][1] - P0[i][1]], d1 = [out[j][0] - P0[j][0], out[j][1] - P0[j][1]];
+      run.forEach((r, q) => { const t = L[q + 1] / T; out[r] = [P0[r][0] + d0[0] + (d1[0] - d0[0]) * t, P0[r][1] + d0[1] + (d1[1] - d0[1]) * t]; });
+    }
+  }
+  return fitAround(out, ms, ox, oy, mg);
+}
+// 도형이 점선 밖으로 튀어나오면: 그 도형을 가로지르는 직선 중 가장 조금만 밀면 되는 것부터 도형 바깥(+여백)으로 밀어냄. 그래도 안 되면 bad
+function fitAround(out, ms, ox, oy, m){
+  const boxes = ms.map(b => { const a = canvasBox(b); return [a.x0 - ox, a.z0 - oy, a.x1 - ox, a.z1 - oy]; });
+  pushOut(out, boxes.map(([x0, z0, x1, z1]) => [x0 - m, z0 - m, x1 + m, z1 + m]));
+  const h = m / 2, res = out.map(([x, z]) => [x + ox, z + oy]);
+  if (!boxes.every(([x0, z0, x1, z1]) => [[x0 - h, z0 - h], [x1 + h, z0 - h], [x1 + h, z1 + h], [x0 - h, z1 + h]].every(([x, z]) => inPoly(out, x, z)))) res.bad = true;
+  return res;
+}
+function pushOut(pts, rects){
+  const n = pts.length, E = 1e-6;
+  for (let it = 0; it < 24; it++) {
+    let best = null;
+    for (let i = 0; i < n; i++) {
+      const a = pts[i], c = pts[(i + 1) % n];
+      for (const ax of [0, 1]) { // ax 0: 세로 직선(x 고정), 1: 가로 직선(z 고정)
+        if (Math.abs(a[ax] - c[ax]) > E) continue;
+        const v = a[ax], lo = Math.min(a[1 - ax], c[1 - ax]), hi = Math.max(a[1 - ax], c[1 - ax]); if (hi - lo < E) continue;
+        const mid = (lo + hi) / 2, probe = ax ? [mid, v + 1e-3] : [v + 1e-3, mid], dir = inPoly(pts, probe[0], probe[1]) ? -1 : 1;
+        for (const g of rects) {
+          if (!(lo < g[3 - ax] - E && hi > g[1 - ax] + E)) continue;
+          if (!(v > g[ax] + E && v < g[ax + 2] - E)) continue;
+          const nv = dir > 0 ? g[ax + 2] : g[ax], d = Math.abs(nv - v);
+          if (!best || d < best.d) best = { i, ax, nv, d };
+        }
+      }
+    }
+    if (!best) return;
+    pts[best.i][best.ax] = best.nv; pts[(best.i + 1) % n][best.ax] = best.nv;
+  }
+}
+function envPoly(env, ms){
+  const es = P.envShapes && P.envShapes[env]; if (!es) return null;
+  const i = P.sheets.findIndex(s => s.id === es.sheet); if (i < 0 || !sheetVis(i)) return null;
+  const sp = envShapeCanvas(es, ms);
+  return sp && !sp.bad && ms.every(b => { const [x, z] = boxCenterCanvas(b); return inPoly(sp, x, z); }) ? sp : null;
+}
+// 꺾인 점선 모양 → 모서리만 살짝 둥근 경로 (기본 점선 테두리와 같은 느낌)
+function roundedPolyD(sp, r){
+  const n = sp.length, f = q => `${r3(q[0])},${r3(q[1])}`, cut = (q, o, k) => { const L = Math.hypot(o[0] - q[0], o[1] - q[1]) || 1; return [q[0] + (o[0] - q[0]) / L * k, q[1] + (o[1] - q[1]) / L * k]; };
+  let d = '';
+  sp.forEach((q, i) => {
+    const a = sp[(i - 1 + n) % n], c = sp[(i + 1) % n], k = Math.min(r, Math.hypot(a[0] - q[0], a[1] - q[1]) / 2, Math.hypot(c[0] - q[0], c[1] - q[1]) / 2);
+    d += (i ? 'L' : 'M') + f(cut(q, a, k)) + 'Q' + f(q) + ' ' + f(cut(q, c, k));
+  });
+  return d + 'Z';
+}
+const polyBox = sp => { const xs = sp.map(q => q[0]), zs = sp.map(q => q[1]); return { x0: Math.min(...xs), z0: Math.min(...zs), x1: Math.max(...xs), z1: Math.max(...zs) }; };
 function envSvg(px){
   let h = ''; const m = px(7);
   for (const [env, ms] of envGroups()) {
-    const on = ms.some(b => selSet.has(b.id)) && !flowEdit;
+    const on = ms.some(b => selSet.has(b.id)) && !flowEdit, sp = envPoly(env, ms);
     let d;
-    if (ms.length === 1) {
+    if (sp) d = roundedPolyD(sp, px(8));
+    else if (ms.length === 1) {
       const b = ms[0], ox = sheetOx(boxSheetIdx(b)), eb = { ...b, x: b.x - m, z: b.z + sheetOy(boxSheetIdx(b)) - m, w: b.w + 2 * m, d: b.d + 2 * m };
       d = isSketch() && b.shape === 'rect' ? roundD(eb, ox, Math.min(px(12), b.w / 3, b.d / 3) + m) : pathFrom(worldPts(eb), ox);
     } else {
       const r = membersRect(ms), x0 = r.x0 - m, z0 = r.z0 - m, x1 = r.x1 + m, z1 = r.z1 + m, rr = px(8);
       d = `M${r3(x0 + rr)},${r3(z0)}H${r3(x1 - rr)}Q${r3(x1)},${r3(z0)} ${r3(x1)},${r3(z0 + rr)}V${r3(z1 - rr)}Q${r3(x1)},${r3(z1)} ${r3(x1 - rr)},${r3(z1)}H${r3(x0 + rr)}Q${r3(x0)},${r3(z1)} ${r3(x0)},${r3(z1 - rr)}V${r3(z0 + rr)}Q${r3(x0)},${r3(z0)} ${r3(x0 + rr)},${r3(z0)}Z`;
     }
-    h += `<path d="${d}" fill="none" stroke="${on ? '#2c5a8c' : '#6f7279'}" stroke-opacity="${on ? .9 : .7}" stroke-width="${r3(px(1))}" stroke-dasharray="${r3(px(3))} ${r3(px(2.4))}" pointer-events="none"/>`;
+    h += `<path d="${d}" fill="none" stroke="${on ? '#2c5a8c' : '#6f7279'}" stroke-opacity="${on ? .9 : .7}" stroke-width="${r3(px(1))}" stroke-linejoin="round" stroke-dasharray="${r3(px(3))} ${r3(px(2.4))}" pointer-events="none"/>`;
   }
   return h;
 }
@@ -3612,13 +3767,13 @@ function envProbe(){
   const mr = membersRect(moving), cx = (mr.x0 + mr.x1) / 2, cz = (mr.z0 + mr.z1) / 2;
   const groups = envGroups(new Set(moving.map(b => b.id))), leave = envLeaveDist();
   const own = (moving.find(b => b.env && groups.has(b.env)) || {}).env;
-  if (own) { const rect = grow(membersRect(groups.get(own)), leave), apart = mr.x0 >= rect.x1 || mr.x1 <= rect.x0 || mr.z0 >= rect.z1 || mr.z1 <= rect.z0; return { env: own, mode: 'stay', inside: !apart, rect }; }
+  if (own) { const osp = envPoly(own, groups.get(own)), rect = grow(osp ? polyBox(osp) : membersRect(groups.get(own)), leave), apart = mr.x0 >= rect.x1 || mr.x1 <= rect.x0 || mr.z0 >= rect.z1 || mr.z1 <= rect.z0; return { env: own, mode: 'stay', inside: !apart, rect }; }
   let best = null;
   for (const [env, ms] of groups) {
-    const r = membersRect(ms), rect = grow(r, 7 / sv.k), near = grow(r, leave);
+    const sp = envPoly(env, ms), r = sp ? polyBox(sp) : membersRect(ms), rect = grow(r, sp ? 0 : 7 / sv.k), near = grow(r, leave);
     if (!inRect(near, cx, cz)) continue;
     const d = Math.hypot(cx - (r.x0 + r.x1) / 2, cz - (r.z0 + r.z1) / 2);
-    if (!best || d < best.d) best = { env, mode: 'join', inside: inRect(rect, cx, cz), rect, d };
+    if (!best || d < best.d) best = { env, mode: 'join', inside: sp ? inPoly(sp, cx, cz) : inRect(rect, cx, cz), rect, d };
   }
   return best;
 }
@@ -3680,15 +3835,20 @@ function renderStudy(){
     else { const gl = r3(D * 0.8); paper += `<line x1="${r3(ox - M)}" y1="${gl}" x2="${r3(ox + W + M)}" y2="${gl}" stroke="#8a6f5a" stroke-width="${r3(px(1.6))}" pointer-events="none"/><text x="${r3(ox - M + px(6))}" y="${r3(D * 0.8 - px(6))}" font-size="${r3(px(11 * T))}" fill="#8a6f5a" pointer-events="none">GL</text>`; }
     const sub = s.type === 'plan' ? `${levelName(s.level)} 평면` : '입면·단면';
     paper += `<text x="${r3(ox - M)}" y="${r3(-M - px(10))}" font-size="${r3(px(17 * T))}" font-weight="700" fill="${act ? '#2c5a8c' : '#27241f'}" data-role="sheettitle" data-sheet="${s.id}">${esc(sheetTitle(s))}<tspan font-size="${r3(px(11.5 * T))}" font-weight="400" fill="#7a7368" dx="${r3(px(8))}">${esc(sub === sheetTitle(s) ? '' : sub)}${sub === sheetTitle(s) ? '' : ' · '}${cellsStr(W)}×${cellsStr(D)}칸</tspan></text>`;
+    const hs = s.type === 'plan' && !isHalf(s.level) && !sketch && P.sheets.find(x => x.type === 'plan' && x.level === s.level + 0.5);
+    if (hs) { // n.5층 접기·펴기 아이콘: n층 대지 오른쪽 끝을 넘지 않게 오른쪽 위에
+      const z = px(28), x0 = ox + W - z, y0 = -M - z - px(6), op = halfOpen.has(hs.id), u = v => r3(v * z / 24);
+      paper += `<g data-role="halftog" data-sheet="${hs.id}" transform="translate(${r3(x0)} ${r3(y0)})" style="cursor:pointer"><title>${esc(levelName(hs.level))} ${op ? '접기' : '펼치기'}</title><rect width="${r3(z)}" height="${r3(z)}" rx="${u(6)}" fill="${op ? '#5e3a22' : '#fbf8f1'}" stroke="#5e3a22" stroke-width="${u(1.4)}"/><rect x="${u(5)}" y="${u(op ? 12 : 5)}" width="${u(14)}" height="${u(7)}" rx="${u(1.5)}" fill="none" stroke="${op ? '#fbf8f1' : '#5e3a22'}" stroke-width="${u(1.5)}" stroke-dasharray="${u(2.4)} ${u(1.6)}"/><path d="${op ? `M${u(8)} ${u(8)}L${u(12)} ${u(4.5)}L${u(16)} ${u(8)}` : `M${u(8)} ${u(15.5)}L${u(12)} ${u(19)}L${u(16)} ${u(15.5)}`}" fill="none" stroke="${op ? '#fbf8f1' : '#5e3a22'}" stroke-width="${u(1.8)}" stroke-linecap="round" stroke-linejoin="round"/></g>`;
+    }
     paper = paper.slice(0, p0) + wrapS(i, paper.slice(p0));
   });
-  if (!sketch && !halfOpen) {
+  if (!sketch) {
     for (const b of P.boxes) {
       const bi = boxSheetIdx(b); if (sheetVis(bi) || b.sheet) continue;
       for (const lv of [Math.floor(b.lv), Math.floor(b.lv) + 1]) {
         const ti = P.sheets.findIndex(x => x.type === 'plan' && x.level === lv && sheetVis(P.sheets.indexOf(x))); if (ti < 0) continue;
         const d = pathFrom(worldPts(b), sheetOx(ti));
-        paper += `<path d="${d}" fill="${b.kind === 'solid' ? colorOf(b) : 'none'}" fill-opacity=".22" stroke="#6e685e" stroke-opacity=".45" stroke-width="${r3(px(1))}" stroke-dasharray="${r3(px(4))} ${r3(px(3))}" pointer-events="none"/>`;
+        paper += `<path d="${d}" fill="#8f8270" fill-opacity="${b.kind === 'solid' ? .13 : .06}" stroke="#6e685e" stroke-opacity=".6" stroke-width="${r3(px(0.7))}" pointer-events="none"/>`;
         const a = aabb(b); paper += `<text x="${r3(sheetOx(ti) + a.x0 + px(4))}" y="${r3(a.z0 + px(12))}" font-size="${r3(px(10.5))}" fill="#6e685e" fill-opacity=".8" pointer-events="none">${levelName(b.lv)}</text>`;
       }
     }
@@ -3776,7 +3936,7 @@ function renderStudy(){
   if (gs && gs.type === 'outline' && gs.pts.length > 1) {
     const [sx, sz] = gs.pts[0];
     over += `<path d="M${gs.pts.map(([x, z]) => `${r3(x)},${r3(z)}`).join('L')}" fill="none" stroke="${gs.site ? '#a3492f' : '#2c5a8c'}" stroke-width="${r3(px(1.8))}" stroke-dasharray="${r3(px(5))} ${r3(px(3.5))}" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`;
-    over += `<circle cx="${r3(sx)}" cy="${r3(sz)}" r="${r3(outSnap())}" fill="${gs.near ? 'rgba(44,90,140,.18)' : 'none'}" stroke="#2c5a8c" stroke-opacity=".6" stroke-width="${r3(px(1.2))}" stroke-dasharray="${r3(px(3))} ${r3(px(3))}" pointer-events="none"/><circle cx="${r3(sx)}" cy="${r3(sz)}" r="${r3(px(4))}" fill="#2c5a8c" pointer-events="none"/>`;
+    if (gs.site) over += `<circle cx="${r3(sx)}" cy="${r3(sz)}" r="${r3(outSnap())}" fill="${gs.near ? 'rgba(44,90,140,.18)' : 'none'}" stroke="#2c5a8c" stroke-opacity=".6" stroke-width="${r3(px(1.2))}" stroke-dasharray="${r3(px(3))} ${r3(px(3))}" pointer-events="none"/><circle cx="${r3(sx)}" cy="${r3(sz)}" r="${r3(px(4))}" fill="#2c5a8c" pointer-events="none"/>`;
   }
   if (gs && gs.type === 'flow' && gs.pts.length > 1) {
     const st = FLOWS[flowType];
@@ -3827,22 +3987,203 @@ function closedSimplify(raw){
 }
 const pathLen = pts => pts.reduce((t, q, i) => i ? t + Math.hypot(q[0] - pts[i - 1][0], q[1] - pts[i - 1][1]) : 0, 0);
 const outSnap = () => Math.max(22 / sv.k, P.grid * 0.35); // 시작점에 이만큼 가까워지면 붙여서 닫음
-// 손으로 그린 외곽선 → 꼭짓점 몇 개짜리 다각형으로 다듬어 점선 외곽 도형을 만듦
-function finishOutline(g){
-  const si = g.si, ox = sheetOx(si), oy = sheetOy(si);
-  let pts = closedSimplify(g.pts).map(([x, z]) => [x - ox, z - oy]);
-  if (studySnap && !isSketch()) pts = pts.map(([x, z]) => [sn(x), sn(z)]);
-  pts = pts.filter((q, i) => { const pv = pts[(i - 1 + pts.length) % pts.length]; return q[0] !== pv[0] || q[1] !== pv[1]; });
-  // 한 줄 위에 있는 점은 빼기
-  for (let k = 0; k < 3 && pts.length > 3; k++) pts = pts.filter((q, i) => { const a = pts[(i - 1 + pts.length) % pts.length], c = pts[(i + 1) % pts.length]; return Math.abs((q[0] - a[0]) * (c[1] - a[1]) - (q[1] - a[1]) * (c[0] - a[0])) > 1e-6; });
-  if (pts.length < 3 || polyArea(pts) < sStep() * sStep()) { toast('너무 작아서 만들지 않았어요'); return; }
-  const xs = pts.map(q => q[0]), zs = pts.map(q => q[1]), x0 = Math.min(...xs), z0 = Math.min(...zs), w = Math.max(...xs) - x0, d = Math.max(...zs) - z0;
-  if (w < 1e-6 || d < 1e-6) return;
-  const rectish = pts.length === 4 && pts.every((q, i) => { const n2 = pts[(i + 1) % 4]; return q[0] === n2[0] || q[1] === n2[1]; });
-  const nb = normBox({ id: uid(), kind: 'outer', shape: rectish ? 'rect' : 'poly', pts: rectish ? undefined : pts.map(([x, z]) => [(x - x0) / w, (z - z0) / d]), x: r2(x0), z: r2(z0), w: r2(w), d: r2(d), lv: 0, fl: 1, cat: 'free' }, P.grid);
-  placeInSheet(nb, si);
-  commit(() => { P.boxes.push(nb); setSel([nb.id]); });
-  setTool('select'); toast(rectish ? '사각 점선 외곽을 만들었어요' : `꼭짓점 ${pts.length}개짜리 점선 외곽을 만들었어요`);
+// 그린 점선 모양에서 도형 가운데가 빠져나가면 그 모양은 버리고 기본 테두리로 (다시 그리기 안내)
+function envShapeCheck(){
+  if (!P.envShapes) return;
+  const groups = envGroups(); let lost = 0;
+  for (const k of Object.keys(P.envShapes)) {
+    const ms = groups.get(k); if (!ms) { delete P.envShapes[k]; continue; }
+    const sp = envShapeCanvas(P.envShapes[k], ms); if (!sp) { delete P.envShapes[k]; continue; }
+    if (sp.bad || !ms.every(b => { const [x, z] = boxCenterCanvas(b); return inPoly(sp, x, z); })) { delete P.envShapes[k]; lost++; }
+  }
+  if (lost) toast('꺾은 점선으로는 도형을 다 감쌀 수 없어서 기본 점선 모양으로 돌아갔어요', { label: '다시 꺾기', fn: () => setTool('outer') });
+}
+// 점선 꺾기: 이미 있는 점선 테두리를 가로질러 선을 그으면, 그 선을 따라 점선이 안으로 꺾여 들어감
+// 손그림을 그대로 쓰지 않고 수평·수직 직선으로 바꾼 뒤, 가까운 도형 모서리(+점선 여백)에 맞춤. 도형이 없는 쪽이 잘려 나감
+function segHit(p1, p2, q1, q2){
+  const rx = p2[0] - p1[0], rz = p2[1] - p1[1], sx = q2[0] - q1[0], sz = q2[1] - q1[1], den = rx * sz - rz * sx;
+  if (Math.abs(den) < 1e-12) return null;
+  const t = ((q1[0] - p1[0]) * sz - (q1[1] - p1[1]) * sx) / den, u = ((q1[0] - p1[0]) * rz - (q1[1] - p1[1]) * rx) / den;
+  return t >= 0 && t <= 1 && u >= 0 && u <= 1 ? { t, u, pt: [p1[0] + rx * t, p1[1] + rz * t] } : null;
+}
+function lineHits(line, poly){
+  const hs = [];
+  for (let i = 0; i < line.length - 1; i++) for (let j = 0; j < poly.length; j++) { const h = segHit(line[i], line[i + 1], poly[j], poly[(j + 1) % poly.length]); if (h) hs.push({ s: i + h.t, e: j + h.u, pt: h.pt }); }
+  return hs.sort((a, b) => a.s - b.s);
+}
+// 지금 보이는 점선 테두리의 꼭짓점 (그린 모양이 있으면 그것, 없으면 도형들을 감싼 사각형)
+function envOutlinePts(env, ms, m){
+  const sp = envPoly(env, ms); if (sp) return sp;
+  const r = membersRect(ms); return [[r.x0 - m, r.z0 - m], [r.x1 + m, r.z0 - m], [r.x1 + m, r.z1 + m], [r.x0 - m, r.z1 + m]];
+}
+// 묶인 도형 정보: 화면 좌표 다각형 + 점선 여백만큼 키운 사각형
+function cutMembers(ms, m){
+  return ms.map(b => { const si = boxSheetIdx(b), ox = sheetOx(si), oy = sheetOy(si), a = canvasBox(b); return { poly: worldPts(b).map(([x, z]) => [x + ox, z + oy]), g: { x0: a.x0 - m, z0: a.z0 - m, x1: a.x1 + m, z1: a.z1 + m }, c: [(a.x0 + a.x1) / 2, (a.z0 + a.z1) / 2] }; });
+}
+function distToPoly(p, poly){
+  let d = Infinity;
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], c = poly[(i + 1) % poly.length], dx = c[0] - a[0], dz = c[1] - a[1], L = dx * dx + dz * dz || 1e-12;
+    const t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dz) / L));
+    d = Math.min(d, Math.hypot(p[0] - a[0] - dx * t, p[1] - a[1] - dz * t));
+  }
+  return d;
+}
+// 점이 묶인 도형을 침범하는지 (도형 안이거나 점선 여백보다 가까움)
+const intrudes = (p, mem, m) => mem.some(o => inPoly(o.poly, p[0], p[1]) || distToPoly(p, o.poly) < m * 0.6);
+// 손그림 한 토막 → 수평·수직 직선 (도형 모서리에 맞춤, 묶인 도형은 절대 침범하지 않음).
+// 꺾이는 곳을 직각에 가깝게 그렸으면 직각, 크게 돌려 그렸으면 둥글게: 둥근 부분의 시작·끝은 가까운 도형 꼭짓점에 맞춤
+function orthoPiece(raw, cx, cz, mem, m, endS, endE){
+  let q = simplify(raw, Math.max(14 / sv.k, P.grid * 0.3));
+  if (q.length < 2) q = [raw[0], raw[raw.length - 1]];
+  let runs = [];
+  const push = (arr, r) => { const l = arr[arr.length - 1]; if (l && l.H === r.H) { l.v = (l.v * l.L + r.v * r.L) / (l.L + r.L); l.L += r.L; } else arr.push({ ...r }); };
+  for (let i = 0; i < q.length - 1; i++) {
+    const dx = q[i + 1][0] - q[i][0], dz = q[i + 1][1] - q[i][1], L = Math.hypot(dx, dz); if (L < 1e-6) continue;
+    const H = Math.abs(dx) >= Math.abs(dz); push(runs, { H, v: H ? (q[i][1] + q[i + 1][1]) / 2 : (q[i][0] + q[i + 1][0]) / 2, L });
+  }
+  const minRun = Math.max(12 / sv.k, P.grid * 0.25);
+  if (runs.length > 1) { const out = []; for (const r of runs.filter(r => r.L >= minRun)) push(out, r); runs = out; }
+  if (!runs.length) return [raw[0], raw[raw.length - 1]];
+  runs.forEach(r => { r.v0 = r.v; });
+  const tol = Math.max(26 / sv.k, P.grid * 0.6), snapV = (v, arr) => { let best = v, bd = tol; for (const c of arr) { const d = Math.abs(c - v); if (d < bd) { bd = d; best = c; } } return best; };
+  for (const r of runs) r.v = snapV(r.v, r.H ? cz : cx);
+  const [sx, sz] = raw[0], [ex, ez] = raw[raw.length - 1], BIG = (P.siteW + P.siteD) * 2;
+  const verts = () => {
+    const r0 = runs[0], rN = runs[runs.length - 1], V = [r0.H ? [sx, r0.v] : [r0.v, sz]];
+    for (let i = 0; i < runs.length - 1; i++) { const A = runs[i], B = runs[i + 1]; V.push(A.H ? [B.v, A.v] : [A.v, B.v]); }
+    V.push(rN.H ? [ex, rN.v] : [rN.v, ez]); return V;
+  };
+  // 직선이 묶인 도형(+여백)을 지나가면 그 도형 바깥 모서리선으로 밀어냄 (그린 쪽으로)
+  for (let it = 0; it < 6; it++) {
+    const V = verts(); let moved = false;
+    runs.forEach((r, i) => {
+      const ax = r.H ? 0 : 1; let sa = V[i][ax], sc = V[i + 1][ax];
+      if (i === 0 && endS) sa += sa <= sc ? -BIG : BIG; // 양 끝 직선은 점선 밖까지 늘어나니 그만큼 검사
+      if (i === runs.length - 1 && endE) sc += sc >= sa ? BIG : -BIG;
+      const lo = Math.min(sa, sc), hi = Math.max(sa, sc);
+      for (const o of mem) {
+        const g = o.g, s0 = r.H ? g.x0 : g.z0, s1 = r.H ? g.x1 : g.z1, t0 = r.H ? g.z0 : g.x0, t1 = r.H ? g.z1 : g.x1;
+        if (!(lo < s1 - 1e-6 && hi > s0 + 1e-6)) continue;
+        if (r.v > t0 + 1e-6 && r.v < t1 - 1e-6) { r.v = r.v0 < (t0 + t1) / 2 ? t0 : t1; moved = true; }
+      }
+    });
+    if (!moved) break;
+  }
+  const V = verts(), out = [V[0]], K = Math.SQRT2 - 1, dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  // 도형 꼭짓점(+여백) 좌표 중, 이 직선 위에 놓인 도형의 것만 둥근 부분 끝점 후보
+  const cornerCands = r => { const o = []; for (const t of mem) { const g = t.g; if (r.H ? (Math.abs(g.z0 - r.v) < 1e-6 || Math.abs(g.z1 - r.v) < 1e-6) : (Math.abs(g.x0 - r.v) < 1e-6 || Math.abs(g.x1 - r.v) < 1e-6)) o.push(...(r.H ? [g.x0, g.x1, g.x0 + m, g.x1 - m] : [g.z0, g.z1, g.z0 + m, g.z1 - m])); } return o; }; // 여백선과 실제 꼭짓점 둘 다
+  for (let i = 1; i < V.length - 1; i++) {
+    const C = V[i], A = runs[i - 1], B = runs[i], C0 = A.H ? [B.v0, A.v0] : [A.v0, B.v0];
+    let d0 = Infinity; for (const p of raw) d0 = Math.min(d0, dist(p, C0));
+    const R = d0 > 12 / sv.k ? d0 / K : 0;
+    if (R * sv.k < 6) { out.push(C); continue; }
+    const ua = [Math.sign(C[0] - V[i - 1][0]), Math.sign(C[1] - V[i - 1][1])], ub = [Math.sign(V[i + 1][0] - C[0]), Math.sign(V[i + 1][1] - C[1])];
+    const lp = dist(V[i - 1], C) * (i === 1 ? 0.95 : 0.5), ln = dist(C, V[i + 1]) * (i === V.length - 2 ? 0.95 : 0.5);
+    // 앞 직선 쪽 반지름 ra, 뒤 직선 쪽 rb: 그린 크기에 가장 가까운 도형 꼭짓점에 맞춤 (없으면 그린 크기)
+    const pickR = (cands, axisC, sign, cap) => { let best = null, bd = Infinity; for (const c of cands) { const rr = (c - axisC) * sign; if (rr < R * 0.3 || rr > Math.min(cap, R * 3) + 1e-6 || rr * sv.k < 5) continue; const d = Math.abs(rr - R); if (d < bd) { bd = d; best = rr; } } return best; };
+    let ra = pickR(cornerCands(A), A.H ? C[0] : C[1], -(A.H ? ua[0] : ua[1]), lp), rb = pickR(cornerCands(B), B.H ? C[0] : C[1], B.H ? ub[0] : ub[1], ln);
+    // 한쪽만 도형 꼭짓점에 맞으면 다른 쪽도 같은 반지름 (둥근 모서리가 도형 꼭짓점에서 시작·끝)
+    if (ra == null && rb == null) ra = rb = Math.min(R, lp, ln);
+    else if (ra == null) ra = Math.min(rb, lp); else if (rb == null) rb = Math.min(ra, ln);
+    const arc = (ra, rb) => { const cc = [C[0] - ua[0] * ra + ub[0] * rb, C[1] - ua[1] * ra + ub[1] * rb], o = []; for (let k = 0; k <= 12; k++) { const t = k / 12 * Math.PI / 2; o.push([cc[0] - ub[0] * rb * Math.cos(t) + ua[0] * ra * Math.sin(t), cc[1] - ub[1] * rb * Math.cos(t) + ua[1] * ra * Math.sin(t)]); } return o; };
+    let pts = null;
+    for (let tries = 0; tries < 8 && ra * sv.k >= 4 && rb * sv.k >= 4; tries++) { const o = arc(ra, rb); if (!o.some(p => intrudes(p, mem, m))) { pts = o; break; } ra *= 0.75; rb *= 0.75; }
+    if (pts) out.push(...pts); else out.push(C);
+  }
+  out.push(V[V.length - 1]);
+  return out;
+}
+// 원형·반원 도형의 곡선을 점선 여백만큼 바깥으로 띄운 점들
+function arcSamples(b, m){
+  const e = ell(b); if (!e) return null;
+  const si = boxSheetIdx(b), ox = sheetOx(si), oy = sheetOy(si), N = b.shape === 'circle' ? 72 : 40, pts = [];
+  const [qx, qz] = fromLocal(b, e.cu, e.cv);
+  for (let i = 0; i <= N; i++) {
+    if (b.shape === 'circle' && i === N) break;
+    const t = e.t0 + (e.t1 - e.t0) * i / N, [px0, pz0] = fromLocal(b, e.cu + e.ru * Math.cos(t), e.cv + e.rv * Math.sin(t)), L = Math.hypot(px0 - qx, pz0 - qz) || 1;
+    pts.push([px0 + (px0 - qx) / L * m + ox, pz0 + (pz0 - qz) / L * m + oy]);
+  }
+  return { pts, closed: b.shape === 'circle' };
+}
+// 손그림 → 꺾을 선: 원형·반원 곡선을 따라 그린 부분은 그 곡선 그대로, 나머지는 직선(+둥근 모서리)으로. 양 끝은 점선 밖까지 길게 늘림
+function orthoLine(raw, ms, poly, m){
+  const cx = [], cz = [];
+  for (const b of ms) { const a = canvasBox(b); cx.push(a.x0 - m, a.x1 + m); cz.push(a.z0 - m, a.z1 + m); }
+  poly.forEach((p0, j) => { const p1 = poly[(j + 1) % poly.length]; if (Math.abs(p0[1] - p1[1]) < 1e-6) cz.push(p0[1]); if (Math.abs(p0[0] - p1[0]) < 1e-6) cx.push(p0[0]); });
+  const mem = cutMembers(ms, m), arcs = ms.filter(b => ['circle', 'semi', 'quarter'].includes(b.shape)).map(b => arcSamples(b, m)).filter(Boolean);
+  const tolC = Math.max(16 / sv.k, P.grid * 0.35), tags = raw.map(p => {
+    let best = null;
+    arcs.forEach((A, k) => A.pts.forEach((q, j) => { const d = Math.hypot(p[0] - q[0], p[1] - q[1]); if (d < tolC && (!best || d < best.d)) best = { k, j, d }; }));
+    return best;
+  });
+  // 같은 곡선을 따라간 점끼리 토막으로
+  let pieces = [];
+  raw.forEach((p, i) => { const k = tags[i] ? tags[i].k : -1, l = pieces[pieces.length - 1]; if (l && l.k === k) { l.pts.push(p); l.js.push(tags[i] && tags[i].j); } else pieces.push({ k, pts: [p], js: [tags[i] && tags[i].j] }); });
+  const minArc = Math.max(36 / sv.k, P.grid * 0.6);
+  for (const pc of pieces) if (pc.k >= 0 && pathLen(pc.pts) < minArc) pc.k = -1;
+  const merged = []; for (const pc of pieces) { const l = merged[merged.length - 1]; if (l && l.k === -1 && pc.k === -1) l.pts.push(...pc.pts); else merged.push(pc); }
+  pieces = merged;
+  const arcPts = pc => {
+    const A = arcs[pc.k], N = A.pts.length, j0 = pc.js[0], j1 = pc.js[pc.js.length - 1], o = [];
+    if (A.closed) { let tot = 0; for (let i = 1; i < pc.js.length; i++) { let dj = pc.js[i] - pc.js[i - 1]; if (dj > N / 2) dj -= N; if (dj < -N / 2) dj += N; tot += dj; } const st = Math.sign(tot) || 1; for (let i = 0; i <= Math.abs(tot); i++) o.push(A.pts[((j0 + st * i) % N + N) % N]); }
+    else { const st = j1 >= j0 ? 1 : -1; for (let j = j0; j !== j1 + st; j += st) o.push(A.pts[j]); }
+    return o;
+  };
+  const out = [];
+  pieces.forEach((pc, i) => {
+    if (pc.k >= 0) { out.push(...arcPts(pc)); return; }
+    let pr = pc.pts.slice();
+    if (out.length) pr.unshift(out[out.length - 1]);
+    const nx = pieces[i + 1]; if (nx && nx.k >= 0) pr.push(arcPts(nx)[0]);
+    if (pr.length < 2 || pathLen(pr) < 4 / sv.k) { if (!out.length) out.push(...pr); return; }
+    out.push(...orthoPiece(pr, cx, cz, mem, m, !out.length, i === pieces.length - 1));
+  });
+  if (out.length < 2) return null;
+  const BIG = (P.siteW + P.siteD) * 2, ext = (p, toward) => { const dx = p[0] - toward[0], dz = p[1] - toward[1], L = Math.hypot(dx, dz) || 1; return [p[0] + dx / L * BIG, p[1] + dz / L * BIG]; };
+  let k1 = 1; while (k1 < out.length - 1 && Math.hypot(out[k1][0] - out[0][0], out[k1][1] - out[0][1]) < 1e-6) k1++;
+  let k2 = out.length - 2; while (k2 > 0 && Math.hypot(out[k2][0] - out[out.length - 1][0], out[k2][1] - out[out.length - 1][1]) < 1e-6) k2--;
+  out.unshift(ext(out[0], out[k1])); out.push(ext(out[out.length - 1], out[k2]));
+  return out;
+}
+function cleanPoly(pts){
+  let o = pts.filter((q, i) => { const pv = pts[(i - 1 + pts.length) % pts.length]; return Math.hypot(q[0] - pv[0], q[1] - pv[1]) > 1e-4; });
+  for (let k = 0; k < 3 && o.length > 3; k++) o = o.filter((q, i) => { const a = o[(i - 1 + o.length) % o.length], c = o[(i + 1) % o.length]; return Math.abs((q[0] - a[0]) * (c[1] - a[1]) - (q[1] - a[1]) * (c[0] - a[0])) > 1e-6; });
+  return o;
+}
+function finishEnvCut(g){
+  const groups = envGroups(), m = 7 / sv.k;
+  // 그은 선이 가로지르는 점선 테두리 찾기 (여럿이면 가장 많이 가로지른 것)
+  let pick = null;
+  for (const [env, ms] of groups) {
+    if (!ms.every(b => sheetVis(boxSheetIdx(b)))) continue;
+    const poly = envOutlinePts(env, ms, m), n = lineHits(g.pts, poly).length, r = polyBox(poly), mid = g.pts[g.pts.length >> 1];
+    const score = n * 10 + (inRect(r, mid[0], mid[1]) ? 1 : 0);
+    if (score > 0 && (!pick || score > pick.score)) pick = { env, ms, poly, score };
+  }
+  if (!pick) { toast('점선 테두리를 가로질러 그어 주세요. 그은 선을 따라 점선이 꺾여요'); return; }
+  const line = orthoLine(g.pts, pick.ms, pick.poly, m);
+  const hs = line && lineHits(line, pick.poly);
+  if (!hs || hs.length < 2) { toast('선이 점선 테두리를 양쪽으로 가로질러야 꺾을 수 있어요'); return; }
+  const I1 = hs[0], I2 = hs[hs.length - 1], poly = pick.poly, n = poly.length;
+  const mid = []; for (let i = Math.floor(I1.s) + 1; i <= Math.floor(I2.s) && i < line.length; i++) if (i > I1.s && i < I2.s) mid.push(line[i]);
+  const walk = (A, B) => { // 테두리를 A에서 B까지 앞으로 따라감
+    const out = [A.pt]; let j = Math.floor(A.e); const jb = Math.floor(B.e);
+    if (!(j === jb && A.e % 1 <= B.e % 1)) { do { j = (j + 1) % n; out.push(poly[j]); } while (j !== jb); }
+    out.push(B.pt); return out;
+  };
+  const pa = cleanPoly([...walk(I1, I2), ...mid.slice().reverse()]), pb = cleanPoly([...walk(I2, I1), ...mid]);
+  const cnt = pp => pp.length >= 3 ? pick.ms.filter(b => { const [x, z] = boxCenterCanvas(b); return inPoly(pp, x, z); }).length : -1;
+  const ca = cnt(pa), cb = cnt(pb), keep = ca > cb || (ca === cb && polyArea(pa) >= polyArea(pb)) ? pa : pb;
+  if (Math.max(ca, cb) < pick.ms.length) { toast('도형 가운데를 가로지르면 꺾을 수 없어요. 도형 사이 빈 곳으로 그어 주세요'); return; }
+  // 묶인 도형은 반드시 점선 안쪽(여백 포함)에 있어야 함
+  const mem = cutMembers(pick.ms, m), bad = mem.some(o => o.poly.some(p => !inPoly(keep, p[0], p[1]) || distToPoly(p, keep) < m * 0.5));
+  if (bad) { toast('그렇게 꺾으면 묶인 도형에 점선이 닿아요. 도형 바깥 빈 곳으로 다시 그어 주세요'); return; }
+  let kp = keep; for (let t = 0.5; kp.length > 560 && t < 64; t *= 2) kp = simplify([...keep, keep[0]], t / sv.k).slice(0, -1);
+  const si = boxSheetIdx(pick.ms[0]), ox = sheetOx(si), oy = sheetOy(si), local = kp.map(([x, z]) => [r2(x - ox), r2(z - oy)]);
+  const ref = {}; for (const b of pick.ms) { const a = canvasBox(b); ref[b.id] = [r2(a.x0 - ox), r2(a.z0 - oy), r2(a.x1 - ox), r2(a.z1 - oy)]; }
+  commit(() => { P.envShapes = { ...(P.envShapes || {}), [pick.env]: { sheet: P.sheets[si].id, pts: local, ref, m: Math.round(m * 1000) / 1000 } }; setSel(pick.ms.map(b => b.id)); });
+  toast('그은 선을 따라 점선을 꺾었어요 · 되돌리기로 취소할 수 있어요');
 }
 function simplify(pts, tol){
   if (pts.length < 3) return pts;
@@ -3877,6 +4218,7 @@ pc.addEventListener('pointerdown', e => {
   const w = toWorld(e), el = e.target.closest ? e.target.closest('[data-role]') : null;
   const role = el ? el.dataset.role : null, id = el ? el.dataset.id : null, ro = edRO();
   if (e.button === 1 || e.button === 2 || spaceDown) { sAuto = false; gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty }; return; }
+  if (role === 'halftog') { gesture = { type: 'none' }; toggleHalf(el.dataset.sheet); return; }
   if (role === 'sheettitle') { gesture = { type: 'none' }; activateSheet(el.dataset.sheet, true); return; }
   if (linkMode && !flowEdit) {
     const c = P.cards.find(x => x.id === selCard);
@@ -3928,7 +4270,7 @@ pc.addEventListener('pointerdown', e => {
     return;
   }
   if (!ro && tool === 'outer') {
-    // 점선 외곽: 손으로 그려서 양 끝을 이으면 도형이 됨 (동선 그리기처럼)
+    // 점선 꺾기: 점선 테두리를 가로질러 그은 선을 따라 점선이 직각으로 꺾여 들어감
     const si = sheetAt(w.x, w.z); activeSheet = P.sheets[si].id;
     gesture = { type: 'outline', si, pts: [[w.x, w.z]], lx: e.clientX, ly: e.clientY, sx: e.clientX, sy: e.clientY, near: false };
     return;
@@ -4018,7 +4360,7 @@ pc.addEventListener('pointermove', e => {
     g.lx = e.clientX; g.ly = e.clientY; g.pts.push([w.x, w.z]);
     const [sx, sz] = g.pts[0], len = pathLen(g.pts);
     g.near = len > outSnap() * 6 && Math.hypot(w.x - sx, w.z - sz) <= outSnap();
-    if (g.near && g.pts.length > 10) { (g.site ? finishSite : finishOutline)(g); gesture = { type: 'none' }; studyUI(); return; } // 시작점에 닿으면 자동으로 닫힘
+    if (g.site && g.near && g.pts.length > 10) { finishSite(g); gesture = { type: 'none' }; studyUI(); return; } // 경계선: 시작점에 닿으면 자동으로 닫힘
     renderStudy(); return;
   }
   if (g.type === 'draw') {
@@ -4148,14 +4490,11 @@ function endStudyPointer(e){
     if (cancelled) { renderStudy(); return; }
     const tap = Math.hypot(e.clientX - g.sx, e.clientY - g.sy) < 10 && g.pts.length < 4;
     if (tap && g.site) { renderStudy(); return; }
-    if (tap) { // 톡 누르면 기본 크기 사각 외곽
-      const ox = sheetOx(g.si), oy = sheetOy(g.si), cell = P.grid, dw = cell * 6, dd = cell * 4;
-      const nb = normBox({ id: uid(), kind: 'outer', shape: 'rect', x: sn(g.pts[0][0] - ox - dw / 2), z: sn(g.pts[0][1] - oy - dd / 2), w: dw, d: dd, lv: 0, fl: 1, cat: 'free' }, P.grid);
-      placeInSheet(nb, g.si); commit(() => { P.boxes.push(nb); setSel([nb.id]); }); setTool('select'); return;
-    }
+    if (tap) { toast('점선 테두리를 가로질러 꺾고 싶은 대로 그어 주세요'); renderStudy(); return; }
+    if (!g.site) { finishEnvCut(g); setTool('select'); return; }
     const [sx, sz] = g.pts[0], [ex, ez] = g.pts[g.pts.length - 1];
-    if (Math.hypot(ex - sx, ez - sz) <= outSnap() * 1.6 && pathLen(g.pts) > outSnap() * 4) { (g.site ? finishSite : finishOutline)(g); studyUI(); return; }
-    toast(g.site ? '양 끝이 만나야 경계선이 생겨요. 시작한 점까지 이어서 그려 주세요' : '양 끝이 만나야 점선 외곽이 생겨요. 시작한 점까지 이어서 그려 주세요'); renderStudy(); return;
+    if (Math.hypot(ex - sx, ez - sz) <= outSnap() * 1.6 && pathLen(g.pts) > outSnap() * 4) { finishSite(g); studyUI(); return; }
+    toast('양 끝이 만나야 경계선이 생겨요. 시작한 점까지 이어서 그려 주세요'); renderStudy(); return;
   }
   if (g.type === 'draw') {
     if (cancelled) { renderStudy(); return; }
@@ -4174,7 +4513,7 @@ function endStudyPointer(e){
   if (g.type === 'resize' || g.type === 'rotate') { if (g.moved && !cancelled) { const b = getBox(sel); if (b) remember(b); pushHist(g.start); } else { if (cancelled && g.moved) { P = JSON.parse(g.start); pruneSel(); } renderStudy(); } return; }
   if (g.type === 'move') {
     if (g.moved && !cancelled && (g.dx || g.dz || g.envChanged)) {
-      rehome(); pushHist(g.start); return;
+      rehome(); envShapeCheck(); pushHist(g.start); return;
     }
     if (cancelled) { if (g.moved && (g.dx || g.dz || g.envChanged)) { P = JSON.parse(g.start); pruneSel(); } studyUI(); return; }
     if (g.held) { studyUI(); return; }
@@ -4207,7 +4546,7 @@ function openCardLightbox(cid){
 }
 function tapCheck(id){
   const now = performance.now();
-  if (lastTap.id === id && now - lastTap.t < 380 && !edRO()) { lastTap = { t: 0, id: null }; openLabelEd(id); return; }
+  if (lastTap.id === id && now - lastTap.t < 380) { lastTap = { t: 0, id: null }; if (edRO()) setTimeout(() => showShapeInfo(id), 0); else openLabelEd(id); return; }
   lastTap = { t: now, id };
 }
 pc.addEventListener('wheel', e => {
@@ -4234,6 +4573,25 @@ function renderLeCats(){
   const el = $('#leCats'); el.textContent = '';
   catChips(el, leCat, k => { leCat = k; leCatTouched = true; renderLeCats(); }, id => { leCat = id; leCatTouched = true; renderLeCats(); });
 }
+let leTag = '';
+function renderLeTag(){ document.querySelectorAll('#leTag button').forEach(x => x.classList.toggle('on', x.dataset.t === leTag)); }
+document.querySelectorAll('#leTag button').forEach(x => x.onclick = () => { leTag = x.dataset.t; renderLeTag(); });
+// 보기 전용(남의 작업물)에서 두 번 톡: 접힌 설명·공간 종류·태그를 읽기만
+function showShapeInfo(id){
+  const b = getBox(id); if (!b) return;
+  let el = $('#infoPop'); if (!el) { el = document.createElement('div'); el.id = 'infoPop'; el.className = 'infoPop'; $('#studyUI').appendChild(el); }
+  const ci = b.kind === 'solid' ? catInfo(b.cat) : null;
+  el.innerHTML = `<b></b><p></p><div class="m"></div>`;
+  el.querySelector('b').textContent = b.label || (b.kind === 'outer' ? '점선 외곽' : '이름 없는 공간');
+  el.querySelector('p').textContent = b.note || '설명이 없어요';
+  el.querySelector('.m').textContent = [ci && ci.n, SPACE_TAGS[b.tag] && `${SPACE_TAGS[b.tag]} 공간`, dimText(b.w, b.d)].filter(Boolean).join('  ·  ');
+  el.hidden = false;
+  const r = $('#editView').getBoundingClientRect(), cb = canvasBox(b), c = toScreen((cb.x0 + cb.x1) / 2, cb.z0);
+  el.style.left = Math.max(10, Math.min(r.width - el.offsetWidth - 10, c.x - r.left - el.offsetWidth / 2)) + 'px';
+  el.style.top = Math.max($('#topArea').offsetHeight + 8, c.y - r.top - el.offsetHeight - 12) + 'px';
+}
+function hideShapeInfo(){ const el = $('#infoPop'); if (el) el.hidden = true; }
+pc.addEventListener('pointerdown', hideShapeInfo, { capture: true });
 function openLabelEd(id, isNew){
   const b = getBox(id), n = getNote(id); if (!b && !n) return;
   if (b && b.lock) { toast('잠긴 도형이에요. 잠금을 풀고 써 주세요'); return; }
@@ -4244,6 +4602,7 @@ function openLabelEd(id, isNew){
   $('#leLabel').maxLength = n ? 80 : 24;
   $('#leLabel').value = n ? n.text : b.label; $('#leNote').value = b ? b.note : '';
   leCat = b ? b.cat : 'free'; leCatTouched = !!(b && b.cat !== 'free'); renderLeCats();
+  leTag = b ? b.tag || '' : ''; $('#leTag').hidden = !b || b.kind === 'outer'; renderLeTag();
   $('#leDims').hidden = !b;
   if (b) {
     const sk = isSketch();
@@ -4278,7 +4637,7 @@ function closeLabelEd(save){
       commit(() => { const x = getNote(id); if (x) x.text = v.slice(0, 80) || x.text || '텍스트'; });
     } else if (b) commit(() => {
       const x = getBox(id); if (!x) return;
-      x.label = v.slice(0, 24); x.note = m.slice(0, 40); if (x.kind === 'solid') x.cat = leCat;
+      x.label = v.slice(0, 24); x.note = m.slice(0, 80); if (x.kind === 'solid') { x.cat = leCat; x.tag = leTag; }
       const sk = isSketch(), wv = Number($('#leW').value), dv = Number($('#leD').value);
       const conv = v2 => sk ? Math.max(0.25, r2(Math.round(v2 * 4) / 4)) : Math.max(P.grid / 2, r2(Math.round(v2 * 2) / 2 * P.grid));
       if (Number.isFinite(wv) && wv > 0) x.w = conv(wv);
@@ -4297,7 +4656,7 @@ $('#leCancel').onclick = () => closeLabelEd(false);
 }));
 
 /* --- 도구·막대 --- */
-function setTool(t){ tool = t; if (t !== 'select') { multiPick = false; rotMode = false; } if (t === 'outer') toast('외곽을 손으로 그리고 시작점까지 이으면 점선 외곽이 돼요. 톡 누르면 기본 크기 사각형'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
+function setTool(t){ tool = t; if (t !== 'select') { multiPick = false; rotMode = false; } if (t === 'outer') toast('점선 테두리를 가로질러 선을 그어 보세요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 원·반원을 따라 그리면 그 곡선대로 꺾여요'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
 document.querySelectorAll('#stools [data-tool]').forEach(b => b.onclick = () => setTool(b.dataset.tool));
 $('#zoomBtn').onclick = () => fitSheet(activeIdx(), true);
 $('#snapBtn').onclick = () => { studySnap = !studySnap; try { localStorage.setItem('mass-study-snap', studySnap ? 'on' : 'off'); } catch (e) {} studyUI(); toast(studySnap ? `격자가 보이고 반 칸(${f2(P.grid / 2)}m)씩 맞춰져요` : '격자 없이 자유롭게 움직여요'); };
@@ -4350,14 +4709,12 @@ function setCat(k){ commit(() => { for (const x of selBoxes()) if (!x.lock && x.
 let shMode = 'add', shEditId = null, shType = 'plan', shNameTouched = false, shTs = 1.15;
 document.querySelectorAll('#shTs button').forEach(b => b.onclick = () => { shTs = Number(b.dataset.ts); document.querySelectorAll('#shTs button').forEach(x => x.classList.toggle('on', x === b)); });
 const intLevels = () => P.sheets.filter(s => s.type === 'plan' && !isHalf(s.level)).map(s => s.level);
-function halfChoices(){ const ls = intLevels().sort((a, b) => a - b), have = new Set(P.sheets.filter(s => s.type === 'plan').map(s => s.level)); return ls.map(L => L + 0.5).filter(h => !have.has(h)); }
 function newLevelFor(type){
   if (type === 'base') return Math.min(0, ...intLevels()) - 1;
-  if (type === 'half') return Number($('#shHalfOf').value);
   return Math.max(-1, ...intLevels()) + 1;
 }
 function autoSheetName(type){
-  if (type === 'plan' || type === 'base' || type === 'half') return levelName(newLevelFor(type));
+  if (type === 'plan' || type === 'base') return levelName(newLevelFor(type));
   const n = P.sheets.filter(s => s.type === 'section').length; return `단면 ${String.fromCharCode(65 + Math.min(n, 25))}`;
 }
 function openSheetModal(mode, id){
@@ -4366,10 +4723,11 @@ function openSheetModal(mode, id){
   shType = s ? s.type : 'plan';
   $('#shTitle').textContent = mode === 'add' ? '대지 추가' : '대지 설정';
   $('#shType').hidden = mode !== 'add';
-  fillHalfChoices();
   $('#shName').value = s ? sheetTitle(s) : autoSheetName(shType);
   $('#shCopyRow').hidden = mode !== 'add' || shType === 'section';
-  $('#shHalfRow').hidden = mode !== 'add' || shType !== 'half';
+  const canHalf = mode === 'edit' && s && s.type === 'plan' && !isHalf(s.level) && !isSketch() && !P.sheets.some(x => x.type === 'plan' && x.level === s.level + 0.5);
+  $('#shGround').hidden = !(mode === 'edit' && s && s.type === 'plan' && !isHalf(s.level) && s.level !== 0 && !isSketch());
+  $('#shAddHalf').hidden = !canHalf; if (canHalf) { $('#shAddHalf').textContent = `+ ${levelName(s.level + 0.5)} 추가`; $('#shAddHalf').title = '두 층 사이 높이의 스킵 플로어'; }
   $('#shDel').hidden = mode === 'add' || P.sheets.length <= 1;
   $('#shLeft').hidden = $('#shRight').hidden = mode === 'add' || P.sheets.length <= 1 || (s && s.type === 'plan' && isHalf(s.level));
   $('#shOk').textContent = mode === 'add' ? '추가하고 보기' : '확인';
@@ -4389,22 +4747,14 @@ document.querySelectorAll('#shType button').forEach(b => b.onclick = () => {
 const SH_INFO = {
   plan: '평면 대지는 층이 하나씩 올라가요. 치수 모드 3D에서 그 층 높이에 쌓여요.',
   base: '지하층은 맨 왼쪽에 놓이고 3D에서 땅 아래로 내려가요. 용적률 연면적에는 들어가지 않아요.',
-  half: '반 층은 두 층 사이 높이에 놓이는 스킵 플로어예요. 펼치면 두 층 사이 위쪽에, 접으면 두 층에 희미하게 겹쳐 보여요.',
   section: '입면·단면 대지는 그림만 그려요. 면적 계산과 3D에는 들어가지 않아요.'
 };
-function fillHalfChoices(){
-  const sel = $('#shHalfOf'), ch = halfChoices(); sel.textContent = '';
-  for (const h of ch) { const o = document.createElement('option'); o.value = h; o.textContent = `${levelName(h - 0.5)}과 ${levelName(h + 0.5)} 사이 (${levelName(h)})`; sel.appendChild(o); }
-  const btn = document.querySelector('#shType [data-t=half]'); if (btn) btn.disabled = !ch.length;
-}
 function openSheetModalRefresh(){
   document.querySelectorAll('#shType button').forEach(b => b.classList.toggle('on', b.dataset.t === shType));
   $('#shCopyRow').hidden = shType === 'section';
-  $('#shHalfRow').hidden = shType !== 'half';
   $('#shInfo').textContent = SH_INFO[shType] || SH_INFO.plan;
 }
 $('#shName').addEventListener('input', () => { shNameTouched = true; });
-$('#shHalfOf').addEventListener('change', () => { if (!shNameTouched) $('#shName').value = autoSheetName(shType); });
 $('#shName').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) $('#shOk').click(); });
 $('#shCancel').onclick = () => { $('#sheetModal').hidden = true; };
 $('#shOk').onclick = () => {
@@ -4413,12 +4763,11 @@ $('#shOk').onclick = () => {
   if (shMode === 'add') {
     const id = 's' + uid();
     commit(() => {
-      if (shType === 'plan' || shType === 'base' || shType === 'half') {
+      if (shType === 'plan' || shType === 'base') {
         const L = newLevelFor(shType); if (!Number.isFinite(L)) return;
-        const from = shType === 'base' ? Math.min(...intLevels()) : shType === 'half' ? Math.floor(L) : Math.max(...intLevels());
+        const from = shType === 'base' ? Math.min(...intLevels()) : Math.max(...intLevels());
         const sh = { id, name: name || levelName(L), type: 'plan', level: L, ts: shTs };
         if (shType === 'base') P.sheets.unshift(sh); else P.sheets.push(sh);
-        if (shType === 'half') { halfOpen = true; LAY = null; }
         if ($('#shCopy').checked) for (const b of P.boxes.filter(b => !b.sheet && b.lv === from && b.kind === 'outer')) P.boxes.push({ ...b, id: uid(), lv: L, group: '' });
       } else P.sheets.push({ id, name: name || autoSheetName('section'), type: 'section', level: 0, ts: shTs });
     });
@@ -4445,6 +4794,32 @@ function moveSheet(dir){
   if (moved) toast('층 순서도 같이 바꿨어요. 치수 모드 3D에도 그대로 쌓여요');
   activateSheet(shEditId, true);
 }
+// 이 층을 1층(지면)으로: 모든 층 번호를 같이 옮김. 아래층은 지하(땅 아래, 용적률 제외)가 됨
+$('#shGround').onclick = async () => {
+  const s = P.sheets.find(x => x.id === shEditId); if (!s) return;
+  const d = -s.level, below = P.sheets.filter(x => x.type === 'plan' && x.level < s.level).length;
+  if (!await confirmBox(`${sheetTitle(s)}을 1층으로 정할까요?`, below ? `아래에 있는 ${below}개 층은 지하층이 되고, 3D에서 땅 아래로 내려가요. 지하층 면적은 용적률에서 빠져요.` : '이 층 위로 층 번호가 다시 매겨져요.', '1층으로 지정', false)) return;
+  const nm = sheetTitle(s); $('#sheetModal').hidden = true;
+  commit(() => {
+    for (const x of P.sheets) if (x.type === 'plan') {
+      const nl = Math.max(-10, Math.min(99, x.level + d));
+      if (!x.name || x.name === levelName(x.level) || x.name === `${x.level + 1}층`) x.name = levelName(nl);
+      x.level = nl;
+    }
+    for (const b of P.boxes) if (!b.sheet) b.lv = Math.max(-10, Math.min(99, b.lv + d));
+    const fh = {}; for (const [k, v] of Object.entries(P.floorHs || {})) fh[Number(k) + d] = v; P.floorHs = fh;
+  });
+  toast(below ? `‘${nm}’을 1층으로 정했어요. 아래 ${below}개 층은 지하층이 됐어요` : '층 번호를 다시 매겼어요');
+};
+$('#shAddHalf').onclick = () => {
+  const s = P.sheets.find(x => x.id === shEditId); if (!s) return;
+  const L = s.level + 0.5, id = 's' + uid();
+  $('#sheetModal').hidden = true;
+  commit(() => { const i = P.sheets.findIndex(x => x.id === shEditId); P.sheets.splice(i + 1, 0, { id, name: levelName(L), type: 'plan', level: L, ts: s.ts }); });
+  halfOpen.add(id); LAY = null;
+  requestAnimationFrame(() => activateSheet(id, true));
+  toast(`${levelName(L)}을 더했어요. ${levelName(s.level)} 대지 오른쪽 위 아이콘으로 접었다 펼 수 있어요`);
+};
 $('#shLeft').onclick = () => moveSheet(-1);
 $('#shRight').onclick = () => moveSheet(1);
 $('#shDel').onclick = async () => {
@@ -4468,6 +4843,8 @@ const IC = {
   circle: SVGI('<circle cx="10" cy="10" r="6.6" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7"/>'),
   tri: SVGI('<path d="M10 3.6L17 16H3z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'),
   poly: SVGI('<path d="M4 6l6-3 6 4-1 8-7 2-5-5z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.4 1.8" stroke-linejoin="round"/>'),
+  copy: '<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><rect x="6.5" y="6.5" width="9.5" height="9.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 4H5.6c-.9 0-1.6.7-1.6 1.6v7.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  unshare: '<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M10 12.5V3.5M6.8 6.6L10 3.4l3.2 3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 10.5v4.4c0 .9.7 1.6 1.6 1.6h7.8c.9 0 1.6-.7 1.6-1.6v-4.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M3.5 17L16.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
   pen: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M12.9 4.1l3 3L7.4 15.6l-3.7.7.7-3.7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M11.4 5.6l3 3" stroke="currentColor" stroke-width="1.6"/></svg>',
   trash: '<svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true"><path d="M4.5 6h11M8 6V4.6c0-.4.3-.6.6-.6h2.8c.3 0 .6.2.6.6V6M6 6l.7 9.4c0 .6.5 1.1 1.1 1.1h4.4c.6 0 1.1-.5 1.1-1.1L14 6M8.6 9v4.8M11.4 9v4.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   semi: SVGI('<path d="M3 14a7 7 0 0 1 14 0z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'),
@@ -4569,6 +4946,18 @@ function dragScroll(el){
 }
 ['#sbottom', '#stools', '#sheetBar', '#stats', '#teamFilter', '#ctx'].forEach(q => { const el = $(q); if (el) { el.style.overflowX = 'auto'; dragScroll(el); } });
 
+// n.5층 접기·펴기 (n층 대지 오른쪽 위 아이콘)
+function toggleHalf(hid){
+  if (halfOpen.has(hid)) halfOpen.delete(hid); else halfOpen.add(hid);
+  LAY = null;
+  if (!halfOpen.has(hid)) {
+    setSel([...selSet].filter(id => { const b = getBox(id), n = getNote(id); return sheetVis(b ? boxSheetIdx(b) : n ? itemSheetIdx(n) : 0); }));
+    const h = P.sheets.find(s => s.id === hid);
+    if (activeSheet === hid && h) activeSheet = (P.sheets.find(s => s.type === 'plan' && s.level === Math.floor(h.level)) || P.sheets[0]).id;
+  }
+  if (allView) fitAll(); else renderStudy();
+  studyBars(); studyUI();
+}
 function studyBars(){
   if (!P) return;
   const ro = edRO();
@@ -4582,7 +4971,7 @@ function studyBars(){
   order.forEach(s => {
     const i = P.sheets.indexOf(s);
     const b = document.createElement('button'); b.textContent = sheetTitle(s);
-    if (s.type === 'plan' && isHalf(s.level)) { b.classList.add('half'); if (!halfOpen) b.classList.add('folded'); }
+    if (s.type === 'plan' && isHalf(s.level)) { b.classList.add('half'); if (!halfOpen.has(s.id)) b.classList.add('folded'); }
     if (!ro) b.title = '두 번 누르면 이름·글자 크기 설정';
     if (s.type === 'section') b.classList.add('sec');
     if (s.id === activeSheet && !allView) b.classList.add('on');
@@ -4593,12 +4982,6 @@ function studyBars(){
     };
     bar.appendChild(b);
   });
-  if (halves.length) {
-    const t = document.createElement('button'); t.className = 'fold'; t.textContent = halfOpen ? '반 층 접기' : '반 층 펼치기';
-    t.setAttribute('aria-pressed', halfOpen ? 'true' : 'false');
-    t.onclick = () => { halfOpen = !halfOpen; LAY = null; if (!halfOpen) { setSel([...selSet].filter(id => { const b = getBox(id), n = getNote(id); return sheetVis(b ? boxSheetIdx(b) : n ? itemSheetIdx(n) : 0); })); } const a = P.sheets.find(s => s.id === activeSheet); if (!halfOpen && a && a.type === 'plan' && isHalf(a.level)) activeSheet = (P.sheets.find(s => s.type === 'plan' && s.level === Math.floor(a.level)) || P.sheets[0]).id; if (allView) fitAll(); else activateSheet(activeSheet, true); studyBars(); };
-    bar.appendChild(t);
-  }
   if (!ro) { const a = document.createElement('button'); a.className = 'add'; a.textContent = '+ 대지'; a.onclick = () => openSheetModal('add'); bar.appendChild(a); }
 }
 const pressed = (q, on, text) => { const b = $(q); b.setAttribute('aria-pressed', on ? 'true' : 'false'); if (text != null) b.textContent = text; };
@@ -4708,12 +5091,12 @@ function renderCtx(){
     if (b.group) btn('그룹 풀기', () => act('ungroup'));
     const linked = P.cards.filter(c => c.target === b.id);
     if (linked.length) btn(`사진 ${linked.length}`, () => focusCard(linked[(linked.findIndex(c => c.id === selCard) + 1) % linked.length].id));
-    btn('복제', () => act('dup')); trash(() => act('del'));
+    ibtn(IC.copy, '복제', () => act('dup'), 'cpy'); trash(() => act('del'));
   } else if (!sb.length) {
     const n = ns[0];
     if (ns.length === 1) { ibtn(IC.pen, '글 고치기', () => openLabelEd(n.id), 'pen'); btn(n.size === 1 ? '크게' : n.size === 1.4 ? '더 크게' : '작게', () => commit(() => { const x = getNote(n.id); if (x) x.size = x.size === 1 ? 1.4 : x.size === 1.4 ? 2 : 1; })); sep(); }
     else { const c = document.createElement('span'); c.className = 'cnt'; c.textContent = `글 ${ns.length}개`; ctx.appendChild(c); }
-    btn('복제', () => act('dup')); trash(() => act('del'));
+    ibtn(IC.copy, '복제', () => act('dup'), 'cpy'); trash(() => act('del'));
   } else {
     const c = document.createElement('span'); c.className = 'cnt'; c.textContent = `${sb.length + ns.length}개${oneGroup ? ' · 그룹' : ''}`; ctx.appendChild(c);
     if (!oneGroup) btn('그룹으로 묶기', () => act('group'), 'on');
@@ -4721,7 +5104,7 @@ function renderCtx(){
     if (solids.length) { catBtn(); tagBtn(); const allEnv = solids.every(b => b.env) && new Set(solids.map(b => b.env)).size === 1; ibtn(IC.env, allEnv ? '점선 테두리 끄기' : '한 점선 테두리로 두르기', envToggle, allEnv ? 'on' : ''); }
     const ab = btn('정렬', () => togglePop('align'), popKind === 'align' ? 'ib open' : 'ib'); ab.dataset.pop = 'align'; ab.insertAdjacentHTML('beforeend', ' ' + IC.caret);
     if (misSel.length && !isSketch()) btn('칸에 맞추기', () => fixUnit(misSel));
-    btn('복제', () => act('dup')); trash(() => act('del'));
+    ibtn(IC.copy, '복제', () => act('dup'), 'cpy'); trash(() => act('del'));
   }
 }
 function renderPop(){
@@ -5200,7 +5583,17 @@ async function prepImage(file, maxDim, quality, maxBytes){
 }
 const toDataURL = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
 $('#fileIn').onchange = async () => {
-  const files = [...$('#fileIn').files]; $('#fileIn').value = '';
+  let files = [...$('#fileIn').files]; $('#fileIn').value = '';
+  if (!files.length) return;
+  // 사진 올리기 한도: 한 번에 10장, 한 사람당 80장, 원본 20MB 이하 이미지만
+  const PER_BATCH = 10, PER_USER = 80, MAX_SRC = 20 * 1024 * 1024;
+  const mineNow = refs.filter(r => r.by === me && !r.trashed).length, left = PER_USER - mineNow;
+  const skipped = files.filter(f => !/^image\//.test(f.type) || f.size > MAX_SRC).length;
+  files = files.filter(f => /^image\//.test(f.type) && f.size <= MAX_SRC);
+  if (left <= 0) { toast(`사진은 한 사람당 ${PER_USER}장까지 올릴 수 있어요. 안 쓰는 사진을 지우고 다시 올려 주세요`); return; }
+  const allow = Math.min(PER_BATCH, left);
+  if (files.length > allow) { toast(`한 번에 ${allow}장까지만 올려요 (남은 칸 ${left}장)`); files = files.slice(0, allow); }
+  if (skipped) toast(`이미지가 아니거나 20MB가 넘는 파일 ${skipped}개는 뺐어요`);
   if (!files.length) return;
   const folder = curFolder === TRASH ? folders[0] : curFolder;
   let ok = 0;
@@ -5211,7 +5604,7 @@ $('#fileIn').onchange = async () => {
       const doc = { folder, name: f.name.replace(/\.[^.]+$/, '').slice(0, 60), by: me, at: Date.now(), trashed: false, asset: null, data: null };
       let done = false;
       if (assets) {
-        try { const { blob, w, h } = await prepImage(f, 2000, 0.86, 0); const up = await assets.upload(blob, { type: 'image/jpeg' }); doc.asset = up.id; doc.w = w; doc.h = h; done = true; }
+        try { const { blob, w, h } = await prepImage(f, 1600, 0.82, 0); const up = await assets.upload(blob, { type: 'image/jpeg' }); doc.asset = up.id; doc.w = w; doc.h = h; done = true; }
         catch (e) { if (e && e.code === 'too_large') throw e; }
       }
       if (!done) {
