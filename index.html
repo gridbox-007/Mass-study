@@ -3597,13 +3597,47 @@ function wrapText(t, fs, maxW, maxLines, wt){
   if (out.length > maxLines) { const keep = out.slice(0, maxLines); let last = keep[maxLines - 1] + '…'; while (last.length > 1 && textW(last, fs, wt) > maxW) last = last.slice(0, -2) + '…'; keep[maxLines - 1] = last; return { lines: keep, cut: true }; }
   return { lines: out, cut: false };
 }
-function labelSvg(b, px, ox){
+// 글씨 자리 정하기: 위에 그려지는 도형이나 다른 글씨와 겹치지 않는 곳을 도형 안에서 찾음 (위 레이어부터)
+function labelPlacement(order){
+  const res = new Map(), placed = [], k = sv.k, solids = order.filter(b => b.kind === 'solid' && sheetVis(boxSheetIdx(b)));
+  const ov = (a, c) => a.x0 < c.x1 && a.x1 > c.x0 && a.z0 < c.z1 && a.z1 > c.z0;
+  for (let i = solids.length - 1; i >= 0; i--) {
+    const b = solids[i], label = roleMode ? (b.cat !== 'free' ? catInfo(b.cat).n : '') : b.label, note = roleMode ? '' : b.note;
+    if (!label && !note) continue;
+    const si = boxSheetIdx(b), ox = sheetOx(si), oy = sheetOy(si), above = solids.slice(i + 1).filter(o => boxSheetIdx(o) === si).map(canvasBox);
+    const T = tsOf(si), wPx = Math.min(b.w * k * 0.86, Math.max(textW(label || '', 15 * T), note ? textW(note.slice(0, 16), 11.5 * T, 400) : 0) + 12), hPx = ((label ? 21 : 0) + (note ? 17 : 0)) * T;
+    const own = canvasBox(b), cen = centroid(b), [cx, cz] = fromLocal(b, cen[0], cen[1]);
+    const rectAt = (u, v, sc) => { const [x, z] = fromLocal(b, u, v), lw = wPx * sc / k, lh = hPx * sc / k; return { x0: x + ox - lw / 2, x1: x + ox + lw / 2, z0: z + oy - lh / 2, z1: z + oy + lh / 2 }; };
+    const fits = r => r.x0 >= own.x0 - 1e-6 && r.x1 <= own.x1 + 1e-6 && r.z0 >= own.z0 - 1e-6 && r.z1 <= own.z1 + 1e-6 && !placed.some(p => ov(p, r)) && !above.some(a => ov(a, r));
+    let pl = null;
+    const c0 = rectAt(cen[0], cen[1], 1);
+    if (!placed.some(p => ov(p, c0)) && !above.some(a => ov(a, c0))) pl = { u: cen[0], v: cen[1], free: true, r: c0 }; // 가운데가 비어 있으면 그대로
+    else {
+      // 도형 안을 촘촘히 훑어서, 가려지지 않고 다른 글씨와도 안 겹치는 자리 중 가운데에 가장 가까운 곳 (안 되면 글씨를 조금씩 줄여서)
+      const pts = []; for (let u = 0.06; u <= 0.94 + 1e-9; u += 0.04) for (let v = 0.06; v <= 0.94 + 1e-9; v += 0.04) { const [x, z] = fromLocal(b, u, v); pts.push([u, v, Math.hypot(x - cx, z - cz)]); }
+      pts.sort((a, c) => a[2] - c[2]);
+      for (const sc of [1, 0.85, 0.7]) { const hit = pts.find(([u, v]) => fits(rectAt(u, v, sc))); if (hit) { const r = rectAt(hit[0], hit[1], sc); pl = { u: hit[0], v: hit[1], aw: wPx * sc, ah: hPx * sc + 4, r }; break; } }
+      // 도형 안에 자리가 없으면 도형 바로 바깥(위·아래·왼쪽·오른쪽)에서 다른 글씨와 안 겹치는 곳
+      if (!pl && (b.shape === 'rect' || !b.shape) && !b.ang) {
+        const w = wPx / k, h = hPx / k, g = 5 / k, W = own.x1 - own.x0, D = own.z1 - own.z0;
+        for (const [x, z] of [[(own.x0 + own.x1) / 2, own.z0 - h / 2 - g], [(own.x0 + own.x1) / 2, own.z1 + h / 2 + g], [own.x0 - w / 2 - g, (own.z0 + own.z1) / 2], [own.x1 + w / 2 + g, (own.z0 + own.z1) / 2]]) {
+          const r = { x0: x - w / 2, x1: x + w / 2, z0: z - h / 2, z1: z + h / 2 }; if (placed.some(p => ov(p, r))) continue;
+          pl = { u: (x - own.x0) / W, v: (z - own.z0) / D, aw: wPx, ah: hPx + 4, r, out: true }; break;
+        }
+      }
+      if (!pl) { const hit = pts.find(([u, v]) => { const r = rectAt(u, v, 0.7); return !placed.some(p => ov(p, r)); }); pl = hit ? { u: hit[0], v: hit[1], aw: wPx * 0.7, ah: hPx * 0.7 + 4, r: rectAt(hit[0], hit[1], 0.7) } : { u: cen[0], v: cen[1], free: true, r: c0 }; }
+    }
+    res.set(b.id, pl.free ? null : pl); placed.push(pl.r);
+  }
+  return res;
+}
+function labelSvg(b, px, ox, pl){
   const label = roleMode ? (b.cat !== 'free' ? catInfo(b.cat).n : '') : b.label, note = roleMode ? '' : b.note;
   const tag = SPACE_TAGS[b.tag] || '';
   if (!label && !note && !b.lock && !tag) return '';
-  const T = tsOf(boxSheetIdx(b)), [cu, cv] = centroid(b), [cx0, cz] = fromLocal(b, cu, cv), cx = cx0 + ox;
+  const T = tsOf(boxSheetIdx(b)), [cu, cv] = pl ? [pl.u, pl.v] : centroid(b), [cx0, cz] = fromLocal(b, cu, cv), cx = cx0 + ox;
   const full = b.shape === 'rect' && !b.ang, inset = full ? 0.86 : isPolyShape(b) ? 0.5 : 0.62;
-  const availW = b.w * sv.k * inset - 8, availH = b.d * sv.k * inset - 6;
+  const availW = pl ? pl.aw - 8 : b.w * sv.k * inset - 8, availH = pl ? pl.ah : b.d * sv.k * inset - 6; // 옮긴 자리면 그 빈자리 크기에 맞춤
   const tc = catInfo(b.cat).t;
   let h = '', hidden = false;
   // 공간 성격 태그 (왼쪽 위 작은 표)
@@ -3628,6 +3662,7 @@ function labelSvg(b, px, ox){
   } else if (note) hidden = true;
   const totalH = usedH + (nt ? nt.lines.length * nfs * 1.25 + (lab ? 3 : 0) : 0);
   let y = cz - px(totalH / 2);
+  if (pl && pl.out && (lab || nt)) h += `<rect x="${r3(cx - px(pl.aw / 2))}" y="${r3(cz - px(totalH / 2 + 3))}" width="${r3(px(pl.aw))}" height="${r3(px(totalH + 6))}" rx="${r3(px(6))}" fill="#fbf8f1" fill-opacity=".92" stroke="${tc}" stroke-opacity=".35" stroke-width="${r3(px(1))}" pointer-events="none"/>`; // 바깥에 놓인 글씨는 바탕을 깔아 읽기 쉽게
   if (lab) for (const ln of lab.lines) { y += px(fs * 1.2); h += `<text x="${r3(cx)}" y="${r3(y - px(fs * 0.3))}" font-size="${r3(px(fs))}" font-weight="${roleMode ? 700 : 600}" fill="${tc}" text-anchor="middle" pointer-events="none">${esc(ln)}</text>`; }
   if (nt) { if (lab) y += px(3); for (const ln of nt.lines) { y += px(nfs * 1.25); h += `<text x="${r3(cx)}" y="${r3(y - px(nfs * 0.35))}" font-size="${r3(px(nfs))}" fill="${tc}" opacity=".78" text-anchor="middle" pointer-events="none">${esc(ln)}</text>`; } }
   // 다 못 보여 주면: 오른쪽 위에 '설명 있음' 표시 (두 번 톡 하면 전체를 볼 수 있어요)
@@ -4152,7 +4187,7 @@ function renderStudy(){
       }
     }
   }
-  const order = [...P.boxes].sort((a, b) => (a.kind === 'outer') - (b.kind === 'outer'));
+  const order = [...P.boxes].sort((a, b) => (a.kind === 'outer') - (b.kind === 'outer')), lplace = labelPlacement(order);
   for (const b of order) {
     const bi = boxSheetIdx(b); if (!sheetVis(bi)) continue;
     const s0 = shapes.length, b0 = bound.length;
@@ -4160,7 +4195,7 @@ function renderStudy(){
     if (b.kind === 'solid') {
       const fill = catInfo(b.cat).hatch ? 'url(#hatch)' : colorOf(b);
       shapes += `<path d="${d}" fill="${fill}" stroke="${s ? '#2c5a8c' : '#2b2823'}" stroke-width="${r3(px(s ? 2.4 : sketch ? 1.3 : 1.6))}" stroke-linejoin="round" data-role="body" data-id="${b.id}"/>`;
-      labelsH += labelSvg(b, px, ox); // 글씨는 모든 도형 위에 (겹친 도형에 가려지지 않게)
+      labelsH += labelSvg(b, px, ox, lplace.get(b.id)); // 글씨는 모든 도형 위에, 겹치지 않는 자리로
       if (flowEdit) bound += `<path d="${d}" fill="none" stroke="#3a362f" stroke-width="${r3(px(1.3))}" stroke-linejoin="round"/>`;
     } else {
       const dash = `stroke-dasharray="${r3(px(3.2))} ${r3(px(2.6))}"`;
