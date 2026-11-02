@@ -955,6 +955,17 @@ body.sketchmode #pc{background-color:#f8f4ea;background-image:url("data:image/sv
 .mpPill button{height:28px;padding:0 10px;border-radius:99px;border:0;background:#faf7ef;color:var(--ink);font-size:12.5px;font-weight:600}
 .sbottom .bgrp #straightBtn{background:#e3d6c1;color:#4f2f1b;font-weight:700}
 .sbottom .bgrp #straightBtn[aria-pressed="true"]{background:#6f4529;color:#faf7ef}
+/* 치수 모드 층 레이어 (왼쪽 세로 줄) */
+body.exact #floorBar{position:absolute;left:max(10px, env(safe-area-inset-left));top:calc(100% + 8px);flex-direction:column;align-items:stretch;gap:2px;max-height:calc(100vh - 320px);overflow-y:auto;z-index:3;min-width:118px}
+body.exact #floorBar .fl{padding:4px 8px 2px}
+.flrow{display:flex;align-items:center;gap:2px}
+.flrow .eye{width:32px;height:32px;padding:0;justify-content:center;color:var(--ink)}
+.flrow .nm{flex:1;justify-content:space-between}
+.flrow.off .nm{color:var(--mute);text-decoration:line-through;text-decoration-color:rgba(109,102,91,.5)}
+.flrow.off .eye{color:var(--mute)}
+#floorBar .allon{font-size:12px;height:28px;color:var(--accent)}
+#views2 button.on{background:var(--sel);color:var(--sel-ink);border-color:var(--sel)}
+.hoverTip{position:fixed;z-index:60;max-width:320px;background:var(--ink);color:#faf7ef;font-size:12.5px;line-height:1.45;padding:6px 10px;border-radius:8px;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
 <script type="importmap">
 {"imports":{
@@ -1132,6 +1143,10 @@ body.sketchmode #pc{background-color:#f8f4ea;background-image:url("data:image/sv
         <button data-v="iso">아이소</button>
         <button data-v="plan">평면</button>
         <button data-v="elev">입면</button>
+      </div>
+      <div class="views" id="views2">
+        <button id="lblModeBtn" title="상자 위 글자: 이름·설명 / 크기">글자: 이름·설명</button>
+        <button id="edgeModeBtn" aria-pressed="false" title="상자를 반투명하게 하고 경계선을 또렷하게">경계선 보기</button>
       </div>
       </div>
     </div>
@@ -2240,7 +2255,7 @@ async function unpublish(pid, name){
 /* ---------------- 3D 장면 ---------------- */
 const cv = $('#cv');
 let renderer;
-try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true }); }
+try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true, logarithmicDepthBuffer: true }); }
 catch (e) { document.body.insertAdjacentHTML('afterbegin', '<div class="note" style="margin:16px">이 브라우저에서 3D(WebGL)를 켤 수 없어요. 다른 브라우저로 열어 주세요.</div>'); throw e; }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.shadowMap.enabled = true;
@@ -2251,7 +2266,8 @@ scene.add(new THREE.HemisphereLight(0xffffff, 0xa9a69d, 1.6));
 const sun = new THREE.DirectionalLight(0xffffff, 2.4);
 sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
 scene.add(sun); scene.add(sun.target);
-const persp = new THREE.PerspectiveCamera(38, 1, 0.1, 6000);
+let lblMode = 'name', edgeMode = false, hiddenLv = new Set(); // 치수 모드 보기: 글자 종류, 경계선 보기, 숨긴 층
+const persp = new THREE.PerspectiveCamera(38, 1, 0.3, 6000);
 const ortho = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 6000);
 let cam = persp, controls = null, view = 'persp', orthoH = 20, needs = true;
 const requestRender = () => { needs = true; };
@@ -2259,6 +2275,15 @@ const siteG = new THREE.Group(), boxG = new THREE.Group(), handleG = new THREE.G
 scene.add(siteG, boxG, handleG);
 let boxMeshes = [];
 const matCache = new Map();
+// 경계선 보기: 반투명 상자 + 가려져도 보이는 진한 경계선
+const xrayCache = new Map();
+function xrayMat(color, selected){
+  const k = color + (selected ? '*' : '');
+  if (!xrayCache.has(k)) { const m = new THREE.MeshStandardMaterial({ color, roughness: 0.9, metalness: 0, transparent: true, opacity: selected ? 0.5 : 0.3, depthWrite: false, side: THREE.DoubleSide }); if (selected) { m.emissive = new THREE.Color('#2c5a8c'); m.emissiveIntensity = 0.3; } xrayCache.set(k, m); }
+  return xrayCache.get(k);
+}
+const edgeX = new THREE.LineBasicMaterial({ color: '#1d1b17', depthTest: false, transparent: true, opacity: 0.9 });
+const edgeXSel = new THREE.LineBasicMaterial({ color: '#2c5a8c', depthTest: false });
 function solidMat(color, selected){
   const k = color + (selected ? '*' : '');
   if (!matCache.has(k)) {
@@ -2397,14 +2422,15 @@ function labelTexture(title, sub, aspect, outer){
 function boxMesh(b, totalRooms, rank = 0){
   const H = boxH(b), isSel = selSet.has(b.id), out = outside(b), outer = b.kind === 'outer';
   const geo = shapeGeo(b, H);
-  const mesh = new THREE.Mesh(geo, outer ? (isSel ? outerFillSel : outerFill) : b.cat === 'void' ? (isSel ? outerFillSel : voidMat) : solidMat(colorOf(b), isSel));
+  const mesh = new THREE.Mesh(geo, outer ? (isSel ? outerFillSel : outerFill) : b.cat === 'void' ? (isSel ? outerFillSel : voidMat) : edgeMode ? xrayMat(colorOf(b), isSel) : solidMat(colorOf(b), isSel));
   // 스터디 보드에서 아래 레이어일수록 아주 조금 작고(옆) 바닥이 살짝 떠 있게: 겹친 면이 깨져 보이지 않음
-  const rk = Math.min(rank, 80), ins = rk * 0.0035, lift = 0.004 + rk * 0.0015, drop = rk * 0.0015, Hs = Math.max(0.05, H - lift - drop);
+  const rk = Math.min(rank, 80), ins = rk * 0.006, lift = 0.008 + rk * 0.004, drop = 0.004 + rk * 0.004, Hs = Math.max(0.05, H - lift - drop);
   mesh.scale.set(Math.max(0.6, (b.w - 2 * ins) / b.w), Hs / H, Math.max(0.6, (b.d - 2 * ins) / b.d));
   mesh.position.set(-P.siteW / 2 + b.x + b.w / 2, elevOf(b.lv) + lift + Hs / 2, -P.siteD / 2 + b.z + b.d / 2);
   mesh.rotation.y = -rad(b.ang || 0);
   mesh.castShadow = !outer && b.cat !== 'void'; mesh.receiveShadow = !outer; mesh.userData.id = b.id; mesh.renderOrder = outer ? 2 : 0;
-  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), outer ? (isSel ? dashSel : b.lock ? dashLock : out ? dashOut : dashMat) : (isSel ? edgeSel : b.lock ? edgeLock : out ? edgeOut : edgeMat));
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), outer ? (isSel ? dashSel : b.lock ? dashLock : out ? dashOut : dashMat) : edgeMode ? (isSel ? edgeXSel : edgeX) : (isSel ? edgeSel : b.lock ? edgeLock : out ? edgeOut : edgeMat));
+  if (edgeMode && !outer) edges.renderOrder = 6;
   if (outer) edges.computeLineDistances();
   mesh.add(edges);
   if (b.fl > 1) {
@@ -2424,14 +2450,16 @@ function boxMesh(b, totalRooms, rank = 0){
   let sub;
   if (uiMode === 'study') {
     sub = outer ? '' : `${cellsStr(b.w)}×${cellsStr(b.d)}칸` + (totalRooms ? ` · ${Math.round(shapeArea(b) * b.fl / totalRooms * 100)}%` : '');
-  } else sub = (b.lv < 0 ? levelName(b.lv) + ' · ' : '') + f1(shapeArea(b)) + '㎡' + (b.fl > 1 ? ` ×${b.fl}` : '');
+  } else if (lblMode === 'size') sub = `높이 ${f1(H)}m · ${f1(shapeArea(b))}㎡`; // 크기 모드
+  else sub = (b.lv < 0 ? levelName(b.lv) + ' · ' : '') + (b.note ? b.note : f1(shapeArea(b)) + '㎡' + (b.fl > 1 ? ` ×${b.fl}` : ''));
   if (b.lock) sub = (sub ? sub + ' · ' : '') + '잠김';
-  if (b.label || sub) {
+  const ttl = uiMode !== 'study' && lblMode === 'size' && !outer ? `${f1(b.w)} × ${f1(b.d)}m` : b.label;
+  if (ttl || sub) {
     let pw, pd, cu, cv;
     if (outer) { pw = b.w * 0.9; pd = Math.min(b.d * 0.2, Math.max(1.2, b.w * 0.12)); cu = .5; cv = Math.min(.5, (pd / 2 + b.d * 0.04) / b.d); if (b.shape !== 'rect') { [cu, cv] = centroid(b); pw = b.w * 0.5; } }
     else { const k = b.shape === 'rect' ? 0.88 : 0.5; pw = b.w * k; pd = b.d * k; [cu, cv] = centroid(b); }
     if (pw > 0.2 && pd > 0.2) {
-      const lm = new THREE.Mesh(new THREE.PlaneGeometry(pw, pd), new THREE.MeshBasicMaterial({ map: labelTexture(b.label, sub, pw / pd, outer), transparent: true, depthWrite: false }));
+      const lm = new THREE.Mesh(new THREE.PlaneGeometry(pw, pd), new THREE.MeshBasicMaterial({ map: labelTexture(ttl, sub, pw / pd, outer), transparent: true, depthWrite: false }));
       lm.userData.ownMat = true; lm.rotation.x = -Math.PI / 2;
       lm.position.set(cu * b.w - b.w / 2, H / 2 + 0.03, cv * b.d - b.d / 2); lm.renderOrder = 3;
       mesh.add(lm);
@@ -2458,15 +2486,17 @@ function buildBoxes(){
   disposeGroup(boxG); boxMeshes = [];
   const totalRooms = P.boxes.filter(b => b.kind === 'solid' && !b.sheet).reduce((s, b) => s + shapeArea(b) * b.fl, 0);
   const list = P.boxes.filter(b => !b.sheet);
-  list.forEach((b, i) => { const m = boxMesh(b, totalRooms, list.length - 1 - i); boxG.add(m); boxMeshes.push(m); });
+  list.forEach((b, i) => { if (hiddenLv.has(b.lv)) return; const m = boxMesh(b, totalRooms, list.length - 1 - i); boxG.add(m); boxMeshes.push(m); }); // 끈 층은 안 그림
   underView();
   buildHandles();
   requestRender();
 }
+$('#lblModeBtn').onclick = () => { lblMode = lblMode === 'name' ? 'size' : 'name'; $('#lblModeBtn').textContent = lblMode === 'name' ? '글자: 이름·설명' : '글자: 크기'; buildBoxes(); };
+$('#edgeModeBtn').onclick = () => { edgeMode = !edgeMode; $('#edgeModeBtn').setAttribute('aria-pressed', edgeMode ? 'true' : 'false'); $('#edgeModeBtn').classList.toggle('on', edgeMode); buildBoxes(); };
 function makeControls(){
   if (controls) controls.dispose();
   controls = new OrbitControls(cam, cv);
-  controls.enableDamping = true; controls.dampingFactor = 0.14;
+  controls.enableDamping = true; controls.dampingFactor = 0.14; controls.rotateSpeed = 0.45; controls.zoomSpeed = 0.8; // 돌리는 감도 낮춤
   controls.maxPolarAngle = Math.PI / 2;
   controls.screenSpacePanning = true;
   controls.addEventListener('change', requestRender);
@@ -2570,7 +2600,7 @@ function syncIdle(){ setSync(edKind !== 'draft' ? '보기 전용' : localMode ? 
 let viewPath = '';
 function openEditor(kind, pid, owner, path0){
   closeEditor();
-  rulers = []; doorMode = false; selDoor = null;
+  rulers = []; doorMode = false; selDoor = null; hiddenLv = new Set();
   edKind = kind; curPid = pid; curOwner = owner; P = null; clearSel(); selCard = null; linkMode = false; sAuto = true; hist = []; fut = []; dirty = false; writing = false; viewPlans = []; mode = 'select';
   $('#home').hidden = true; $('#editView').hidden = false; $('#edLoading').hidden = false;
   $('#edLoading').textContent = '스터디를 여는 중…';
@@ -2722,20 +2752,29 @@ function pickFloor(L){
   if (cur && cur.level === L) clearSel(); else { mode = 'select'; setSel(ids, ids[0]); }
   buildBoxes(); refreshUI();
 }
+// 치수 모드 층 레이어: 왼쪽에 위층부터 한 줄로. 눈 아이콘으로 그 층을 끄고 켜고, 이름을 누르면 그 층 상자를 전부 선택
+const EYE_ON = '<svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true"><path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="2.4" fill="currentColor"/></svg>';
+const EYE_OFF = '<svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true"><path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".45"/><path d="M4 16L16 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 function renderFloorBar(){
   const bar = $('#floorBar'); if (!bar) return;
-  const show = uiMode !== 'study' && !isSketch() && !edRO();
+  const show = uiMode !== 'study' && !isSketch(), ro = edRO();
   bar.hidden = !show; if (!show) return;
-  const fl = floorList(), cur = floorOfSel();
+  const fl = floorList().slice().reverse(), cur = floorOfSel();
   bar.textContent = '';
-  const lb = document.createElement('span'); lb.className = 'fl'; lb.textContent = '층 고르기'; bar.appendChild(lb);
+  const lb = document.createElement('span'); lb.className = 'fl'; lb.textContent = '층'; bar.appendChild(lb);
   for (const f of fl) {
-    const n = floorIds(f.level).length, b = document.createElement('button');
-    b.textContent = f.name; b.disabled = !n; b.title = n ? `${f.name} 상자 ${n}개를 한꺼번에 선택` : '이 층에는 상자가 없어요';
+    const n = floorIds(f.level).length, row = document.createElement('div'); row.className = 'flrow' + (hiddenLv.has(f.level) ? ' off' : '');
+    const eye = document.createElement('button'); eye.className = 'eye'; eye.innerHTML = hiddenLv.has(f.level) ? EYE_OFF : EYE_ON;
+    eye.setAttribute('aria-label', `${f.name} ${hiddenLv.has(f.level) ? '보이기' : '숨기기'}`); eye.title = hiddenLv.has(f.level) ? '이 층 보이기' : '이 층 숨기기';
+    eye.onclick = () => { if (hiddenLv.has(f.level)) hiddenLv.delete(f.level); else { hiddenLv.add(f.level); setSel([...selSet].filter(id => { const x = getBox(id); return !x || x.lv !== f.level; })); } buildBoxes(); refreshUI(); };
+    const b = document.createElement('button'); b.className = 'nm'; b.textContent = f.name; b.disabled = ro || !n || hiddenLv.has(f.level);
+    b.title = n ? `${f.name} 상자 ${n}개를 한꺼번에 선택` : '이 층에는 상자가 없어요';
     if (cur && cur.level === f.level) b.classList.add('on');
     const c = document.createElement('span'); c.className = 'c'; c.textContent = n; b.appendChild(c);
-    b.onclick = () => pickFloor(f.level); bar.appendChild(b);
+    b.onclick = () => pickFloor(f.level);
+    row.append(eye, b); bar.appendChild(row);
   }
+  if (hiddenLv.size) { const all = document.createElement('button'); all.className = 'allon'; all.textContent = '모두 보이기'; all.onclick = () => { hiddenLv.clear(); buildBoxes(); refreshUI(); }; bar.appendChild(all); }
 }
 let r2Open = false;
 function r2UI(){
@@ -3111,7 +3150,8 @@ const TOURS = {
   ],
   exact: [
     ['#uiModeSeg', '치수 모드', '미터 단위로 다듬고 3D로 확인해요. 스터디 모드와 같은 작업이에요.'],
-    ['#floorBar', '층 고르기', '층을 누르면 그 층 상자가 전부 선택돼요. 층고를 바꾸거나 한 층씩 올리고 내릴 수 있어요. 지하층을 고르면 땅이 더 투명해져요.'],
+    ['#floorBar', '층 레이어', '왼쪽 층 목록에서 눈 아이콘으로 층을 끄고 켜요. 층 이름을 누르면 그 층 상자가 전부 선택돼요. 지하층을 고르면 땅이 더 투명해져요.'],
+    ['#views2', '보기 방식', '‘글자’로 상자 위에 이름·설명 또는 크기(가로×세로·높이)를 보여 주고, ‘경계선 보기’를 켜면 상자가 반투명해져 겹친 경계가 잘 보여요.'],
     ['#stats', '지하 보기', '지하층이 있으면 땅이 반투명해지고 파낸 자리와 지면선(GL, 벽돌색)이 보여요. 화면을 아래로 돌리면 땅 밑에서 올려다볼 수도 있어요. 지하 면적은 따로 보이고 용적률에서는 빠져요.'],
     ['#r2Btn', '보기 · 자료', '투시·아이소·평면·입면과 레퍼런스·플랜·대지·댓글·내보내기를 접었다 펴요.'],
     ['#sheet', '편집 창', '상자를 고르면 열려요. 높이(m)·층수·45° 회전, 화살표 이동(평면 기준)이 있어요. × 또는 아래로 끌어 닫아요.']
@@ -3679,6 +3719,7 @@ function cardsSvg(px){
     else h += `<rect x="${r3(x)}" y="${r3(z)}" width="${r3(w)}" height="${r3(hh)}" fill="#e4e2db"/><text x="${r3(x + w / 2)}" y="${r3(z + hh / 2)}" font-size="${r3(px(11 * T))}" fill="#7a7368" text-anchor="middle" dominant-baseline="middle">사진 없음</text>`;
     const cap = (r ? (r.name || '사진') : '지워진 사진') + (tb ? ` → ${tb.label || '도형'}` : '');
     h += `<text x="${r3(x)}" y="${r3(z + hh + px(14 * T))}" font-size="${r3(px(11 * T))}" fill="${on ? '#2c5a8c' : '#5c564c'}" font-weight="${on ? 600 : 400}">${esc(fitCap(cap, w * sv.k, 11 * T, on))}</text>`;
+    h += `<title>${esc(cap)}</title>`; // 잘린 이름은 마우스를 올리면 전체가 보임
     h += `</g>`;
   }
   return h;
@@ -4057,7 +4098,7 @@ function renderStudy(){
   let defs = `<pattern id="hatch" patternUnits="userSpaceOnUse" width="${r3(px(9))}" height="${r3(px(9))}" patternTransform="rotate(45)"><rect width="${r3(px(9))}" height="${r3(px(9))}" fill="${CATS.void.c}"/><line x1="0" y1="0" x2="0" y2="${r3(px(9))}" stroke="#a9b8c8" stroke-width="${r3(px(1.4))}"/></pattern>`;
   FB_COLORS.forEach((c, i) => { defs += `<marker id="fbar-${i}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="3.6" markerHeight="3.6" orient="auto"><path d="M0,0L10,5L0,10z" fill="${c}"/></marker>`; });
   for (const [t, f] of Object.entries(FLOWS)) defs += `<marker id="ar-${t}" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="${f.c}"/></marker>`;
-  let paper = '', shapes = '', bound = '', flows = '', over = '';
+  let paper = '', shapes = '', bound = '', flows = '', over = '', labelsH = '';
   const sketch = isSketch();
   if (sketch) { // 스케치북 배경: 칸 꼭짓점마다 점 (확대·축소해도 점 간격이 알맞게)
     const r = pc.getBoundingClientRect(); let st = 1; while (st * k < 18) st *= 2; while (st * k > 56) st /= 2;
@@ -4119,7 +4160,7 @@ function renderStudy(){
     if (b.kind === 'solid') {
       const fill = catInfo(b.cat).hatch ? 'url(#hatch)' : colorOf(b);
       shapes += `<path d="${d}" fill="${fill}" stroke="${s ? '#2c5a8c' : '#2b2823'}" stroke-width="${r3(px(s ? 2.4 : sketch ? 1.3 : 1.6))}" stroke-linejoin="round" data-role="body" data-id="${b.id}"/>`;
-      shapes += labelSvg(b, px, ox);
+      labelsH += labelSvg(b, px, ox); // 글씨는 모든 도형 위에 (겹친 도형에 가려지지 않게)
       if (flowEdit) bound += `<path d="${d}" fill="none" stroke="#3a362f" stroke-width="${r3(px(1.3))}" stroke-linejoin="round"/>`;
     } else {
       const dash = `stroke-dasharray="${r3(px(3.2))} ${r3(px(2.6))}"`;
@@ -4226,6 +4267,7 @@ function renderStudy(){
     over += `<rect x="${r3(x0)}" y="${r3(z0)}" width="${r3(Math.abs(gs.w1.x - gs.w0.x))}" height="${r3(Math.abs(gs.w1.z - gs.w0.z))}" fill="${cross ? 'rgba(94,123,102,.10)' : 'rgba(44,90,140,.08)'}" stroke="${c}" stroke-width="${r3(px(1.3))}"${cross ? ` stroke-dasharray="${r3(px(6))} ${r3(px(4))}"` : ''} pointer-events="none"/>`;
     over += `<text x="${r3(gs.w1.x + px(cross ? -8 : 8))}" y="${r3(gs.w1.z - px(8))}" text-anchor="${cross ? 'end' : 'start'}" font-size="${r3(px(12))}" font-weight="600" fill="${c}" pointer-events="none">${cross ? '걸친 것도 선택' : '완전히 들어온 것만 선택'}</text>`;
   }
+  shapes += labelsH;
   const cardsH = cardsSvg(px), badges = cardBadges(px), glow = targetGlow(px);
   const doorsH = doorsSvg(px);
   over += rulersSvg(px);
@@ -4977,6 +5019,21 @@ function openCardLightbox(cid){
   const c = P.cards.find(x => x.id === cid); if (!c || !refById(c.ref)) { toast('이 사진은 레퍼런스에서 지워졌어요'); return; }
   lbList = [c.ref]; lbIdx = 0; $('#lightbox').hidden = false; renderLightbox();
 }
+// 잘려서 …으로 보이는 글자(카드 이름·사진 이름 등)에 마우스를 잠깐 올리면 전체 글자를 보여 줌
+(() => {
+  let tipT = 0, tipEl = null, cur = null;
+  const tip = () => tipEl || (tipEl = Object.assign(document.createElement('div'), { className: 'hoverTip', hidden: true }), document.body.appendChild(tipEl), tipEl);
+  const hide = () => { clearTimeout(tipT); cur = null; if (tipEl) tipEl.hidden = true; };
+  document.addEventListener('pointerover', e => {
+    if (e.pointerType !== 'mouse') return;
+    let el = e.target, found = null;
+    for (let k = 0; el && k < 4; k++, el = el.parentElement) { if (el.matches && el.matches('input,textarea,select,.modal *')) break; if (el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).textOverflow === 'ellipsis') { found = el; break; } }
+    if (found === cur) return; hide(); if (!found) return;
+    cur = found;
+    tipT = setTimeout(() => { if (cur !== found) return; const t = tip(); t.textContent = found.textContent.trim(); t.hidden = false; const r = found.getBoundingClientRect(); t.style.left = Math.max(8, Math.min(innerWidth - t.offsetWidth - 8, r.left)) + 'px'; t.style.top = (r.bottom + 6 + t.offsetHeight > innerHeight ? r.top - t.offsetHeight - 6 : r.bottom + 6) + 'px'; }, 600);
+  });
+  document.addEventListener('pointerdown', hide, true); document.addEventListener('scroll', hide, true);
+})();
 let emptyTap = { t: 0, x: 0, y: 0 };
 const px2w = v => v / sv.k;
 // 스터디 '여러 개 고르기': 켜져 있으면 도형을 누를 때마다 선택에 더하고 빼요
@@ -5034,7 +5091,18 @@ function showShapeInfo(id){
   el.style.top = Math.max($('#topArea').offsetHeight + 8, c.y - r.top - el.offsetHeight - 12) + 'px';
 }
 function hideShapeInfo(){ const el = $('#infoPop'); if (el) el.hidden = true; }
-pc.addEventListener('pointerdown', hideShapeInfo, { capture: true });
+pc.addEventListener('pointerdown', () => { hideShapeInfo(); clearTimeout(hoverT); hoverId = null; }, { capture: true });
+// 마우스를 도형에 잠깐 올려 두면 접힌 설명·태그를 보여 줌
+let hoverT = 0, hoverId = null;
+pc.addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse' || e.buttons || gesture) return;
+  const el = e.target.closest ? e.target.closest('[data-role=body]') : null, id = el ? el.dataset.id : null;
+  if (id === hoverId) return;
+  hoverId = id; clearTimeout(hoverT); hideShapeInfo();
+  const b = id && getBox(id);
+  if (b && (b.note || b.tag)) hoverT = setTimeout(() => { if (hoverId === id && !gesture && $('#lblEd').hidden) showShapeInfo(id); }, 650);
+});
+pc.addEventListener('pointerleave', () => { clearTimeout(hoverT); hoverId = null; hideShapeInfo(); });
 function openLabelEd(id, isNew){
   const b = getBox(id), n = getNote(id); if (!b && !n) return;
   if (b && b.lock) { toast('잠긴 도형이에요. 잠금을 풀고 써 주세요'); return; }
