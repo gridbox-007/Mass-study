@@ -863,7 +863,6 @@ html,body{overflow:hidden}
   body.study #topArea .bar{justify-content:flex-end}
   body.study #topArea .bar .name{flex:0 1 320px}
   body.study .sbottom{left:auto !important;right:max(12px, env(safe-area-inset-right)) !important;justify-content:flex-end}
-  body.study .ctx{left:auto;right:max(12px, env(safe-area-inset-right));transform:none;bottom:calc(env(safe-area-inset-bottom) + 66px)}
 }
 /* 삭제 아이콘(테두리·바탕 없음) 공통 */
 .trash{border:0 !important;background:none !important;color:var(--warn) !important;padding:0 6px !important;min-width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
@@ -947,6 +946,15 @@ html,body{overflow:hidden}
   body.study #topArea .bar #uiModeSeg{order:3}
   body.study #topArea > #stools{order:4;flex:0 0 auto;margin:0 4px}
 }
+/* 스케치 모드: 스케치북 종이 결 + 칸 꼭짓점 점 */
+body.sketchmode #pc{background-color:#f8f4ea;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.rcard,.ditem{min-width:0}
+.rcard .cap,.ditem .cap{max-width:100%;box-sizing:border-box}
+#lbName{overflow-wrap:anywhere}
+.mpPill{position:absolute;left:50%;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:8px;background:var(--ink);color:#faf7ef;border-radius:99px;padding:6px 6px 6px 14px;font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.mpPill button{height:28px;padding:0 10px;border-radius:99px;border:0;background:#faf7ef;color:var(--ink);font-size:12.5px;font-weight:600}
+.sbottom .bgrp #straightBtn{background:#e3d6c1;color:#4f2f1b;font-weight:700}
+.sbottom .bgrp #straightBtn[aria-pressed="true"]{background:#6f4529;color:#faf7ef}
 </style>
 <script type="importmap">
 {"imports":{
@@ -1004,6 +1012,7 @@ html,body{overflow:hidden}
       <div class="bgrp" role="group" aria-label="화면">
         <button id="zoomBtn" title="눌러서 지금 대지에 맞추기">100%</button>
         <button id="snapBtn" aria-pressed="true">격자</button>
+        <button id="straightBtn" aria-pressed="false" hidden title="동선을 수직·수평·45°로만 그려요">직선</button>
       </div>
       <div class="bgrp" role="group" aria-label="보기">
         <button id="roleBtn" aria-pressed="false" title="이름·용도를 가리고 공간의 역할만 보기">역할만 보기</button>
@@ -1072,6 +1081,7 @@ html,body{overflow:hidden}
       <div class="tgrp aux" role="group" aria-label="보조 도구">
         <button data-tool="text" class="ticon" aria-label="텍스트" title="텍스트"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4.5 5h11M10 5v11M7.6 16h4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
         <button id="flowBtn">동선 그리기</button>
+        <button data-tool="ruler" title="일직선 자: 끌어서 길이 재기 (5개까지)">자</button>
       </div>
     </div>
     <div class="flowbar sitebar" id="siteBar" hidden>
@@ -1084,6 +1094,9 @@ html,body{overflow:hidden}
         <button data-ft="main"><i style="background:#d9480f"></i>주 동선</button>
         <button data-ft="sub"><i style="background:#2c5a8c"></i>부 동선</button>
         <button data-ft="service"><i style="background:#6b6e73"></i>서비스</button>
+        <button id="flowPanBtn" title="선택을 풀고 화면만 움직여요"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M7 10V4.8a1.3 1.3 0 0 1 2.6 0V9.5M9.6 9V3.8a1.3 1.3 0 0 1 2.6 0V9.5M12.2 9.3V5.3a1.3 1.3 0 0 1 2.6 0v6.2c0 3.2-2.2 5.5-5.2 5.5-2 0-3.3-1-4.3-2.6L3.6 11.3a1.3 1.3 0 0 1 2.1-1.4L7 11.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>이동</button>
+        <button id="doorSnapBtn" title="출입문을 변·외곽 가운데에 붙여요 (Alt를 누르고 끌면 잠깐 끔)">맞춤</button>
+        <button id="doorBtn" class="door" title="도형 가장자리를 눌러 출입문 넣기"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M3 16h14M5 16V5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 5a11 11 0 0 1 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2 1.6"/></svg>출입문</button>
       </div>
       <button class="done" id="flowDone">완료</button>
     </div>
@@ -1639,7 +1652,7 @@ function normBox0(b, grid){
     group: b.group ? String(b.group).slice(0, 40) : ''
   };
 }
-const SNAPKEYS = ['siteW', 'siteD', 'grid', 'floorH', 'floorHs', 'site', 'envShapes', 'bcrLimit', 'farLimit', 'snap', 'boxes', 'notes', 'sheets', 'flows', 'cards', 'cats'];
+const SNAPKEYS = ['siteW', 'siteD', 'grid', 'floorH', 'floorHs', 'site', 'envShapes', 'doors', 'bcrLimit', 'farLimit', 'snap', 'boxes', 'notes', 'sheets', 'flows', 'cards', 'cats'];
 // 층 이름: 지하는 '지하 1층', 반 층은 '1.5층'
 function levelName(L){ if (L < 0) return `지하 ${-Math.floor(L)}층`; const n = Math.floor(L); return L - n > 1e-6 ? `${n + 1}.5층` : `${n + 1}층`; }
 const isHalf = L => Math.abs(L - Math.round(L)) > 1e-6;
@@ -1693,6 +1706,8 @@ function normalize(d){
     const pts = d.site.pts.slice(0, 60).filter(q => Array.isArray(q) && Number.isFinite(+q[0]) && Number.isFinite(+q[1])).map(q => [r2(+q[0]), r2(+q[1]), Math.max(-100, Math.min(100, r2(+q[2] || 0)))]);
     if (pts.length >= 3) o.site = { pts };
   }
+  // 출입문: 도형 외곽 위 위치(t: 둘레 0~1)와 폭(m)
+  o.doors = (Array.isArray(d.doors) ? d.doors : []).slice(0, 150).map(q => ({ id: String(q.id || uid()).slice(0, 40), box: String(q.box || ''), t: Math.max(0, Math.min(1, Number(q.t) || 0)), w: Math.max(0.3, Math.min(6, Number(q.w) || 0.9)), e: Number.isInteger(q.e) ? q.e : null, u: Number.isFinite(+q.u) && q.u !== null ? Math.max(0, Math.min(1, +q.u)) : null, thick: !!q.thick, tag: DOOR_TAGS[q.tag] ? q.tag : '' })).filter(q => o.boxes.some(b => b.id === q.box));
   // 손으로 그린 점선 테두리 모양: { 점선id: { sheet, pts } } (대지 기준 좌표)
   o.envShapes = {};
   if (d.envShapes && typeof d.envShapes === 'object') for (const [k, v] of Object.entries(d.envShapes).slice(0, 80)) {
@@ -1700,9 +1715,9 @@ function normalize(d){
     const ref = {}; if (v.ref && typeof v.ref === 'object') for (const [id, r] of Object.entries(v.ref).slice(0, 120)) if (Array.isArray(r) && r.length === 4 && r.every(Number.isFinite)) ref[String(id).slice(0, 40)] = r.map(r2);
     if (pts.length >= 3 && o.boxes.some(b => b.env === k)) o.envShapes[String(k).slice(0, 30)] = { sheet: String(v.sheet || ''), pts, ref, m: Math.max(0, Math.min(10, Number(v.m) || 0)) };
   }
-  return ensureSheets(o);
+  const r = ensureSheets(o); splitEnvs(r); return r;
 }
-function snapshotOf(p){ const s = {}; for (const k of SNAPKEYS) { if (k === 'envShapes' && !Object.keys(p[k] || {}).length) continue; s[k] = clone(p[k]); } return s; }
+function snapshotOf(p){ const s = {}; for (const k of SNAPKEYS) { if ((k === 'envShapes' || k === 'doors') && !Object.keys(p[k] || {}).length) continue; s[k] = clone(p[k]); } return s; }
 const sigOf = p => hash(p.name + JSON.stringify(snapshotOf(p)));
 function rasterArea(shapes, grid, minus = []){
   if (!shapes.length) return 0;
@@ -2532,7 +2547,8 @@ document.querySelectorAll('#views button').forEach(b => b.onclick = () => setVie
 /* ---------------- 편집 상태 ---------------- */
 let selSet = new Set(), multiPick = false;
 function setSel(ids, primary){ selSet = new Set(ids); sel = primary !== undefined ? primary : (ids.length ? ids[ids.length - 1] : null); }
-function clearSel(){ selSet = new Set(); sel = null; }
+let selCards = new Set(); // 여러 개 고를 때 같이 움직일 사진(레퍼런스) 카드
+function clearSel(){ selSet = new Set(); sel = null; selCards = new Set(); }
 const getNote = id => P && P.notes ? P.notes.find(n => n.id === id) : null;
 const selNotes = () => P ? P.notes.filter(n => selSet.has(n.id)) : [];
 function pruneSel(){ if (!P) return; for (const id of [...selSet]) if (!getBox(id) && !getNote(id)) selSet.delete(id); if (sel && !selSet.has(sel)) sel = selSet.size ? [...selSet][selSet.size - 1] : null; if (sel && !selSet.size) selSet.add(sel); }
@@ -2554,6 +2570,7 @@ function syncIdle(){ setSync(edKind !== 'draft' ? '보기 전용' : localMode ? 
 let viewPath = '';
 function openEditor(kind, pid, owner, path0){
   closeEditor();
+  rulers = []; doorMode = false; selDoor = null;
   edKind = kind; curPid = pid; curOwner = owner; P = null; clearSel(); selCard = null; linkMode = false; sAuto = true; hist = []; fut = []; dirty = false; writing = false; viewPlans = []; mode = 'select';
   $('#home').hidden = true; $('#editView').hidden = false; $('#edLoading').hidden = false;
   $('#edLoading').textContent = '스터디를 여는 중…';
@@ -2607,7 +2624,7 @@ const MAX_BYTES = 700000;
 function commit(fn, opts = {}){
   if (edRO() || !P) return false;
   const before = JSON.stringify(P), c0 = { boxes: P.boxes.length, notes: P.notes.length, flows: P.flows.length, cards: P.cards.length };
-  fn();
+  fn(); splitEnvs(P);
   const after = JSON.stringify(P);
   if (after === before) return false;
   const L = LIMITS[isSketch() ? 'sketch' : 'study'];
@@ -3085,8 +3102,8 @@ const TOURS = {
     ['#searchBtn', '찾기', '돋보기를 누르면 이름·용도·작성자로 찾을 수 있어요.']
   ],
   study: [
-    ['#stools', '도구', '선택, 도형(사각형·원형·반원·삼각형), 점선 꺾기, 텍스트, 동선 그리기예요. 점선 꺾기는 점선 테두리를 가로질러 선을 그으면 도형에 맞춰 접혀요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 반원을 따라 그리면 반원대로요. 도형을 옮기면 꺾은 점선도 따라 늘고 줄어요.'],
-    ['#pc', '캔버스 조작', '끌면 화면 이동, 짧게 톡 하면 선택, 두 번 톡 하면 이름·설명·공간 성격(공유·개인) 쓰기, 꾹 누르고 끌면 도형 이동이에요. 빈 곳을 꾹 누르고 끌면 범위 선택: 오른쪽으로 끌면 완전히 들어온 것만, 왼쪽으로 끌면 걸친 것도 골라요.'],
+    ['#stools', '도구', '선택, 도형(사각형·원형·반원·삼각형), 점선 꺾기, 텍스트, 동선 그리기, 자(끌어서 길이 재기, 5개까지 · 끝의 ×로 지움)예요. 동선 그리기에서는 ‘출입문’을 켜고 도형 테두리를 따라 그어 문을 넣어요. 문을 누르면 양 끝 점으로 크기, 가운데를 끌어 외곽을 따라(다른 도형으로도) 옮기고, 두께와 태그(주출입구 등)를 정해요. ‘이동’을 켜면 그리지 않고 화면만 움직여요. ‘맞춤’이 켜져 있으면 문이 변 가운데·이어진 외곽 가운데에 붙고, 더 끌면 떨어져요. 동선은 기본이 직선(수직·수평·45°)이고 아래 ‘직선’을 끄면 자유롭게 그려요. 점선 꺾기는 점선 테두리를 가로질러 선을 그으면 도형에 맞춰 접혀요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 반원을 따라 그리면 반원대로요. 도형을 옮기면 꺾은 점선도 따라 늘고 줄어요.'],
+    ['#pc', '캔버스 조작', '끌면 화면 이동, 짧게 톡 하면 선택, 두 번 톡(마우스는 오른쪽 클릭) 하면 이름·설명·공간 성격(공유·개인) 쓰기, 꾹 누르고 끌면 도형 이동이에요. 빈 곳을 꾹 누르거나 두 번 누르고 끌면 범위 선택(두 번 누르고 그냥 떼면 ‘여러 개 고르기’): 오른쪽으로 끌면 완전히 들어온 것만, 왼쪽으로 끌면 걸친 것도 골라요. Shift로 사진(레퍼런스)도 같이 골라 옮길 수 있어요. 맞붙은 두 도형 사이의 굵은 선을 끌면 붙은 채로 같이 늘고 줄고, 여러 개를 고르면 네 모서리 점으로 한꺼번에 늘리고 줄여요.'],
     ['#sheetBar', '대지(층)', '+ 대지로 위층·지하층을 더해요. 층 탭을 두 번 누르면 이름·글자 크기와 함께 ‘1층으로 지정’(그 아래 층은 지하가 돼요)과 ‘n.5층 추가’가 있어요. n.5층은 대지 오른쪽 위 아이콘으로 접었다 펴요.'],
     ['#sbottom', '아래 상태줄', '배율·격자, 보기 방식, 레퍼런스, 그리고 건폐율·용적률·연면적이 한도와 함께 보여요.'],
     ['#saveBtn', '프로젝트에 저장', '눌러야 조원에게 보여요. 저장 전에는 나만 봐요.'],
@@ -3366,6 +3383,9 @@ const pc = $('#pc');
 let sv = { k: 15, tx: 0, ty: 0, kBase: 15 }, tool = 'select', studySnap = true, gesture = null, lastTap = { t: 0, id: null };
 let spaceDown = false, editingId = null, activeSheet = null, rotMode = false;
 let cardShow = true, dockOpen = false, dockTab = '__used', selCard = null, linkMode = false, sAuto = true;
+const DOOR_TAGS = { main: '주출입구', sub: '부출입구', svc: '서비스', exit: '비상구' };
+let flowPan = false, doorSnap = true;
+let rulers = [], doorMode = false, straightMode = true, selDoor = null;
 let flowShow = true, flowEdit = false, flowType = 'main', selFlow = null, txtScale = 1.15, leCat = 'free', leCatTouched = false;
 let popKind = null, popFor = '', chipTap = { id: null, t: 0 }, tabTap = { id: null, t: 0 }, allView = false, roleMode = false;
 try { roleMode = localStorage.getItem('mass-role') === 'on'; } catch (e) {}
@@ -3623,6 +3643,16 @@ function focusCard(id){
   const i = itemSheetIdx(c); if (P.sheets[i].id !== activeSheet) fitSheet(i, true);
   clearSel(); selCard = id; cardShow = true; studyUI();
 }
+// 사진 이름이 사진 폭을 넘지 않게 잘라서 … 붙임
+let capCtx = null;
+function fitCap(t, maxPx, fs, bold){
+  if (!capCtx) capCtx = document.createElement('canvas').getContext('2d');
+  capCtx.font = `${bold ? 600 : 400} ${fs}px Pretendard, 'Noto Sans KR', sans-serif`;
+  if (capCtx.measureText(t).width <= maxPx) return t;
+  let lo = 0, hi = t.length;
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (capCtx.measureText(t.slice(0, mid) + '…').width <= maxPx) lo = mid; else hi = mid - 1; }
+  return lo ? t.slice(0, lo) + '…' : '';
+}
 function cardsSvg(px){
   let h = '';
   const selB = selSet.size === 1 ? sel : null;
@@ -3631,11 +3661,14 @@ function cardsSvg(px){
     const T = tsOf(itemSheetIdx(c));
     const ci = itemSheetIdx(c); if (!sheetVis(ci)) continue;
     const r = refById(c.ref), ox = sheetOx(ci), w = c.w, hh = w / refAR(c.ref), x = ox + c.x, z = sheetOy(ci) + c.z;
-    const on = c.id === selCard || (selB && c.target === selB);
+    const on = c.id === selCard || selCards.has(c.id) || (selB && c.target === selB);
     const tb = c.target ? getBox(c.target) : null;
     if (tb) {
-      const [tx, tz] = boxCenterCanvas(tb);
-      const ax = Math.max(x, Math.min(x + w, tx)), az = Math.max(z, Math.min(z + hh, tz));
+      // 연결선은 도형 가운데(글씨 자리)가 아니라 사진 쪽 도형 가장자리에 닿게
+      const cb = canvasBox(tb), mx = x + w / 2, mz = z + hh / 2;
+      const ax = Math.max(x, Math.min(x + w, (cb.x0 + cb.x1) / 2)), az = Math.max(z, Math.min(z + hh, (cb.z0 + cb.z1) / 2));
+      let tx = Math.max(cb.x0, Math.min(cb.x1, mx)), tz = Math.max(cb.z0, Math.min(cb.z1, mz));
+      if (tx > cb.x0 && tx < cb.x1 && tz > cb.z0 && tz < cb.z1) { const d = [tx - cb.x0, cb.x1 - tx, tz - cb.z0, cb.z1 - tz], k2 = d.indexOf(Math.min(...d)); if (k2 === 0) tx = cb.x0; else if (k2 === 1) tx = cb.x1; else if (k2 === 2) tz = cb.z0; else tz = cb.z1; }
       h += `<line x1="${r3(ax)}" y1="${r3(az)}" x2="${r3(tx)}" y2="${r3(tz)}" stroke="${on ? '#2c5a8c' : '#8b8e95'}" stroke-width="${r3(px(on ? 2 : 1.2))}"${on ? '' : ` stroke-dasharray="${r3(px(4))} ${r3(px(4))}"`} pointer-events="none"/>`;
       h += `<circle cx="${r3(tx)}" cy="${r3(tz)}" r="${r3(px(on ? 5 : 3.5))}" fill="${on ? '#2c5a8c' : '#8b8e95'}" stroke="#fff" stroke-width="${r3(px(1.5))}" pointer-events="none"/>`;
     }
@@ -3645,7 +3678,7 @@ function cardsSvg(px){
     if (src) h += `<image href="${esc(src)}" x="${r3(x)}" y="${r3(z)}" width="${r3(w)}" height="${r3(hh)}" preserveAspectRatio="xMidYMid slice"/>`;
     else h += `<rect x="${r3(x)}" y="${r3(z)}" width="${r3(w)}" height="${r3(hh)}" fill="#e4e2db"/><text x="${r3(x + w / 2)}" y="${r3(z + hh / 2)}" font-size="${r3(px(11 * T))}" fill="#7a7368" text-anchor="middle" dominant-baseline="middle">사진 없음</text>`;
     const cap = (r ? (r.name || '사진') : '지워진 사진') + (tb ? ` → ${tb.label || '도형'}` : '');
-    h += `<text x="${r3(x)}" y="${r3(z + hh + px(14 * T))}" font-size="${r3(px(11 * T))}" fill="${on ? '#2c5a8c' : '#5c564c'}" font-weight="${on ? 600 : 400}">${esc(cap.length > 26 ? cap.slice(0, 25) + '…' : cap)}</text>`;
+    h += `<text x="${r3(x)}" y="${r3(z + hh + px(14 * T))}" font-size="${r3(px(11 * T))}" fill="${on ? '#2c5a8c' : '#5c564c'}" font-weight="${on ? 600 : 400}">${esc(fitCap(cap, w * sv.k, 11 * T, on))}</text>`;
     h += `</g>`;
   }
   return h;
@@ -3655,7 +3688,7 @@ function cardBadges(px){
   for (const c of P.cards) if (c.target) cnt[c.target] = (cnt[c.target] || 0) + 1;
   for (const [id, n] of Object.entries(cnt)) {
     const b = getBox(id); if (!b) continue;
-    const a = canvasBox(b), x = a.x1 - px(6), z = a.z0 + px(6), on = selCard && P.cards.find(c => c.id === selCard)?.target === id;
+    const a = canvasBox(b), x = a.x1, z = a.z0 - px(22), on = selCard && P.cards.find(c => c.id === selCard)?.target === id;
     const wpx = 38 + String(n).length * 6;
     h += `<g pointer-events="none"><rect x="${r3(x - px(wpx))}" y="${r3(z)}" width="${r3(px(wpx))}" height="${r3(px(18))}" rx="${r3(px(9))}" fill="${on ? '#2c5a8c' : '#27241f'}" opacity=".88"/><text x="${r3(x - px(wpx / 2))}" y="${r3(z + px(12.5))}" font-size="${r3(px(11))}" fill="#fff" text-anchor="middle">사진 ${n}</text></g>`;
   }
@@ -3673,9 +3706,24 @@ function roundD(b, ox, r){
   return `M${P2(-hw + r, -hd)}L${P2(hw - r, -hd)}Q${P2(hw, -hd)} ${P2(hw, -hd + r)}L${P2(hw, hd - r)}Q${P2(hw, hd)} ${P2(hw - r, hd)}L${P2(-hw + r, hd)}Q${P2(-hw, hd)} ${P2(-hw, hd - r)}L${P2(-hw, -hd + r)}Q${P2(-hw, -hd)} ${P2(-hw + r, -hd)}Z`;
 }
 function shapeD(b, ox, px){ return isSketch() && b.shape === 'rect' ? roundD(b, ox, Math.min(px(12), b.w / 3, b.d / 3)) : pathFrom(worldPts(b), ox); }
-function envGroups(exclude){
+// 점선 묶음은 한 대지(층) 안에서만: 다른 층으로 옮겨지거나 복사된 도형은 그 층에서 따로 묶음
+function splitEnvs(p){
+  const by = new Map();
+  for (const b of p.boxes) if (b.env) { const si = boxSheetIdxIn(p, b); if (!by.has(b.env)) by.set(b.env, new Map()); const m = by.get(b.env); if (!m.has(si)) m.set(si, []); m.get(si).push(b); }
+  for (const [env, m] of by) {
+    if (m.size < 2) continue;
+    const es = p.envShapes && p.envShapes[env], keep = es ? p.sheets.findIndex(s => s.id === es.sheet) : -1;
+    const main = m.has(keep) ? keep : [...m.entries()].sort((a, b) => b[1].length - a[1].length)[0][0];
+    for (const [si, ms] of m) if (si !== main) { const ne = 'e' + uid(); ms.forEach(b => { b.env = ne; }); }
+  }
+}
+function boxSheetIdxIn(p, b){
+  if (b.sheet) { const i = p.sheets.findIndex(s => s.id === b.sheet); if (i >= 0) return i; }
+  const i = p.sheets.findIndex(s => s.type === 'plan' && s.level === b.lv); return i < 0 ? 0 : i;
+}
+function envGroups(exclude, all){
   const m = new Map();
-  for (const b of P.boxes) if (b.env && b.kind === 'solid' && !(exclude && exclude.has(b.id))) { if (!m.has(b.env)) m.set(b.env, []); m.get(b.env).push(b); }
+  for (const b of P.boxes) if (b.env && b.kind === 'solid' && !(exclude && exclude.has(b.id)) && (all || sheetVis(boxSheetIdx(b)))) { if (!m.has(b.env)) m.set(b.env, []); m.get(b.env).push(b); }
   return m;
 }
 function membersRect(ms){ let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity; for (const b of ms) { const a = canvasBox(b); x0 = Math.min(x0, a.x0); z0 = Math.min(z0, a.z0); x1 = Math.max(x1, a.x1); z1 = Math.max(z1, a.z1); } return { x0, z0, x1, z1 }; }
@@ -3713,22 +3761,31 @@ function envShapeCanvas(es, ms){
       const i = (st + k) % n; if (curved[i] || !curved[(i + 1) % n]) continue;
       let j = (i + 1) % n; const run = []; while (curved[j]) { run.push(j); j = (j + 1) % n; }
       const L = [0]; let prev = i; for (const r of [...run, j]) { L.push(L[L.length - 1] + Math.hypot(P0[r][0] - P0[prev][0], P0[r][1] - P0[prev][1])); prev = r; }
-      const T = L[L.length - 1] || 1, d0 = [out[i][0] - P0[i][0], out[i][1] - P0[i][1]], d1 = [out[j][0] - P0[j][0], out[j][1] - P0[j][1]];
-      run.forEach((r, q) => { const t = L[q + 1] / T; out[r] = [P0[r][0] + d0[0] + (d1[0] - d0[0]) * t, P0[r][1] + d0[1] + (d1[1] - d0[1]) * t]; });
+      // 양 끝점 사이를 가로·세로 따로 늘이고 줄여서 곡선 모양(둥근 모서리·반원)을 그대로 유지
+      const map = (v, ax) => { const o0 = P0[i][ax], o1 = P0[j][ax], n0 = out[i][ax], n1 = out[j][ax]; return Math.abs(o1 - o0) > 1e-6 ? n0 + (v - o0) / (o1 - o0) * (n1 - n0) : v + ((n0 - o0) + (n1 - o1)) / 2; };
+      run.forEach(r => { out[r] = [map(P0[r][0], 0), map(P0[r][1], 1)]; });
     }
   }
   return fitAround(out, ms, ox, oy, mg);
 }
 // 도형이 점선 밖으로 튀어나오면: 그 도형을 가로지르는 직선 중 가장 조금만 밀면 되는 것부터 도형 바깥(+여백)으로 밀어냄. 그래도 안 되면 bad
 function fitAround(out, ms, ox, oy, m){
-  const boxes = ms.map(b => { const a = canvasBox(b); return [a.x0 - ox, a.z0 - oy, a.x1 - ox, a.z1 - oy]; });
-  pushOut(out, boxes.map(([x0, z0, x1, z1]) => [x0 - m, z0 - m, x1 + m, z1 + m]));
+  // 사각형(안 돌린 것)은 상자 그대로, 원·반원·돌린 도형은 실제 외곽선으로 검사
+  const isBox = b => (b.shape === 'rect' || !b.shape) && !b.ang;
+  const rects = [], polys = [];
+  for (const b of ms) {
+    if (isBox(b)) { const a = canvasBox(b); rects.push([a.x0 - ox, a.z0 - oy, a.x1 - ox, a.z1 - oy]); }
+    else { const si = boxSheetIdx(b), dx = sheetOx(si) - ox, dz = sheetOy(si) - oy; polys.push(worldPts(b).map(([x, z]) => [x + dx, z + dz])); }
+  }
+  pushOut(out, rects.map(([x0, z0, x1, z1]) => [x0 - m, z0 - m, x1 + m, z1 + m]), polys, m);
   const h = m / 2, res = out.map(([x, z]) => [x + ox, z + oy]);
-  if (!boxes.every(([x0, z0, x1, z1]) => [[x0 - h, z0 - h], [x1 + h, z0 - h], [x1 + h, z1 + h], [x0 - h, z1 + h]].every(([x, z]) => inPoly(out, x, z)))) res.bad = true;
+  const okR = rects.every(([x0, z0, x1, z1]) => [[x0 - h, z0 - h], [x1 + h, z0 - h], [x1 + h, z1 + h], [x0 - h, z1 + h]].every(([x, z]) => inPoly(out, x, z)));
+  const okP = polys.every(pl => pl.every(q => inPoly(out, q[0], q[1]) && distToPoly(q, out) >= m * 0.3));
+  if (!okR || !okP) res.bad = true;
   return res;
 }
-function pushOut(pts, rects){
-  const n = pts.length, E = 1e-6;
+function pushOut(pts, rects, polys, m){
+  const n = pts.length, E = 1e-6, pBox = polys.map(pl => { const b = polyBox(pl); return [b.x0 - m, b.z0 - m, b.x1 + m, b.z1 + m]; });
   for (let it = 0; it < 24; it++) {
     let best = null;
     for (let i = 0; i < n; i++) {
@@ -3737,12 +3794,15 @@ function pushOut(pts, rects){
         if (Math.abs(a[ax] - c[ax]) > E) continue;
         const v = a[ax], lo = Math.min(a[1 - ax], c[1 - ax]), hi = Math.max(a[1 - ax], c[1 - ax]); if (hi - lo < E) continue;
         const mid = (lo + hi) / 2, probe = ax ? [mid, v + 1e-3] : [v + 1e-3, mid], dir = inPoly(pts, probe[0], probe[1]) ? -1 : 1;
+        const cand = g => { const nv = dir > 0 ? g[ax + 2] : g[ax], d = Math.abs(nv - v); if (!best || d < best.d) best = { i, ax, nv, d }; };
         for (const g of rects) {
           if (!(lo < g[3 - ax] - E && hi > g[1 - ax] + E)) continue;
-          if (!(v > g[ax] + E && v < g[ax + 2] - E)) continue;
-          const nv = dir > 0 ? g[ax + 2] : g[ax], d = Math.abs(nv - v);
-          if (!best || d < best.d) best = { i, ax, nv, d };
+          if (v > g[ax] + E && v < g[ax + 2] - E) cand(g);
         }
+        polys.forEach((pl, k) => { // 곡선 도형: 이 직선 위 점이 도형에 닿을 때만
+          const g = pBox[k]; if (!(lo < g[3 - ax] - E && hi > g[1 - ax] + E) || !(v > g[ax] + E && v < g[ax + 2] - E)) return;
+          for (let t = Math.max(lo, g[1 - ax]); t <= Math.min(hi, g[3 - ax]); t += m * 0.5) { const q = ax ? [t, v] : [v, t]; if (inPoly(pl, q[0], q[1]) || distToPoly(q, pl) < m * 0.6) { cand(g); break; } }
+        });
       }
     }
     if (!best) return;
@@ -3822,6 +3882,173 @@ function envToggle(){
   toast(allOn ? '점선 테두리를 껐어요' : bs.length > 1 ? `${bs.length}개를 한 점선 테두리로 둘렀어요` : '점선 테두리를 둘렀어요 · 다른 도형을 가까이 끌어오면 안에 넣을 수 있어요');
 }
 function flowPath(f){ const si = itemSheetIdx(f), ox = sheetOx(si), oy = sheetOy(si); return 'M' + f.pts.map(([x, z]) => `${r3(x + ox)},${r3(z + oy)}`).join('L'); }
+// ---- 도형 둘레 (출입문용): 화면 좌표 꼭짓점, 둘레 길이 ----
+function boxRing(b){
+  const si = boxSheetIdx(b), ox = sheetOx(si), oy = sheetOy(si), pts = worldPts(b).map(([x, z]) => [x + ox, z + oy]), L = [0];
+  for (let i = 0; i < pts.length; i++) { const a = pts[i], c = pts[(i + 1) % pts.length]; L.push(L[i] + Math.hypot(c[0] - a[0], c[1] - a[1])); }
+  return { pts, L, tot: L[L.length - 1] || 1 };
+}
+function ringAt(R, t){ // 둘레 위치 t → 점·방향
+  const d = ((t % 1) + 1) % 1 * R.tot; let i = 0; while (i < R.pts.length - 1 && R.L[i + 1] < d) i++;
+  const a = R.pts[i], c = R.pts[(i + 1) % R.pts.length], seg = (R.L[i + 1] - R.L[i]) || 1, u = (d - R.L[i]) / seg;
+  return { p: [a[0] + (c[0] - a[0]) * u, a[1] + (c[1] - a[1]) * u], dir: [(c[0] - a[0]) / seg, (c[1] - a[1]) / seg] };
+}
+function ringNearest(R, p){ // 점에서 가장 가까운 둘레 위치
+  let best = { d: Infinity, t: 0 };
+  for (let i = 0; i < R.pts.length; i++) {
+    const a = R.pts[i], c = R.pts[(i + 1) % R.pts.length], dx = c[0] - a[0], dz = c[1] - a[1], L2 = dx * dx + dz * dz || 1e-12;
+    const u = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dz) / L2)), q = [a[0] + dx * u, a[1] + dz * u], dd = Math.hypot(p[0] - q[0], p[1] - q[1]);
+    if (dd < best.d) best = { d: dd, t: (R.L[i] + Math.sqrt(L2) * u) / R.tot };
+  }
+  return best;
+}
+// 변 i가 옆 도형의 같은 방향 변과 이어져 만드는 한 줄 외곽 범위 (안 돌린 축 방향 변만)
+function edgeLine(b, R, i){
+  const n = R.pts.length, a = R.pts[i], c = R.pts[(i + 1) % n], E = 1e-6, si = boxSheetIdx(b);
+  const H = Math.abs(a[1] - c[1]) < E, V = Math.abs(a[0] - c[0]) < E; if (!H && !V) return null;
+  const [ccx, ccz] = boxCenterCanvas(b), ax = H ? 1 : 0, v = a[ax], side = Math.sign((H ? ccz : ccx) - v);
+  let lo = Math.min(a[1 - ax], c[1 - ax]), hi = Math.max(a[1 - ax], c[1 - ax]);
+  const segs = [];
+  for (const o of P.boxes) {
+    if (o === b || o.kind !== 'solid' || boxSheetIdx(o) !== si || o.ang) continue;
+    const cb = canvasBox(o), edge = side > 0 ? (H ? cb.z0 : cb.x0) : (H ? cb.z1 : cb.x1);
+    if (Math.abs(edge - v) < E) segs.push(H ? [cb.x0, cb.x1] : [cb.z0, cb.z1]);
+  }
+  let grown = true; while (grown) { grown = false; for (const [s0, s1] of segs) if (s0 <= hi + E && s1 >= lo - E && (s0 < lo - E || s1 > hi + E)) { lo = Math.min(lo, s0); hi = Math.max(hi, s1); grown = true; } }
+  return { ax, v, lo, hi, a0: a[1 - ax], c0: c[1 - ax] };
+}
+// 출입문 자석 자리: 각 변의 가운데 + 옆 도형과 이어진 한 줄 외곽의 가운데
+function doorSnapPts(b, R){
+  const out = [], n = R.pts.length, E = 1e-6;
+  for (let i = 0; i < n; i++) {
+    const seg = R.L[i + 1] - R.L[i]; if (seg < 1e-6) continue;
+    out.push({ t: (R.L[i] + seg / 2) / R.tot, n: '변 가운데' });
+    const ln = edgeLine(b, R, i); if (!ln || ln.hi - ln.lo <= seg + E) continue;
+    const mid = (ln.lo + ln.hi) / 2;
+    if (mid >= Math.min(ln.a0, ln.c0) - E && mid <= Math.max(ln.a0, ln.c0) + E) out.push({ t: (R.L[i] + Math.abs(mid - ln.a0)) / R.tot, n: '이어진 외곽 가운데' });
+  }
+  return out;
+}
+// 둘레 t0~t1 구간의 점들 (t1 > t0, 1을 넘으면 한 바퀴 이어서)
+// 문 위치는 '몇 번째 변의 어디(비율)'로 기억: 도형 크기를 바꿔도 같은 변의 같은 자리에 머묾
+function doorT(dr, R){
+  if (dr.e != null && dr.e < R.pts.length && dr.u != null) { const seg = R.L[dr.e + 1] - R.L[dr.e]; return (R.L[dr.e] + seg * dr.u) / R.tot; }
+  return dr.t;
+}
+function setDoorT(dr, R, t){
+  t = ((t % 1) + 1) % 1; const d = t * R.tot; let i = 0; while (i < R.pts.length - 1 && R.L[i + 1] < d) i++;
+  const seg = (R.L[i + 1] - R.L[i]) || 1; dr.e = i; dr.u = r3(Math.max(0, Math.min(1, (d - R.L[i]) / seg))); dr.t = r3(t);
+}
+function ringSlice(R, t0, t1){
+  const mid = [];
+  for (let c = Math.floor(t0) - 1; c <= Math.floor(t1) + 1; c++) for (let vi = 0; vi < R.pts.length; vi++) { const tv = c + R.L[vi] / R.tot; if (tv > t0 + 1e-9 && tv < t1 - 1e-9) mid.push([tv, R.pts[vi]]); }
+  mid.sort((a, b) => a[0] - b[0]);
+  return [ringAt(R, t0).p, ...mid.map(m => m[1]), ringAt(R, t1).p];
+}
+// 출입문: 도형 외곽 위의 굵은 선 (이음선과 같은 느낌). 동선 그리기에서 골라 양 끝을 끌어 크기, 가운데를 끌어 옮김(다른 도형으로도)
+function doorsSvg(px){
+  let h = '';
+  for (const dr of P.doors || []) {
+    const b = getBox(dr.box); if (!b || !sheetVis(boxSheetIdx(b))) continue;
+    const R = boxRing(b), tt = doorT(dr, R), half = Math.min(dr.w, R.tot) / 2 / R.tot, on = flowEdit && selDoor === dr.id;
+    let pts = ringSlice(R, tt - half, tt + half);
+    if (dr.e != null && dr.e < R.pts.length) { // 옆 도형과 이어진 외곽 위면 모서리를 돌지 않고 곧게
+      const ln = edgeLine(b, R, dr.e), seg = R.L[dr.e + 1] - R.L[dr.e];
+      if (ln) { const cpos = ln.a0 + Math.sign(ln.c0 - ln.a0) * seg * (dr.u ?? 0.5), p0 = cpos - dr.w / 2, p1 = cpos + dr.w / 2;
+        const spill = p0 < Math.min(ln.a0, ln.c0) - 1e-6 || p1 > Math.max(ln.a0, ln.c0) + 1e-6;
+        if (spill && p0 >= ln.lo - 1e-6 && p1 <= ln.hi + 1e-6) pts = ln.ax ? [[p0, ln.v], [p1, ln.v]] : [[ln.v, p0], [ln.v, p1]]; }
+    }
+    const d = 'M' + pts.map(q => `${r3(q[0])},${r3(q[1])}`).join('L'), M = ringAt(R, tt), gl = Math.min(px(7), dr.w / 4), th = dr.thick ? 8.5 : 5;
+    h += `<path d="${d}" fill="none" stroke="#fbf8f1" stroke-width="${r3(px(th + 3 + (on ? 1.5 : 0)))}" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`;
+    h += `<path d="${d}" fill="none" stroke="${on ? '#1f5f52' : '#2f7d6b'}" stroke-width="${r3(px(th + (on ? 1.5 : 0)))}" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`;
+    if (dr.tag) { // 출입문 태그: 도형 바깥쪽에 작은 이름표
+      const [ccx, ccz] = boxCenterCanvas(b); let nx = -M.dir[1], nz = M.dir[0]; if ((M.p[0] - ccx) * nx + (M.p[1] - ccz) * nz < 0) { nx = -nx; nz = -nz; }
+      const tx = DOOR_TAGS[dr.tag], tw = px(tx.length * 11 + 14), tq = [M.p[0] + nx * px(th + 14), M.p[1] + nz * px(th + 14)];
+      h += `<g pointer-events="none"><rect x="${r3(tq[0] - tw / 2)}" y="${r3(tq[1] - px(9))}" width="${r3(tw)}" height="${r3(px(18))}" rx="${r3(px(9))}" fill="#2f7d6b"/><text x="${r3(tq[0])}" y="${r3(tq[1] + px(4))}" text-anchor="middle" font-size="${r3(px(11))}" font-weight="600" fill="#fff">${tx}</text></g>`;
+    }
+    h += `<line x1="${r3(M.p[0] - M.dir[0] * gl)}" y1="${r3(M.p[1] - M.dir[1] * gl)}" x2="${r3(M.p[0] + M.dir[0] * gl)}" y2="${r3(M.p[1] + M.dir[1] * gl)}" stroke="#fff" stroke-width="${r3(px(1.8))}" stroke-linecap="round" pointer-events="none"/>`;
+    if (flowEdit && !edRO()) {
+      h += `<path d="${d}" fill="none" stroke="transparent" stroke-width="${r3(px(24))}" stroke-linecap="round" data-role="door" data-did="${dr.id}" style="cursor:grab"/>`;
+      const hr = Math.min(px(16), dr.w / 4); // 작은 문도 가운데를 잡을 수 있게 끝 손잡이 크기를 줄임
+      if (on) [0, 1].forEach(k => { const q = pts[k ? pts.length - 1 : 0]; h += `<circle cx="${r3(q[0])}" cy="${r3(q[1])}" r="${r3(hr)}" fill="transparent" data-role="doorend" data-did="${dr.id}" data-end="${k}" style="cursor:ew-resize"/><circle cx="${r3(q[0])}" cy="${r3(q[1])}" r="${r3(px(5.5))}" fill="#fff" stroke="#1f5f52" stroke-width="${r3(px(2))}" pointer-events="none"/>`; });
+    }
+  }
+  return h;
+}
+// 가장 가까운 도형 외곽(문을 붙일 수 있는 곳)
+function nearestRing(p, onlyBox){
+  let best = null;
+  for (const b of P.boxes) { if (b.kind !== 'solid' || !sheetVis(boxSheetIdx(b)) || (onlyBox && b.id !== onlyBox)) continue; const R = boxRing(b), n = ringNearest(R, p); if (!best || n.d < best.d) best = { b, R, t: n.t, d: n.d }; }
+  return best;
+}
+const wrapD = d => d - Math.round(d); // 둘레 위치 차이를 -0.5~0.5로
+// 동선 직선 모드: 수직·수평·45°로만
+function straightPts(pts){
+  const q = simplify(pts, Math.max(10 / sv.k, sStep() * 0.5)); if (q.length < 2) return q;
+  const out = [q[0]];
+  for (let i = 1; i < q.length; i++) {
+    const a = out[out.length - 1], dx = q[i][0] - a[0], dz = q[i][1] - a[1], L = Math.hypot(dx, dz); if (L < 1e-6) continue;
+    const ang = Math.round(Math.atan2(dz, dx) / (Math.PI / 4)) * (Math.PI / 4), ux = Math.cos(ang), uz = Math.sin(ang), len = dx * ux + dz * uz;
+    if (len <= 1e-6) continue;
+    const np = [a[0] + ux * len, a[1] + uz * len];
+    if (out.length > 1) { const pv = out[out.length - 2], px0 = a[0] - pv[0], pz0 = a[1] - pv[1]; if (Math.abs(px0 * uz - pz0 * ux) < 1e-6 && px0 * ux + pz0 * uz > 0) { out[out.length - 1] = np; continue; } }
+    out.push(np);
+  }
+  return out;
+}
+// 자: 화면 좌표 대신 대지 기준으로 저장(대지 배치가 바뀌어도 그대로)
+function rulersSvg(px){
+  let h = '';
+  rulers.forEach((r, i) => {
+    const si = P.sheets.findIndex(s => s.id === r.sheet); if (si < 0 && !isSketch()) return; if (si >= 0 && !sheetVis(si)) return;
+    const ox = si >= 0 ? sheetOx(si) : 0, oy = si >= 0 ? sheetOy(si) : 0, a = [r.a[0] + ox, r.a[1] + oy], c = [r.b[0] + ox, r.b[1] + oy];
+    h += rulerLine(a, c, px, i);
+  });
+  return h;
+}
+function rulerLine(a, c, px, i){
+  const L = Math.hypot(c[0] - a[0], c[1] - a[1]); if (L < 1e-6) return '';
+  const ux = (c[0] - a[0]) / L, uz = (c[1] - a[1]) / L, nx = -uz, nz = ux, tk = px(7), col = '#a3492f';
+  const ln = (p, q, w, ex = '') => `<line x1="${r3(p[0])}" y1="${r3(p[1])}" x2="${r3(q[0])}" y2="${r3(q[1])}" stroke="${col}" stroke-width="${r3(px(w))}" stroke-linecap="round" pointer-events="none"${ex}/>`;
+  let h = ln(a, c, 1.6) + ln([a[0] - nx * tk, a[1] - nz * tk], [a[0] + nx * tk, a[1] + nz * tk], 1.6) + ln([c[0] - nx * tk, c[1] - nz * tk], [c[0] + nx * tk, c[1] + nz * tk], 1.6);
+  const mid = [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2], txt = isSketch() ? `${f2(L)}m` : `${cellsStr(L)}칸 · ${f2(L)}m`;
+  let ang = Math.atan2(uz, ux) * 180 / Math.PI; if (ang > 90) ang -= 180; if (ang < -90) ang += 180;
+  h += `<g transform="translate(${r3(mid[0] - nx * px(12))} ${r3(mid[1] - nz * px(12))}) rotate(${r3(ang)})" pointer-events="none"><rect x="${r3(-px(txt.length * 3.6 + 6))}" y="${r3(-px(9))}" width="${r3(px(txt.length * 7.2 + 12))}" height="${r3(px(17))}" rx="${r3(px(8))}" fill="#fbf8f1" stroke="${col}" stroke-width="${r3(px(1))}"/><text x="0" y="${r3(px(4))}" text-anchor="middle" font-size="${r3(px(11.5))}" font-family="IBM Plex Mono, monospace" fill="${col}">${txt}</text></g>`;
+  if (i != null && !edRO()) { const q = [c[0] + ux * px(14), c[1] + uz * px(14)]; h += `<g data-role="rulerdel" data-ri="${i}" style="cursor:pointer"><circle cx="${r3(q[0])}" cy="${r3(q[1])}" r="${r3(px(13))}" fill="transparent"/><circle cx="${r3(q[0])}" cy="${r3(q[1])}" r="${r3(px(8))}" fill="${col}"/><path d="M${r3(q[0] - px(3))},${r3(q[1] - px(3))}L${r3(q[0] + px(3))},${r3(q[1] + px(3))}M${r3(q[0] + px(3))},${r3(q[1] - px(3))}L${r3(q[0] - px(3))},${r3(q[1] + px(3))}" stroke="#fff" stroke-width="${r3(px(1.6))}"/></g>`; }
+  return h;
+}
+// 이음선: 고른 도형의 한 변이 놓인 직선 위에서, 양쪽으로 맞닿은 도형들을 한 줄로 이어 찾음.
+// 각 도형의 그 변이 반대쪽 도형들에 빈틈없이 전부 맞닿아야 붙은 것으로 봄. a = 왼쪽/위 묶음, b = 오른쪽/아래 묶음
+function findSeams(sb){
+  const ok = b => b.kind === 'solid' && (b.shape === 'rect' || !b.shape) && !b.ang && !b.lock;
+  const E = 1e-6, out = [], seen = new Set();
+  const covered = (lo, hi, segs) => { let cur = lo; for (const [a, c] of segs.slice().sort((x, y) => x[0] - y[0])) { if (a > cur + E) break; cur = Math.max(cur, c); } return cur >= hi - E; };
+  for (const s0 of sb) {
+    if (!ok(s0)) continue; const si = boxSheetIdx(s0); if (!sheetVis(si)) continue;
+    const pool = P.boxes.filter(o => ok(o) && boxSheetIdx(o) === si);
+    for (const ax of ['x', 'z']) { // x: 세로 이음선, z: 가로 이음선
+      const pos = b => ax === 'x' ? [b.x, b.x + b.w] : [b.z, b.z + b.d], span = b => ax === 'x' ? [b.z, b.z + b.d] : [b.x, b.x + b.w];
+      for (const side of [1, 0]) {
+        const v = pos(s0)[side], key = ax + ':' + si + ':' + v.toFixed(4); 
+        const A = pool.filter(o => Math.abs(pos(o)[1] - v) < E), B = pool.filter(o => Math.abs(pos(o)[0] - v) < E);
+        if (!A.length || !B.length) continue;
+        // s0에서 시작해 겹치는 도형끼리 이어진 묶음만
+        const inA = new Set(), inB = new Set(), q = [[s0, side === 1]];
+        if (side === 1) inA.add(s0); else inB.add(s0);
+        while (q.length) { const [cur, isA] = q.pop(), [l0, l1] = span(cur); for (const o of isA ? B : A) { const set = isA ? inB : inA; if (set.has(o)) continue; const [m0, m1] = span(o); if (m0 < l1 - E && m1 > l0 + E) { set.add(o); q.push([o, !isA]); } } }
+        if (!inA.size || !inB.size || seen.has(key + [...inA, ...inB].map(o => o.id).sort().join())) continue;
+        const aS = [...inA].map(span), bS = [...inB].map(span);
+        if (![...inA].every(o => covered(...span(o), bS)) && ![...inB].every(o => covered(...span(o), aS))) continue; // 한쪽 변 전체가 맞닿아야
+        seen.add(key + [...inA, ...inB].map(o => o.id).sort().join());
+        const lo = Math.max(Math.min(...aS.map(x => x[0])), Math.min(...bS.map(x => x[0]))), hi = Math.min(Math.max(...aS.map(x => x[1])), Math.max(...bS.map(x => x[1])));
+        const flush = Math.abs(Math.min(...aS.map(x => x[0])) - Math.min(...bS.map(x => x[0]))) < E && Math.abs(Math.max(...aS.map(x => x[1])) - Math.max(...bS.map(x => x[1]))) < E;
+        const ox = sheetOx(si), oy = sheetOy(si);
+        out.push({ a: [...inA].map(o => o.id).join(','), b: [...inB].map(o => o.id).join(','), ax, v: v + (ax === 'x' ? ox : oy), lo: lo + (ax === 'x' ? oy : ox), hi: hi + (ax === 'x' ? oy : ox), len: hi - lo, flush });
+      }
+    }
+  }
+  return out;
+}
 function renderStudy(){
   if (!P || uiMode !== 'study') return;
   LAY = layFrozen && LAY ? LAY : computeLayout();
@@ -3832,6 +4059,12 @@ function renderStudy(){
   for (const [t, f] of Object.entries(FLOWS)) defs += `<marker id="ar-${t}" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="${f.c}"/></marker>`;
   let paper = '', shapes = '', bound = '', flows = '', over = '';
   const sketch = isSketch();
+  if (sketch) { // 스케치북 배경: 칸 꼭짓점마다 점 (확대·축소해도 점 간격이 알맞게)
+    const r = pc.getBoundingClientRect(); let st = 1; while (st * k < 18) st *= 2; while (st * k > 56) st /= 2;
+    const vx0 = -sv.tx / k, vz0 = -sv.ty / k, vx1 = vx0 + r.width / k, vz1 = vz0 + r.height / k;
+    defs += `<pattern id="sdots" patternUnits="userSpaceOnUse" x="${r3(-st / 2)}" y="${r3(-st / 2)}" width="${r3(st)}" height="${r3(st)}"><circle cx="${r3(st / 2)}" cy="${r3(st / 2)}" r="${r3(px(1.1))}" fill="#d9d0c0"/></pattern>`;
+    paper += `<rect x="${r3(vx0)}" y="${r3(vz0)}" width="${r3(vx1 - vx0)}" height="${r3(vz1 - vz0)}" fill="url(#sdots)" pointer-events="none"/>`;
+  }
   (sketch ? [] : P.sheets).forEach((s, i) => {
     if (!sheetVis(i)) return;
     const p0 = paper.length;
@@ -3920,6 +4153,9 @@ function renderStudy(){
   }
   // 선택 손잡이
   const sb = selBoxes();
+  // 맞붙은 두 도형 사이 이음선: 잡고 끌면 두 도형이 붙은 채로 같이 늘고 줄어듦 (한 면이 통째로 맞닿아야 붙은 것으로 봄)
+  const seams = !flowEdit && !ro && tool === 'select' && sb.length && !rotMode ? findSeams(sb) : [], seamSide = new Set();
+  for (const sm of seams) { if (sm.a.split(',').some(id => selSet.has(id))) seamSide.add(sm.ax === 'x' ? 'e' : 's'); if (sm.b.split(',').some(id => selSet.has(id))) seamSide.add(sm.ax === 'x' ? 'w' : 'n'); }
   if (!flowEdit && !ro && sb.length === 1 && !selNotes().length && !sb[0].lock && sheetVis(boxSheetIdx(sb[0]))) {
     const b = sb[0], hbi = boxSheetIdx(b), ox = sheetOx(hbi), oy = sheetOy(hbi), hs = px(11), hit = px(26);
     const at = (u, v) => { const [x, z] = fromLocal(b, u, v); return [x + ox, z + oy]; };
@@ -3934,6 +4170,7 @@ function renderStudy(){
     } else {
       if (b.kind === 'outer') { const [mx, mz] = boxCenterCanvas(b); over += `<circle cx="${r3(mx)}" cy="${r3(mz)}" r="${r3(px(22))}" fill="transparent" data-role="handle" data-h="mv" style="cursor:move"/><circle cx="${r3(mx)}" cy="${r3(mz)}" r="${r3(px(7))}" fill="#2c5a8c" stroke="#fff" stroke-width="${r3(px(2.2))}" pointer-events="none"/>`; }
       for (const [key, u, v] of [['nw', 0, 0], ['n', .5, 0], ['ne', 1, 0], ['e', 1, .5], ['se', 1, 1], ['s', .5, 1], ['sw', 0, 1], ['w', 0, .5]]) {
+        if (seamSide.has(key)) continue; // 이음선이 있는 면은 이음선으로 조절
         const [x, z] = at(u, v);
         over += `<rect x="${r3(x - hit / 2)}" y="${r3(z - hit / 2)}" width="${r3(hit)}" height="${r3(hit)}" fill="transparent" data-role="handle" data-h="${key}"/>`;
         over += `<rect x="${r3(x - hs / 2)}" y="${r3(z - hs / 2)}" width="${r3(hs)}" height="${r3(hs)}" rx="${r3(px(2))}" fill="#fff" stroke="#2c5a8c" stroke-width="${r3(px(2))}" pointer-events="none"/>`;
@@ -3944,6 +4181,22 @@ function renderStudy(){
     for (const b of sb) { const a = canvasBox(b); x0 = Math.min(x0, a.x0); z0 = Math.min(z0, a.z0); x1 = Math.max(x1, a.x1); z1 = Math.max(z1, a.z1); }
     for (const n of selNotes()) { const ni = itemSheetIdx(n), ox = sheetOx(ni), oy = sheetOy(ni); x0 = Math.min(x0, ox + n.x); z0 = Math.min(z0, oy + n.z - noteH(n)); x1 = Math.max(x1, ox + n.x + noteW(n)); z1 = Math.max(z1, oy + n.z + noteH(n) * 0.3); }
     if (isFinite(x0)) over += `<rect x="${r3(x0 - px(5))}" y="${r3(z0 - px(5))}" width="${r3(x1 - x0 + px(10))}" height="${r3(z1 - z0 + px(10))}" fill="none" stroke="#2c5a8c" stroke-width="${r3(px(1.3))}" stroke-dasharray="${r3(px(5))} ${r3(px(4))}" pointer-events="none"/>`;
+    // 여러 개 한꺼번에 늘리고 줄이기: 네 모서리 손잡이 (같은 대지, 잠긴 것 없을 때)
+    if (isFinite(x0) && !ro && sb.length > 1 && !selNotes().length && sb.every(b => !b.lock) && new Set(sb.map(boxSheetIdx)).size === 1) {
+      const hs = px(12), hit = px(28);
+      for (const [key, x, z] of [['nw', x0 - px(5), z0 - px(5)], ['ne', x1 + px(5), z0 - px(5)], ['se', x1 + px(5), z1 + px(5)], ['sw', x0 - px(5), z1 + px(5)]]) {
+        over += `<rect x="${r3(x - hit / 2)}" y="${r3(z - hit / 2)}" width="${r3(hit)}" height="${r3(hit)}" fill="transparent" data-role="mhandle" data-h="${key}" style="cursor:${key === 'nw' || key === 'se' ? 'nwse' : 'nesw'}-resize"/>`;
+        over += `<rect x="${r3(x - hs / 2)}" y="${r3(z - hs / 2)}" width="${r3(hs)}" height="${r3(hs)}" rx="${r3(px(6))}" fill="#2c5a8c" stroke="#fff" stroke-width="${r3(px(2.2))}" pointer-events="none"/>`;
+      }
+    }
+  }
+  for (const sm of seams) {
+    const ins = Math.min(px(6), sm.len / 4), [p0, p1] = sm.ax === 'x' ? [[sm.v, sm.lo + ins], [sm.v, sm.hi - ins]] : [[sm.lo + ins, sm.v], [sm.hi - ins, sm.v]];
+    const c = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2], gl = Math.min(px(14), sm.len / 3) / 2, g0 = sm.ax === 'x' ? [c[0], c[1] - gl] : [c[0] - gl, c[1]], g1 = sm.ax === 'x' ? [c[0], c[1] + gl] : [c[0] + gl, c[1]];
+    const L = (a, b, st) => `<line x1="${r3(a[0])}" y1="${r3(a[1])}" x2="${r3(b[0])}" y2="${r3(b[1])}" ${st}/>`;
+    over += L(p0, p1, `stroke="${sm.flush ? '#2c5a8c' : '#8a6f5a'}" stroke-width="${r3(px(6))}" stroke-linecap="round" pointer-events="none"`); // 양쪽 모서리가 일직선이면 파랑
+    over += L(g0, g1, `stroke="#fff" stroke-width="${r3(px(1.8))}" stroke-linecap="round" pointer-events="none"`);
+    over += L(p0, p1, `stroke="transparent" stroke-width="${r3(px(22))}" stroke-linecap="round" data-role="seam" data-a="${sm.a}" data-b="${sm.b}" data-ax="${sm.ax}" style="cursor:${sm.ax === 'x' ? 'col' : 'row'}-resize"`);
   }
   if (siteEdit && P.site && !sketch) P.sheets.forEach((s, i) => {
     if (s.type !== 'plan' || !sheetVis(i)) return;
@@ -3964,8 +4217,8 @@ function renderStudy(){
     if (gs.site) over += `<circle cx="${r3(sx)}" cy="${r3(sz)}" r="${r3(outSnap())}" fill="${gs.near ? 'rgba(44,90,140,.18)' : 'none'}" stroke="#2c5a8c" stroke-opacity=".6" stroke-width="${r3(px(1.2))}" stroke-dasharray="${r3(px(3))} ${r3(px(3))}" pointer-events="none"/><circle cx="${r3(sx)}" cy="${r3(sz)}" r="${r3(px(4))}" fill="#2c5a8c" pointer-events="none"/>`;
   }
   if (gs && gs.type === 'flow' && gs.pts.length > 1) {
-    const st = FLOWS[flowType];
-    over += `<path d="M${gs.pts.map(([x, z]) => `${r3(x)},${r3(z)}`).join('L')}" fill="none" stroke="${st.c}" stroke-width="${r3(px(st.w))}" stroke-linecap="round" stroke-linejoin="round" opacity=".7" pointer-events="none"/>`;
+    const st = FLOWS[flowType], gp = straightMode ? straightPts(gs.pts) : gs.pts;
+    over += `<path d="M${gp.map(([x, z]) => `${r3(x)},${r3(z)}`).join('L')}" fill="none" stroke="${st.c}" stroke-width="${r3(px(st.w))}" stroke-linecap="round" stroke-linejoin="round" opacity=".7" pointer-events="none"/>`;
   }
   if (gs && gs.type === 'marquee' && gs.dragged) {
     const x0 = Math.min(gs.w0.x, gs.w1.x), z0 = Math.min(gs.w0.z, gs.w1.z), cross = gs.w1.x < gs.w0.x;
@@ -3974,9 +4227,12 @@ function renderStudy(){
     over += `<text x="${r3(gs.w1.x + px(cross ? -8 : 8))}" y="${r3(gs.w1.z - px(8))}" text-anchor="${cross ? 'end' : 'start'}" font-size="${r3(px(12))}" font-weight="600" fill="${c}" pointer-events="none">${cross ? '걸친 것도 선택' : '완전히 들어온 것만 선택'}</text>`;
   }
   const cardsH = cardsSvg(px), badges = cardBadges(px), glow = targetGlow(px);
+  const doorsH = doorsSvg(px);
+  over += rulersSvg(px);
+  if (gs && gs.type === 'ruler' && gs.b) over += rulerLine(gs.a, gs.b, px, null);
   let h = `<defs>${defs}</defs><g transform="translate(${r3(sv.tx)},${r3(sv.ty)}) scale(${r3(k)})">${paper}`;
   h += flowEdit ? `<g opacity=".3" pointer-events="none">${shapes}${cardsH}</g><g pointer-events="none">${bound}</g>` : fbEdit ? `<g pointer-events="none" opacity=".82">${shapes + envH + badges + cardsH}</g>` : shapes + envH + envProbeSvg(px) + glow + badges + cardsH;
-  h += `<g${flowEdit ? '' : ' pointer-events="none"'}>${flows}</g>${fbEdit ? '' : over}${fbSvg(px)}</g>`;
+  h += `<g${flowEdit ? '' : ' pointer-events="none" opacity=".45"'}>${flows}</g><g${flowEdit ? '' : ' pointer-events="none"'}>${doorsH}</g>${fbEdit ? '' : over}${fbSvg(px)}</g>`; // 동선 그리기가 아닐 땐 동선을 반투명하게
   if (linkMode) { const r = pc.getBoundingClientRect(); h += `<rect x="0" y="0" width="${r.width}" height="${r.height}" fill="none" stroke="#2c5a8c" stroke-width="6" pointer-events="none"/>`; }
   if (!P.boxes.length && !P.notes.length && !gs) {
     const r = pc.getBoundingClientRect();
@@ -4015,7 +4271,7 @@ const outSnap = () => Math.max(22 / sv.k, P.grid * 0.35); // 시작점에 이만
 // 그린 점선 모양에서 도형 가운데가 빠져나가면 그 모양은 버리고 기본 테두리로 (다시 그리기 안내)
 function envShapeCheck(){
   if (!P.envShapes) return;
-  const groups = envGroups(); let lost = 0;
+  const groups = envGroups(null, true); let lost = 0;
   for (const k of Object.keys(P.envShapes)) {
     const ms = groups.get(k); if (!ms) { delete P.envShapes[k]; continue; }
     const sp = envShapeCanvas(P.envShapes[k], ms); if (!sp) { delete P.envShapes[k]; continue; }
@@ -4136,8 +4392,8 @@ function orthoLine(raw, ms, poly, m){
   const cx = [], cz = [];
   for (const b of ms) { const a = canvasBox(b); cx.push(a.x0 - m, a.x1 + m); cz.push(a.z0 - m, a.z1 + m); }
   poly.forEach((p0, j) => { const p1 = poly[(j + 1) % poly.length]; if (Math.abs(p0[1] - p1[1]) < 1e-6) cz.push(p0[1]); if (Math.abs(p0[0] - p1[0]) < 1e-6) cx.push(p0[0]); });
-  const mem = cutMembers(ms, m), arcs = ms.filter(b => ['circle', 'semi', 'quarter'].includes(b.shape)).map(b => arcSamples(b, m)).filter(Boolean);
-  const tolC = Math.max(16 / sv.k, P.grid * 0.35), tags = raw.map(p => {
+  const mem = cutMembers(ms, m), arcs = ms.map((b, mi) => ['circle', 'semi', 'quarter'].includes(b.shape) ? Object.assign(arcSamples(b, m) || {}, { mi }) : null).filter(a => a && a.pts);
+  const tolC = Math.max(30 / sv.k, P.grid * 0.55), tags = raw.map(p => {
     let best = null;
     arcs.forEach((A, k) => A.pts.forEach((q, j) => { const d = Math.hypot(p[0] - q[0], p[1] - q[1]); if (d < tolC && (!best || d < best.d)) best = { k, j, d }; }));
     return best;
@@ -4149,15 +4405,23 @@ function orthoLine(raw, ms, poly, m){
   for (const pc of pieces) if (pc.k >= 0 && pathLen(pc.pts) < minArc) pc.k = -1;
   const merged = []; for (const pc of pieces) { const l = merged[merged.length - 1]; if (l && l.k === -1 && pc.k === -1) l.pts.push(...pc.pts); else merged.push(pc); }
   pieces = merged;
-  const arcPts = pc => {
+  // 곡선 토막: 그린 만큼 곡선을 따라가고, 선의 처음·끝이 곡선 위에서 끝났으면 점선 밖으로 나갈 때까지(다른 도형에 닿기 전까지) 곡선을 이어 그림
+  const arcPts = (pc, extS, extE) => {
     const A = arcs[pc.k], N = A.pts.length, j0 = pc.js[0], j1 = pc.js[pc.js.length - 1], o = [];
-    if (A.closed) { let tot = 0; for (let i = 1; i < pc.js.length; i++) { let dj = pc.js[i] - pc.js[i - 1]; if (dj > N / 2) dj -= N; if (dj < -N / 2) dj += N; tot += dj; } const st = Math.sign(tot) || 1; for (let i = 0; i <= Math.abs(tot); i++) o.push(A.pts[((j0 + st * i) % N + N) % N]); }
-    else { const st = j1 >= j0 ? 1 : -1; for (let j = j0; j !== j1 + st; j += st) o.push(A.pts[j]); }
+    let st, cnt;
+    if (A.closed) { let tot = 0; for (let i = 1; i < pc.js.length; i++) { let dj = pc.js[i] - pc.js[i - 1]; if (dj > N / 2) dj -= N; if (dj < -N / 2) dj += N; tot += dj; } st = Math.sign(tot) || 1; cnt = Math.abs(tot); }
+    else { st = j1 >= j0 ? 1 : -1; cnt = Math.abs(j1 - j0); }
+    const at = j => A.closed ? A.pts[((j % N) + N) % N] : A.pts[j], ok = j => A.closed ? true : j >= 0 && j < N;
+    for (let i = 0; i <= cnt; i++) o.push(at(j0 + st * i));
+    const others = mem.filter((_, i) => i !== A.mi);
+    const grow = (from, dir, put) => { for (let j = from + dir, n = 0; ok(j) && n < N; j += dir, n++) { const q = at(j); if (intrudes(q, others, m)) break; put(q); if (!inPoly(poly, q[0], q[1])) break; } };
+    if (extE) grow(j0 + st * cnt, st, q => o.push(q));
+    if (extS) grow(j0, -st, q => o.unshift(q));
     return o;
   };
   const out = [];
   pieces.forEach((pc, i) => {
-    if (pc.k >= 0) { out.push(...arcPts(pc)); return; }
+    if (pc.k >= 0) { out.push(...arcPts(pc, i === 0, i === pieces.length - 1)); return; }
     let pr = pc.pts.slice();
     if (out.length) pr.unshift(out[out.length - 1]);
     const nx = pieces[i + 1]; if (nx && nx.k >= 0) pr.push(arcPts(nx)[0]);
@@ -4165,7 +4429,15 @@ function orthoLine(raw, ms, poly, m){
     out.push(...orthoPiece(pr, cx, cz, mem, m, !out.length, i === pieces.length - 1));
   });
   if (out.length < 2) return null;
-  const BIG = (P.siteW + P.siteD) * 2, ext = (p, toward) => { const dx = p[0] - toward[0], dz = p[1] - toward[1], L = Math.hypot(dx, dz) || 1; return [p[0] + dx / L * BIG, p[1] + dz / L * BIG]; };
+  // 양 끝은 점선 밖까지 길게: 그대로 늘리면 도형에 닿을 때는 수평·수직 중 닿지 않는 쪽으로
+  const BIG = (P.siteW + P.siteD) * 2, pb = polyBox(poly), far = Math.hypot(pb.x1 - pb.x0, pb.z1 - pb.z0) + m * 4;
+  const clear = (p, u) => { for (let t = m * 0.5; t <= far; t += m * 0.5) if (intrudes([p[0] + u[0] * t, p[1] + u[1] * t], mem, m)) return false; return true; };
+  const ext = (p, toward) => {
+    const dx = p[0] - toward[0], dz = p[1] - toward[1], L = Math.hypot(dx, dz) || 1, u = [dx / L, dz / L];
+    let dir = u;
+    if (!clear(p, u)) { const axes = [[1, 0], [-1, 0], [0, 1], [0, -1]].filter(a => a[0] * u[0] + a[1] * u[1] > -0.2).sort((a, b) => (b[0] * u[0] + b[1] * u[1]) - (a[0] * u[0] + a[1] * u[1])); dir = axes.find(a => clear(p, a)) || u; }
+    return [p[0] + dir[0] * BIG, p[1] + dir[1] * BIG];
+  };
   let k1 = 1; while (k1 < out.length - 1 && Math.hypot(out[k1][0] - out[0][0], out[k1][1] - out[0][1]) < 1e-6) k1++;
   let k2 = out.length - 2; while (k2 > 0 && Math.hypot(out[k2][0] - out[out.length - 1][0], out[k2][1] - out[out.length - 1][1]) < 1e-6) k2--;
   out.unshift(ext(out[0], out[k1])); out.push(ext(out[out.length - 1], out[k2]));
@@ -4242,7 +4514,12 @@ pc.addEventListener('pointerdown', e => {
   LAY = computeLayout(); layFrozen = true;
   const w = toWorld(e), el = e.target.closest ? e.target.closest('[data-role]') : null;
   const role = el ? el.dataset.role : null, id = el ? el.dataset.id : null, ro = edRO();
+  if (e.button === 2 && id && (getBox(id) || getNote(id)) && (role === 'body' || role === 'note' || role === 'label')) { // 오른쪽 클릭 = 두 번 누르기 (이름·설명 쓰기)
+    gesture = { type: 'none' }; if (!selSet.has(id)) setSel([id]);
+    if (ro) setTimeout(() => showShapeInfo(id), 0); else setTimeout(() => openLabelEd(id), 0); studyUI(); return;
+  }
   if (e.button === 1 || e.button === 2 || spaceDown) { sAuto = false; gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty }; return; }
+  if (role === 'rulerdel') { gesture = { type: 'none' }; rulers.splice(Number(el.closest('[data-role=rulerdel]').dataset.ri), 1); renderStudy(); return; }
   if (role === 'halftog') { gesture = { type: 'none' }; toggleHalf(el.dataset.sheet); return; }
   if (role === 'sheettitle') { gesture = { type: 'none' }; activateSheet(el.dataset.sheet, true); return; }
   if (linkMode && !flowEdit) {
@@ -4262,6 +4539,13 @@ pc.addEventListener('pointerdown', e => {
   const cardEl = !flowEdit && e.target.closest ? e.target.closest('[data-role=card]') : null;
   if (cardEl) {
     const cid = cardEl.dataset.cid, c = P.cards.find(x => x.id === cid);
+    if (!ro && c && (e.shiftKey || multiPick)) { // Shift·여러 개 고르기: 사진도 선택에 더하고 빼기 (움직일 때만 같이 감)
+      selCard = null; if (selCards.has(cid)) selCards.delete(cid); else selCards.add(cid); gesture = { type: 'none' }; studyUI(); return;
+    }
+    if (!ro && c && selCards.has(cid) && (selSet.size || selCards.size > 1)) { // 고른 것 전체를 같이 옮기기
+      const orig = {}; for (const x of selBoxes()) orig[x.id] = [x.x, x.z]; for (const x of selNotes()) orig[x.id] = [x.x, x.z]; for (const k of selCards) { const cc = P.cards.find(y => y.id === k); if (cc) orig[k] = [cc.x, cc.z]; }
+      gesture = { type: 'move', w0: w, start: JSON.stringify(P), orig, moved: false, single: false, id: null, cx: e.clientX, cy: e.clientY, dx: 0, dz: 0, held: true }; return;
+    }
     if (ro || !c || selCard !== cid) {
       const g0 = { type: 'tapsel', card: cid, x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty };
       if (!ro && c) g0.lp = setTimeout(() => { if (gesture !== g0) return; clearSel(); selCard = cid; gesture = { type: 'cardmove', cid, start: JSON.stringify(P), w0: w, o: [c.x, c.z], moved: false, cx: g0.x0, cy: g0.y0, dx: 0, dz: 0 }; if (navigator.vibrate) try { navigator.vibrate(10); } catch (err) {} studyUI(); }, 300);
@@ -4272,6 +4556,25 @@ pc.addEventListener('pointerdown', e => {
   }
   if (selCard && !flowEdit) { selCard = null; }
   if (flowEdit) {
+    if (!ro && role === 'doorend') { // 문 끝을 끌어 크기 조절
+      const dr = (P.doors || []).find(d => d.id === el.dataset.did), b = dr && getBox(dr.box); if (!b) return;
+      const R = boxRing(b), half = Math.min(dr.w, R.tot) / 2 / R.tot, k = Number(el.dataset.end), tt = doorT(dr, R);
+      gesture = { type: 'doorend', id: dr.id, fixed: k ? tt - half : tt + half, cur: k ? tt + half : tt - half, start: JSON.stringify(P), moved: false }; return;
+    }
+    if (!ro && role === 'door') { // 문 잡고 끌기: 도형 외곽을 따라 움직이고, 다른 도형 가장자리로 옮겨 갈 수도 있음
+      const dr = (P.doors || []).find(d => d.id === el.dataset.did); if (!dr) return;
+      selDoor = dr.id; selFlow = null; gesture = { type: 'door', id: dr.id, start: JSON.stringify(P), moved: false }; studyUI(); return;
+    }
+    if (!ro && doorMode) { // 출입문 넣기: 도형 가장자리에서 시작해 외곽을 따라 그어서 크기를 정함
+      const nb = nearestRing([w.x, w.z]);
+      if (!nb || nb.d > Math.max(px2w(22), P.grid * 0.4)) { gesture = { type: 'none' }; toast('출입문은 도형 가장자리에만 넣을 수 있어요. 도형 테두리에서 시작해 그어 주세요'); return; }
+      gesture = { type: 'doordraw', box: nb.b.id, t0: nb.t, t1: nb.t, last: nb.t, moved: false }; return;
+    }
+    selDoor = null;
+    if (flowPan) { // 이동 모드: 끌면 화면만 움직임 (동선을 누르면 고르기)
+      if (role === 'flow') { selFlow = el.dataset.fid; studyUI(); } else if (selFlow) { selFlow = null; studyUI(); }
+      sAuto = false; gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty }; return;
+    }
     if (role === 'flow') { selFlow = el.dataset.fid; gesture = { type: 'none' }; studyUI(); return; }
     if (ro) { sAuto = false; gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty }; return; }
     gesture = { type: 'flow', pts: [[w.x, w.z]], sx: e.clientX, sy: e.clientY, lx: e.clientX, ly: e.clientY };
@@ -4283,12 +4586,29 @@ pc.addEventListener('pointerdown', e => {
     gesture = { type: 'move', w0: w, start: JSON.stringify(P), orig, moved: true, single: false, id: sel, cx: e.clientX, cy: e.clientY, dx: 0, dz: 0, held: true };
     return;
   }
+  if (!ro && role === 'seam' && tool === 'select') {
+    const As = el.dataset.a.split(',').map(getBox).filter(Boolean), Bs = el.dataset.b.split(',').map(getBox).filter(Boolean); if (!As.length || !Bs.length) return;
+    const si = boxSheetIdx(As[0]);
+    gesture = { type: 'seam', ax: el.dataset.ax, oa: As.map(b => ({ ...b })), ob: Bs.map(b => ({ ...b })), ox: sheetOx(si), oy: sheetOy(si), start: JSON.stringify(P), moved: false };
+    return;
+  }
+  if (!ro && role === 'mhandle' && tool === 'select') {
+    const bs = selBoxes(), si = boxSheetIdx(bs[0]), orig = {}; let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
+    for (const b of bs) { orig[b.id] = { x: b.x, z: b.z, w: b.w, d: b.d }; const a = aabb(b); x0 = Math.min(x0, a.x0); z0 = Math.min(z0, a.z0); x1 = Math.max(x1, a.x1); z1 = Math.max(z1, a.z1); }
+    gesture = { type: 'mscale', h: el.dataset.h, orig, bb: { x0, z0, x1, z1 }, ox: sheetOx(si), oy: sheetOy(si), start: JSON.stringify(P), moved: false };
+    return;
+  }
   if (!ro && role === 'handle' && tool === 'select') {
     const b = getBox(sel); if (!b) return;
     gesture = { type: el.dataset.h === 'rot' ? 'rotate' : 'resize', h: el.dataset.h, start: JSON.stringify(P), o: { ...b }, ox: sheetOx(boxSheetIdx(b)), oy: sheetOy(boxSheetIdx(b)), moved: false };
     return;
   }
   if (!ro && role === 'sitev' && siteEdit) { gesture = { type: 'none' }; editSiteVertex(Number(el.dataset.vi)); return; }
+  if (!ro && tool === 'ruler') {
+    if (rulers.length >= 5) { gesture = { type: 'none' }; toast('자는 5개까지 그릴 수 있어요. 끝의 × 를 눌러 지우고 그려 주세요'); return; }
+    const si = isSketch() ? -1 : sheetAt(w.x, w.z), p0 = [sn(w.x), sn(w.z)];
+    gesture = { type: 'ruler', si, a: p0, b: null }; return;
+  }
   if (!ro && tool === 'site') {
     const si = sheetAt(w.x, w.z);
     gesture = { type: 'outline', site: true, si, pts: [[w.x, w.z]], lx: e.clientX, ly: e.clientY, sx: e.clientX, sy: e.clientY, near: false };
@@ -4309,6 +4629,7 @@ pc.addEventListener('pointerdown', e => {
   if (!ro && tool === 'text') { gesture = { type: 'none' }; addNote(w); return; }
   if (id) {
     const b = getBox(id), grp = b ? groupOf(b).map(x => x.id) : [id];
+    if (!e.shiftKey && !multiPick && !selSet.has(id)) selCards = new Set();
     if (ro || multiPick || e.shiftKey || !selSet.has(id)) {
       const g0 = { type: 'tapsel', id, shift: e.shiftKey, x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty, w };
       if (!ro && !multiPick && !e.shiftKey) g0.lp = setTimeout(() => {
@@ -4319,6 +4640,7 @@ pc.addEventListener('pointerdown', e => {
         const orig = {};
         for (const x of selBoxes()) orig[x.id] = [x.x, x.z];
         for (const x of selNotes()) orig[x.id] = [x.x, x.z];
+        for (const k of selCards) { const cc = P.cards.find(y => y.id === k); if (cc) orig[k] = [cc.x, cc.z]; }
         gesture = { type: 'move', w0: w, start: JSON.stringify(P), orig, moved: true, single: false, id, cx: g0.x0, cy: g0.y0, dx: 0, dz: 0, held: true };
         if (navigator.vibrate) try { navigator.vibrate(10); } catch (err) {}
         studyUI();
@@ -4331,12 +4653,18 @@ pc.addEventListener('pointerdown', e => {
     const orig = {};
     for (const x of selBoxes()) orig[x.id] = [x.x, x.z];
     for (const x of selNotes()) orig[x.id] = [x.x, x.z];
+    for (const k of selCards) { const cc = P.cards.find(y => y.id === k); if (cc) orig[k] = [cc.x, cc.z]; }
     gesture = { type: 'move', w0: w, start: JSON.stringify(P), orig, moved: false, single, id, cx: e.clientX, cy: e.clientY, dx: 0, dz: 0 };
     return;
   }
   if (role === 'sheet' && el.dataset.sheet !== activeSheet) { activeSheet = el.dataset.sheet; studyBars(); }
   if (!ro && e.shiftKey) { gesture = { type: 'marquee', w0: w, w1: w, add: true, cx: e.clientX, cy: e.clientY, dragged: false }; return; }
   // 빈 곳: 끌면 화면 이동, 꾹 누르고 끌면 범위 선택, 짧게 누르면 선택 해제
+  const now = performance.now();
+  if (!ro && now - emptyTap.t < 380 && Math.hypot(e.clientX - emptyTap.x, e.clientY - emptyTap.y) < 24) { // 빈 곳 두 번 누르기: 끌면 범위 선택, 그냥 떼면 '여러 개 고르기'
+    emptyTap.t = 0; gesture = { type: 'marquee', w0: w, w1: w, add: true, cx: e.clientX, cy: e.clientY, dragged: false, dbl: true }; return;
+  }
+  emptyTap = { t: now, x: e.clientX, y: e.clientY };
   const gg = { type: 'pan', soft: true, x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty, w0: w, onSheet: !!(e.target && e.target.closest && e.target.closest('[data-role=sheet]')) };
   if (!ro) gg.lp = setTimeout(() => { if (gesture === gg && !gg.panMoved) { gesture = { type: 'marquee', w0: gg.w0, w1: gg.w0, add: multiPick, cx: gg.x0, cy: gg.y0, dragged: false }; if (navigator.vibrate) try { navigator.vibrate(12); } catch (err) {} toast('범위를 끌어서 여러 개를 고르세요'); } }, 480);
   gesture = gg;
@@ -4376,6 +4704,35 @@ pc.addEventListener('pointermove', e => {
     if (dx === g.dx && dz === g.dz) return;
     g.dx = dx; g.dz = dz; c.x = r2(g.o[0] + dx); c.z = r2(g.o[1] + dz); renderStudy(); return;
   }
+  if (g.type === 'ruler') {
+    let b = [sn(w.x), sn(w.z)];
+    if (e.shiftKey) { const dx = b[0] - g.a[0], dz = b[1] - g.a[1], ang = Math.round(Math.atan2(dz, dx) / (Math.PI / 4)) * (Math.PI / 4), L = Math.hypot(dx, dz); b = [g.a[0] + Math.cos(ang) * L, g.a[1] + Math.sin(ang) * L]; }
+    g.b = b; const L = Math.hypot(b[0] - g.a[0], b[1] - g.a[1]); showTag(e, isSketch() ? `${f2(L)}m` : `${cellsStr(L)}칸 · ${f2(L)}m`); renderStudy(); return;
+  }
+  if (g.type === 'door') {
+    const dr = (P.doors || []).find(d => d.id === g.id); if (!dr) return;
+    const nb = nearestRing([w.x, w.z]); if (!nb) return;
+    if (nb.b.id !== dr.box && nb.d > Math.max(px2w(26), P.grid * 0.5)) return; // 다른 도형은 가장자리에 가까이 가야 옮겨 감
+    let t = nb.t, hint = '';
+    if (doorSnap && !e.altKey) { // 가운데 자석: 가까이 가면 붙고, 일정 거리 이상 끌면 떨어짐
+      const tot = nb.R.tot * sv.k, dist = tc => Math.abs(wrapD(nb.t - tc)) * tot;
+      if (g.snap && g.snap.box === nb.b.id && dist(g.snap.t) < 34) { t = g.snap.t; hint = g.snap.n; }
+      else {
+        g.snap = null;
+        let best = null; for (const c of doorSnapPts(nb.b, nb.R)) { const dd = dist(c.t); if (dd < 14 && (!best || dd < best.dd)) best = { ...c, dd }; }
+        if (best) { g.snap = { box: nb.b.id, t: best.t, n: best.n }; t = best.t; hint = best.n; }
+      }
+    }
+    if (hint) showTag(e, hint); else hideTag();
+    dr.box = nb.b.id; setDoorT(dr, nb.R, t); dr.w = Math.min(dr.w, r2(nb.R.tot * 0.9)); g.moved = true; renderStudy(); return;
+  }
+  if (g.type === 'doordraw' || g.type === 'doorend') {
+    const dr = g.type === 'doorend' ? (P.doors || []).find(d => d.id === g.id) : null, boxId = dr ? dr.box : g.box, b = getBox(boxId); if (!b) return;
+    const R = boxRing(b), n = ringNearest(R, [w.x, w.z]);
+    if (g.type === 'doordraw') { g.t1 += wrapD(n.t - g.last); g.last = n.t; g.moved = true; showTag(e, `출입문 ${f2(Math.abs(g.t1 - g.t0) * R.tot)}m`); }
+    else { g.cur += wrapD(n.t - g.cur); const a0 = Math.min(g.fixed, g.cur), a1 = Math.max(g.fixed, g.cur), wm = Math.max(0.3, (a1 - a0) * R.tot); dr.w = r2(Math.min(wm, R.tot * 0.9)); setDoorT(dr, R, (a0 + a1) / 2); g.moved = true; showTag(e, `출입문 ${f2(dr.w)}m`); }
+    renderStudy(); return;
+  }
   if (g.type === 'flow') {
     if (Math.hypot(e.clientX - g.lx, e.clientY - g.ly) < 5) return;
     g.lx = e.clientX; g.ly = e.clientY; g.pts.push([w.x, w.z]); renderStudy(); return;
@@ -4402,6 +4759,27 @@ pc.addEventListener('pointermove', e => {
     a = ((a % 360) + 540) % 360 - 180; if (a === -180) a = 180;
     if (a !== b.ang) { b.ang = a; g.moved = true; renderStudy(); }
     showTag(e, `${b.ang}°`); return;
+  }
+  if (g.type === 'seam') {
+    const m = sStep(), X = g.ax === 'x';
+    const lo = Math.max(...g.oa.map(o => (X ? o.x : o.z) + m)), hi = Math.min(...g.ob.map(o => (X ? o.x + o.w : o.z + o.d) - m));
+    const v = Math.min(hi, Math.max(lo, sn(X ? w.x - g.ox : w.z - g.oy)));
+    for (const o of g.oa) { const b = getBox(o.id); if (b) { if (X) b.w = r2(v - o.x); else b.d = r2(v - o.z); } }
+    for (const o of g.ob) { const b = getBox(o.id); if (b) { if (X) { b.x = r2(v); b.w = r2(o.x + o.w - v); } else { b.z = r2(v); b.d = r2(o.z + o.d - v); } } }
+    const A0 = getBox(g.oa[0].id), B0 = getBox(g.ob[0].id); showTag(e, `${dimText(A0.w, A0.d)}  ${X ? '|' : '/'}  ${dimText(B0.w, B0.d)}`);
+    g.moved = true; renderStudy(); return;
+  }
+  if (g.type === 'mscale') {
+    const m = sStep(), bb = g.bb, H = g.h, lx = sn(w.x - g.ox), lz = sn(w.z - g.oy);
+    const ax = H.includes('w') ? bb.x1 : bb.x0, az = H.includes('n') ? bb.z1 : bb.z0, cx0 = H.includes('w') ? bb.x0 : bb.x1, cz0 = H.includes('n') ? bb.z0 : bb.z1;
+    let sx = (H.includes('w') ? Math.min(lx, ax - m) - ax : Math.max(lx, ax + m) - ax) / (cx0 - ax), sz = (H.includes('n') ? Math.min(lz, az - m) - az : Math.max(lz, az + m) - az) / (cz0 - az);
+    if (e.shiftKey) sx = sz = Math.max(sx, sz); // Shift: 비율 그대로
+    for (const [id, o] of Object.entries(g.orig)) {
+      const b = getBox(id); if (!b) continue;
+      if (!b.ang) { const X0 = sn(ax + (o.x - ax) * sx), X1 = sn(ax + (o.x + o.w - ax) * sx), Z0 = sn(az + (o.z - az) * sz), Z1 = sn(az + (o.z + o.d - az) * sz); b.x = r2(Math.min(X0, X1)); b.w = r2(Math.max(m, Math.abs(X1 - X0))); b.z = r2(Math.min(Z0, Z1)); b.d = r2(Math.max(m, Math.abs(Z1 - Z0))); }
+      else { const cx = ax + (o.x + o.w / 2 - ax) * sx, cz = az + (o.z + o.d / 2 - az) * sz; b.w = r2(Math.max(m, sn(o.w * sx))); b.d = r2(Math.max(m, sn(o.d * sz))); b.x = r2(cx - b.w / 2); b.z = r2(cz - b.d / 2); }
+    }
+    g.moved = true; showTag(e, `${Math.round(sx * 100)}% × ${Math.round(sz * 100)}%`); renderStudy(); return;
   }
   if (g.type === 'resize') {
     const b = getBox(sel); if (!b) return;
@@ -4437,7 +4815,7 @@ pc.addEventListener('pointermove', e => {
     g.moved = true;
     if (dx === g.dx && dz === g.dz) return;
     g.dx = dx; g.dz = dz;
-    for (const x of [...selBoxes(), ...selNotes()]) { const o = g.orig[x.id]; if (o) { x.x = r2(o[0] + dx); x.z = r2(o[1] + dz); } }
+    for (const x of [...selBoxes(), ...selNotes(), ...P.cards.filter(c => selCards.has(c.id))]) { const o = g.orig[x.id]; if (o) { x.x = r2(o[0] + dx); x.z = r2(o[1] + dz); } }
     envApply(g);
     renderStudy();
     return;
@@ -4499,11 +4877,34 @@ function endStudyPointer(e){
     if (cancelled && g.moved) { P = JSON.parse(g.start); }
     cardTap(g.cid); return;
   }
+  if (g.type === 'ruler') {
+    hideTag();
+    if (!cancelled && g.b && Math.hypot(g.b[0] - g.a[0], g.b[1] - g.a[1]) > 1e-6) {
+      const si = g.si, ox = si >= 0 ? sheetOx(si) : 0, oy = si >= 0 ? sheetOy(si) : 0;
+      rulers.push({ sheet: si >= 0 ? P.sheets[si].id : '', a: [g.a[0] - ox, g.a[1] - oy], b: [g.b[0] - ox, g.b[1] - oy] });
+      if (rulers.length === 5) toast('자는 5개까지예요. 끝의 × 로 지울 수 있어요');
+    }
+    renderStudy(); return;
+  }
+  if (g.type === 'door' || g.type === 'doorend') {
+    hideTag();
+    if (g.moved && !cancelled) pushHist(g.start); else if (cancelled && g.moved) { P = JSON.parse(g.start); }
+    studyUI(); return;
+  }
+  if (g.type === 'doordraw') {
+    hideTag(); if (cancelled) { renderStudy(); return; }
+    const b = getBox(g.box); if (!b) return;
+    const R = boxRing(b), def = isSketch() ? 0.9 : Math.max(0.9, Math.min(P.grid * 0.5, 1.8));
+    let a0 = Math.min(g.t0, g.t1), a1 = Math.max(g.t0, g.t1), wm = (a1 - a0) * R.tot;
+    if (wm < 0.3) { a0 = g.t0 - def / 2 / R.tot; a1 = g.t0 + def / 2 / R.tot; wm = def; } // 톡 누르면 기본 폭
+    const nd = { id: uid(), box: b.id, t: 0, w: r2(Math.min(wm, R.tot * 0.9)), e: null, u: null, thick: false, tag: '' }; setDoorT(nd, R, (a0 + a1) / 2);
+    commit(() => { P.doors = [...(P.doors || []), nd]; }); selDoor = nd.id; studyUI(); return;
+  }
   if (g.type === 'flow') {
     const len = Math.hypot(e.clientX - g.sx, e.clientY - g.sy);
     if (cancelled || g.pts.length < 2 || (len < 16 && g.pts.length < 4)) { selFlow = null; studyUI(); return; }
-    let pts = simplify(g.pts, 7 / sv.k);
-    if (studySnap) pts = pts.map(([x, z]) => [sn(x), sn(z)]);
+    let pts = straightMode ? straightPts(g.pts) : simplify(g.pts, 7 / sv.k);
+    if (studySnap && !straightMode) pts = pts.map(([x, z]) => [sn(x), sn(z)]);
     pts = pts.filter((q, i) => !i || q[0] !== pts[i - 1][0] || q[1] !== pts[i - 1][1]);
     if (pts.length < 2) { studyUI(); return; }
     const si = sheetAt(pts[0][0], pts[0][1]), ox = sheetOx(si), oy = sheetOy(si);
@@ -4516,7 +4917,7 @@ function endStudyPointer(e){
     const tap = Math.hypot(e.clientX - g.sx, e.clientY - g.sy) < 10 && g.pts.length < 4;
     if (tap && g.site) { renderStudy(); return; }
     if (tap) { toast('점선 테두리를 가로질러 꺾고 싶은 대로 그어 주세요'); renderStudy(); return; }
-    if (!g.site) { finishEnvCut(g); setTool('select'); return; }
+    if (!g.site) { finishEnvCut(g); studyUI(); return; } // 꺾은 뒤에도 점선 꺾기 도구 유지 (선택 도구로 바꾸면 끝)
     const [sx, sz] = g.pts[0], [ex, ez] = g.pts[g.pts.length - 1];
     if (Math.hypot(ex - sx, ez - sz) <= outSnap() * 1.6 && pathLen(g.pts) > outSnap() * 4) { finishSite(g); studyUI(); return; }
     toast('양 끝이 만나야 경계선이 생겨요. 시작한 점까지 이어서 그려 주세요'); renderStudy(); return;
@@ -4535,10 +4936,15 @@ function endStudyPointer(e){
     rotMode = false; setTool('select');
     return;
   }
+  if (g.type === 'seam' || g.type === 'mscale') {
+    if (g.moved && !cancelled) { envShapeCheck(); pushHist(g.start); }
+    else { if (cancelled && g.moved) { P = JSON.parse(g.start); pruneSel(); } renderStudy(); }
+    hideTag(); return;
+  }
   if (g.type === 'resize' || g.type === 'rotate') { if (g.moved && !cancelled) { const b = getBox(sel); if (b) remember(b); pushHist(g.start); } else { if (cancelled && g.moved) { P = JSON.parse(g.start); pruneSel(); } renderStudy(); } return; }
   if (g.type === 'move') {
     if (g.moved && !cancelled && (g.dx || g.dz || g.envChanged)) {
-      rehome(); envShapeCheck(); pushHist(g.start); return;
+      rehome(); splitEnvs(P); envShapeCheck(); pushHist(g.start); return;
     }
     if (cancelled) { if (g.moved && (g.dx || g.dz || g.envChanged)) { P = JSON.parse(g.start); pruneSel(); } studyUI(); return; }
     if (g.held) { studyUI(); return; }
@@ -4547,14 +4953,16 @@ function endStudyPointer(e){
   }
   if (g.type === 'tap') { tapCheck(g.id); studyUI(); return; }
   if (g.type === 'marquee') {
-    if (!g.dragged) { if (!g.add) { clearSel(); rotMode = false; } studyUI(); return; }
+    if (!g.dragged) { if (g.dbl) { setMultiPick(!multiPick); return; } if (!g.add) { clearSel(); rotMode = false; } studyUI(); return; }
     const x0 = Math.min(g.w0.x, g.w1.x), x1 = Math.max(g.w0.x, g.w1.x), z0 = Math.min(g.w0.z, g.w1.z), z1 = Math.max(g.w0.z, g.w1.z);
     const R = { x0, z0, x1, z1 }, cross = g.w1.x < g.w0.x;
     const inside = P.boxes.filter(b => { const a = canvasBox(b); return cross ? shapeTouchesRect(b, R) : a.x0 >= x0 && a.z0 >= z0 && a.x1 <= x1 && a.z1 <= z1; }).map(b => b.id)
       .concat(P.notes.filter(n => { const ni = itemSheetIdx(n), x = sheetOx(ni) + n.x, z = sheetOy(ni) + n.z; return sheetVis(ni) && x >= x0 && z >= z0 && x <= x1 && z <= z1; }).map(n => n.id));
     const ids = new Set(g.add ? selSet : []);
     for (const id of inside) { const b = getBox(id); for (const x of b ? groupOf(b) : [{ id }]) ids.add(x.id); }
-    setSel([...ids]); rotMode = false; studyUI(); return;
+    const cs = new Set(g.add ? selCards : []);
+    if (cardShow) for (const c of P.cards) { const ci = itemSheetIdx(c); if (!sheetVis(ci)) continue; const cx0 = sheetOx(ci) + c.x, cz0 = sheetOy(ci) + c.z, cx1 = cx0 + c.w, cz1 = cz0 + c.w / refAR(c.ref); if (cross ? !(cx1 < x0 || cx0 > x1 || cz1 < z0 || cz0 > z1) : cx0 >= x0 && cz0 >= z0 && cx1 <= x1 && cz1 <= z1) cs.add(c.id); }
+    setSel([...ids]); selCards = cs; selCard = null; rotMode = false; studyUI(); return;
   }
 }
 pc.addEventListener('pointerup', endStudyPointer);
@@ -4568,6 +4976,16 @@ function cardTap(cid){
 function openCardLightbox(cid){
   const c = P.cards.find(x => x.id === cid); if (!c || !refById(c.ref)) { toast('이 사진은 레퍼런스에서 지워졌어요'); return; }
   lbList = [c.ref]; lbIdx = 0; $('#lightbox').hidden = false; renderLightbox();
+}
+let emptyTap = { t: 0, x: 0, y: 0 };
+const px2w = v => v / sv.k;
+// 스터디 '여러 개 고르기': 켜져 있으면 도형을 누를 때마다 선택에 더하고 빼요
+function setMultiPick(on){
+  multiPick = on;
+  let el = $('#mpPill');
+  if (on && !el) { el = document.createElement('div'); el.id = 'mpPill'; el.className = 'mpPill'; el.innerHTML = '<span>여러 개 고르는 중 · 도형을 눌러 더하고 빼요</span><button>끝내기</button>'; el.querySelector('button').onclick = () => setMultiPick(false); $('#studyUI').appendChild(el); }
+  if (el) { el.hidden = !on; el.style.top = ($('#topArea').offsetHeight + 10) + 'px'; }
+  studyUI();
 }
 function tapCheck(id){
   const now = performance.now();
@@ -4681,7 +5099,7 @@ $('#leCancel').onclick = () => closeLabelEd(false);
 }));
 
 /* --- 도구·막대 --- */
-function setTool(t){ tool = t; if (t !== 'select') { multiPick = false; rotMode = false; } if (t === 'outer') toast('점선 테두리를 가로질러 선을 그어 보세요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 원·반원을 따라 그리면 그 곡선대로 꺾여요'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
+function setTool(t){ tool = t; if (t !== 'select') { if (multiPick) setMultiPick(false); rotMode = false; } if (t === 'outer') toast('점선 테두리를 가로질러 선을 그어 보세요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 원·반원을 따라 그리면 그 곡선대로 꺾여요'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
 document.querySelectorAll('#stools [data-tool]').forEach(b => b.onclick = () => setTool(b.dataset.tool));
 $('#zoomBtn').onclick = () => fitSheet(activeIdx(), true);
 $('#snapBtn').onclick = () => { studySnap = !studySnap; try { localStorage.setItem('mass-study-snap', studySnap ? 'on' : 'off'); } catch (e) {} studyUI(); toast(studySnap ? `격자가 보이고 반 칸(${f2(P.grid / 2)}m)씩 맞춰져요` : '격자 없이 자유롭게 움직여요'); };
@@ -4691,7 +5109,7 @@ $('#tUndo').onclick = undo; $('#tRedo').onclick = redo;
 $('#menuBtn').onclick = () => document.body.classList.toggle('menuOpen');
 document.querySelector('.tools2').addEventListener('click', () => document.body.classList.remove('menuOpen'));
 $('#flowBtn').onclick = () => { flowEdit = true; flowShow = true; try { localStorage.setItem('mass-flow-show', 'on'); } catch (e) {} clearSel(); rotMode = false; selFlow = null; studyUI(); };
-$('#flowDone').onclick = () => { flowEdit = false; selFlow = null; studyUI(); };
+$('#flowDone').onclick = () => { flowEdit = false; selFlow = null; doorMode = false; flowPan = false; selDoor = null; studyUI(); };
 $('#cardEye').onclick = () => { cardShow = !cardShow; try { localStorage.setItem('mass-card-show', cardShow ? 'on' : 'off'); } catch (e) {} if (!cardShow) selCard = null; studyUI(); };
 $('#dockBtn').onclick = () => { dockOpen = !dockOpen; studyUI(); if (dockOpen) renderDock(); };
 $('#dockClose').onclick = () => { dockOpen = false; studyUI(); };
@@ -4704,7 +5122,12 @@ function removeRefCards(refId){
 }
 function removeCard(cid){ commit(() => { P.cards = P.cards.filter(c => c.id !== cid); }); selCard = null; studyUI(); toast('대지에서 사진을 뗐어요 (레퍼런스에는 남아요)', { label: '되돌리기', fn: undo }); }
 $('#flowEye').onclick = () => { flowShow = !flowShow; try { localStorage.setItem('mass-flow-show', flowShow ? 'on' : 'off'); } catch (e) {} studyUI(); };
-document.querySelectorAll('#flowTypes button').forEach(b => b.onclick = () => {
+$('#doorSnapBtn').onclick = () => { doorSnap = !doorSnap; studyUI(); toast(doorSnap ? '출입문을 끌면 변·외곽 가운데에 붙어요. 더 끌면 떨어져요' : '출입문이 어디에도 붙지 않고 자유롭게 움직여요'); };
+$('#flowPanBtn').onclick = () => { flowPan = !flowPan; if (flowPan) { doorMode = false; selFlow = null; selDoor = null; } studyUI(); };
+$('#doorBtn').onclick = () => { doorMode = !doorMode; if (doorMode) flowPan = false; selFlow = null; studyUI(); if (doorMode) toast('도형 테두리에서 시작해 외곽을 따라 그으면 그 길이만큼 출입문이 생겨요'); };
+$('#straightBtn').onclick = () => { straightMode = !straightMode; studyUI(); toast(straightMode ? '직선 모드: 동선이 수직·수평·45°로만 그려져요' : '자유롭게 그려요'); };
+document.querySelectorAll('#flowTypes button[data-ft]').forEach(b => b.onclick = () => {
+  doorMode = false; flowPan = false;
   flowType = b.dataset.ft;
   if (selFlow) commit(() => { const f = P.flows.find(x => x.id === selFlow); if (f) f.type = flowType; });
   studyUI();
@@ -5018,11 +5441,13 @@ function studyUI(){
   $('#flowBar').hidden = !flowEdit;
   $('#siteBar').hidden = !siteEdit || uiMode !== 'study';
   document.querySelectorAll('#stools [data-tool]').forEach(b => b.classList.toggle('on', b.dataset.tool === tool));
-  document.querySelectorAll('#flowTypes button').forEach(b => {
+  document.querySelectorAll('#flowTypes button[data-ft]').forEach(b => {
     const cur = selFlow ? (P.flows.find(f => f.id === selFlow) || {}).type : flowType;
-    b.classList.toggle('on', b.dataset.ft === cur);
+    b.classList.toggle('on', !doorMode && !flowPan && b.dataset.ft === cur);
   });
-  $('#flowHint').textContent = selFlow ? '선택한 동선' : '화면을 끌어서 동선을 그려요';
+  $('#doorBtn').classList.toggle('on', doorMode); $('#flowPanBtn').classList.toggle('on', flowPan); $('#doorSnapBtn').classList.toggle('on', doorSnap); $('#doorSnapBtn').textContent = doorSnap ? '맞춤 켬' : '맞춤 끔';
+  $('#flowHint').textContent = flowPan ? '끌어서 화면을 움직여요' : doorMode ? '도형 테두리를 따라 그어 출입문을 넣어요' : selFlow ? '선택한 동선' : '화면을 끌어서 동선을 그려요';
+  pressed('#straightBtn', straightMode, '직선'); $('#straightBtn').hidden = !flowEdit || ro;
   $('#zoomBtn').title = '눌러서 지금 대지에 맞추기';
   pressed('#snapBtn', studySnap, '격자'); $('#snapBtn').hidden = ro;
   pressed('#roleBtn', roleMode, '역할만 보기');
@@ -5072,7 +5497,19 @@ function renderCtx(){
     return;
   }
   if (flowEdit) {
-    const f = P.flows.find(x => x.id === selFlow);
+    const f = P.flows.find(x => x.id === selFlow), dr = selDoor && (P.doors || []).find(d => d.id === selDoor);
+    if (dr && !ro) {
+      ctx.hidden = false;
+      const lb = document.createElement('span'); lb.className = 'lbl'; lb.style.padding = '0 6px'; lb.textContent = '출입문'; ctx.appendChild(lb);
+      const hn = document.createElement('span'); hn.className = 'lbl'; hn.style.padding = '0 6px'; hn.textContent = `${f2(dr.w)}m`; hn.title = '양 끝 점을 끌어 크기, 가운데를 끌어 옮기기'; ctx.appendChild(hn);
+      const setD = fn => commit(() => { const x = P.doors.find(d => d.id === selDoor); if (x) fn(x); });
+      btn('보통', () => setD(x => { x.thick = false; }), !dr.thick ? 'on' : ''); btn('두껍게', () => setD(x => { x.thick = true; }), dr.thick ? 'on' : '');
+      sep();
+      for (const [k, n] of Object.entries(DOOR_TAGS)) btn(n, () => setD(x => { x.tag = x.tag === k ? '' : k; }), dr.tag === k ? 'on' : '');
+      sep();
+      trash(() => { commit(() => { P.doors = P.doors.filter(d => d.id !== selDoor); }); selDoor = null; studyUI(); });
+      return;
+    }
     ctx.hidden = ro || !f;
     if (f) {
       btn(f.both ? '양방향 켬' : '양방향', () => commit(() => { const x = P.flows.find(y => y.id === selFlow); if (x) x.both = !x.both; }), f.both ? 'on' : '');
@@ -5082,6 +5519,10 @@ function renderCtx(){
     return;
   }
   const sb = selBoxes(), ns = selNotes();
+  if (!ro && !sb.length && !ns.length && selCards.size) { // 사진만 골랐을 때
+    ctx.hidden = false; const c0 = document.createElement('span'); c0.className = 'cnt'; c0.textContent = `사진 ${selCards.size}장 · 끌면 같이 움직여요`; ctx.appendChild(c0);
+    btn('선택 풀기', () => { selCards = new Set(); studyUI(); }); return;
+  }
   ctx.hidden = ro || (!sb.length && !ns.length);
   if (ctx.hidden) return;
   const anyLock = sb.some(b => b.lock), grouped = sb.some(b => b.group), oneGroup = sb.length > 1 && sb.every(b => b.group) && new Set(sb.map(b => b.group)).size === 1;
