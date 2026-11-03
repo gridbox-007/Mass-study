@@ -635,10 +635,15 @@ body.study.menuOpen .row2 .tools2 button{height:42px}
 .r2b{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:13.5px;font-weight:500;white-space:nowrap}
 .r2b:hover{border-color:var(--ink)}
 .r2b svg{transition:transform .15s}
-body.r2open .r2b svg{transform:rotate(180deg)}
+body.r2open #r2Btn svg,body.r2mopen #r2mBtn svg{transform:rotate(180deg)}
+.r2heads{display:flex;gap:6px}
+body.r2open #r2Btn,body.r2mopen #r2mBtn{border-color:var(--ink)}
+body.study .r2heads{display:none}
+body:not(.study):not(.r2open) .r2in .views{display:none}
+body:not(.study):not(.r2mopen) .r2in .tools2{display:none}
 body:not(.study) .r2in{display:none;width:100%;gap:6px;justify-content:space-between;flex-wrap:wrap;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
-body:not(.study).r2open .r2in{display:flex}
-body:not(.study).r2open .row2{flex-direction:column}
+body:not(.study).r2open .r2in,body:not(.study).r2mopen .r2in{display:flex}
+body:not(.study).r2open .row2,body:not(.study).r2mopen .row2{flex-direction:column}
 body.study .r2b{display:none}
 body.study .r2in{display:contents}
 /* ================= 디자인: 설계 스튜디오 작업대 =================
@@ -987,6 +992,27 @@ body.exact #floorBar .fl{padding:4px 8px 2px}
   #topArea .bar .modeSeg button{padding:0 10px}
   #topArea .bar #tUndo,#topArea .bar #tRedo{width:38px;min-width:38px}
 }
+/* 작업 화면: 페이지 자체는 절대 스크롤되지 않게 (아이패드 크롬·사파리의 주소창 높이 변화 포함) */
+html.editing,html.editing body{position:fixed;inset:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
+html.editing #topArea,html.editing #sbottom,html.editing .ctx{touch-action:pan-x}
+html.editing #editView{height:100dvh}
+.tour .card2 p{white-space:pre-line}
+/* 삭제 버튼 더 크게 */
+.card .row .trash{flex:0 0 52px !important;min-width:52px !important;height:42px !important}
+.card .row .trash svg{width:26px !important;height:26px !important}
+.ctx .ib.trash svg{width:22px;height:22px}
+.ctx .ib.trash{min-width:44px}
+.publist{display:flex;flex-direction:column;gap:6px;max-height:34vh;overflow-y:auto}
+.publist label{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:14.5px;cursor:pointer}
+.publist label:has(input:checked){border-color:var(--sel);background:var(--sel-t)}
+.publist input{width:18px;height:18px;accent-color:var(--sel)}
+.publist .sub{margin-left:auto;font-size:12px;color:var(--mute)}
+#pubPlanWrap{display:flex;flex-direction:column;gap:6px}
+
+/* 길게 눌러도 글자 선택·확대 말풍선으로 화면이 파랗게 덮이지 않게 */
+html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+input,textarea,select,[contenteditable],[contenteditable] *{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webkit-touch-callout:none !important;-webkit-user-select:none;user-select:none}
 </style>
 <script type="importmap">
 {"imports":{
@@ -1105,7 +1131,7 @@ body.exact #floorBar .fl{padding:4px 8px 2px}
         <button data-tool="rect">사각형</button>
         <button data-tool="circle">원형</button>
         <button data-tool="semi">반원</button>
-        <button data-tool="tri">삼각형</button>
+        <button data-tool="rtri">직각삼각형</button>
       </div>
       <div class="tgrp envg" role="group" aria-label="점선">
         <button data-tool="outer" title="점선 테두리를 가로질러 그어서 꺾기"><svg viewBox="0 0 22 20" width="20" height="18" aria-hidden="true"><path d="M3 3h9.5v6.5H19V17H3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2" stroke-linejoin="round"/><path d="M14.5 2.5c0 4 1 5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".55"/></svg>점선 꺾기</button>
@@ -1128,7 +1154,7 @@ body.exact #floorBar .fl{padding:4px 8px 2px}
         <button data-ft="service"><i style="background:#6b6e73"></i>서비스</button>
         <button id="flowPanBtn" title="선택을 풀고 화면만 움직여요"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M7 10V4.8a1.3 1.3 0 0 1 2.6 0V9.5M9.6 9V3.8a1.3 1.3 0 0 1 2.6 0V9.5M12.2 9.3V5.3a1.3 1.3 0 0 1 2.6 0v6.2c0 3.2-2.2 5.5-5.2 5.5-2 0-3.3-1-4.3-2.6L3.6 11.3a1.3 1.3 0 0 1 2.1-1.4L7 11.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>이동</button>
         <button id="doorSnapBtn" title="출입문을 변·외곽 가운데에 붙여요 (Alt를 누르고 끌면 잠깐 끔)">맞춤</button>
-        <button id="glassBtn" title="도형 가장자리를 따라 그어 유리벽 표시"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="2.5" y="8" width="15" height="4" fill="#9cc7e4" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 10h15" stroke="currentColor" stroke-width="0.9"/></svg>유리벽</button>
+        <button id="glassBtn" title="도형 가장자리를 따라 그어 유리벽·유리 표시"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="2.5" y="8" width="15" height="4" fill="#9cc7e4" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 10h15" stroke="currentColor" stroke-width="0.9"/></svg>유리</button>
         <button id="doorBtn" class="door" title="도형 가장자리를 눌러 출입문 넣기"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M3 16h14M5 16V5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 5a11 11 0 0 1 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2 1.6"/></svg>출입문</button>
       </div>
       <button class="done" id="flowDone">완료</button>
@@ -1151,7 +1177,10 @@ body.exact #floorBar .fl{padding:4px 8px 2px}
     <div class="stats" id="stats"></div>
     <div class="floorbar" id="floorBar" hidden role="group" aria-label="층 고르기"></div>
     <div class="row2">
-      <button id="r2Btn" class="r2b" aria-expanded="false" aria-controls="r2in"><span id="r2Lbl">보기 · 자료</span><svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      <div class="r2heads">
+      <button id="r2Btn" class="r2b" aria-expanded="false" aria-controls="r2in"><span id="r2Lbl">보기</span><svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      <button id="r2mBtn" class="r2b" aria-expanded="false" aria-controls="r2in"><span>메뉴</span><svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      </div>
       <div class="r2in" id="r2in">
       <div class="tools2">
         <button id="refBtn">레퍼런스</button>
@@ -1201,7 +1230,7 @@ body.exact #floorBar .fl{padding:4px 8px 2px}
             <button data-shape="circle">원</button>
             <button data-shape="semi">반원</button>
             <button data-shape="quarter">사분원</button>
-            <button data-shape="tri">삼각</button>
+            <button data-shape="rtri">직각삼각</button>
           </div>
         </div>
       </div>
@@ -1250,7 +1279,7 @@ body.exact #floorBar .fl{padding:4px 8px 2px}
             <button data-shape="circle">원</button>
             <button data-shape="semi">반원</button>
             <button data-shape="quarter">사분원</button>
-            <button data-shape="tri">삼각</button>
+            <button data-shape="rtri">직각삼각</button>
           </div>
         </div>
         <div class="ratio single-only">
@@ -1460,6 +1489,15 @@ body.exact #floorBar .fl{padding:4px 8px 2px}
     <div class="mact"><button class="btn" id="pmCancel">취소</button><button class="btn primary" id="pmOk">확인</button></div>
   </div>
 </div>
+<div class="modal" id="pubModal" hidden>
+  <div class="mbox" role="dialog" aria-labelledby="pubTitle">
+    <h2 id="pubTitle">프로젝트에 저장</h2>
+    <p id="pubDesc">저장할 프로젝트를 하나 이상 고르세요. 그 프로젝트 참여자만 볼 수 있어요.</p>
+    <div id="pubProj" class="publist"></div>
+    <div id="pubPlanWrap"><span class="lbl">같이 올릴 플랜</span><div id="pubPlans" class="publist"></div></div>
+    <div class="mact"><button class="btn" id="pubCancel">닫기</button><button class="btn blue" id="pubOk" disabled>확인</button></div>
+  </div>
+</div>
 <div class="modal" id="pickModal" hidden>
   <div class="mbox" role="dialog" aria-labelledby="pkTitle">
     <h2 id="pkTitle"></h2>
@@ -1488,7 +1526,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const $ = s => document.querySelector(s);
 const COLORS = ['#f4f2ec','#c9ccd1','#d9bd8f','#a9c6e3','#b9cba6','#e6b8a6','#5c6168'];
-const SHAPES = ['rect','circle','semi','quarter','tri','poly'];
+const SHAPES = ['rect','circle','semi','quarter','tri','rtri','poly'];
 const SPACE_TAGS = { shared: '공유', private: '개인', service: '서비스', parking: '주차' }; // 서비스: 화장실·설비·창고 등 / 주차: 지상 주차는 용적률에서 빠짐
 const TAG_COLOR = { shared: '#2c5a8c', private: '#5e7b66', service: '#7a5a86', parking: '#5b6470' }; // 공간 성격 태그: 거실처럼 함께 쓰는 곳 / 방처럼 개인만 쓰는 곳
 // 공간 종류: 꽉 찬 공간일수록 짙고 채도 높게, 빈 공간일수록 옅고 흐리게
@@ -1550,6 +1588,25 @@ function promptBox(title, value, ok = '확인'){
     $('#pmInput').onkeydown = e => { if (e.key === 'Enter' && !e.isComposing) done($('#pmInput').value.trim()); if (e.key === 'Escape') done(null); };
   });
 }
+// 프로젝트에 저장: 프로젝트를 하나 이상 + 같이 올릴 플랜을 고르고 '확인'
+function pickPublish(projs, cur, planList, again){
+  return new Promise(res => {
+    $('#pubTitle').textContent = again ? '프로젝트에 다시 저장' : '프로젝트에 저장';
+    const pe = $('#pubProj'), pl = $('#pubPlans'); pe.textContent = ''; pl.textContent = '';
+    const row = (parent, label, sub, checked, val) => { const l = document.createElement('label'); const i = document.createElement('input'); i.type = 'checkbox'; i.checked = checked; i.value = val; const t = document.createElement('span'); t.textContent = label; l.append(i, t); if (sub) { const s2 = document.createElement('span'); s2.className = 'sub'; s2.textContent = sub; l.appendChild(s2); } parent.appendChild(l); return i; };
+    const pIn = projs.map(p => row(pe, p.name, cur.includes(p.id) ? '저장되어 있음' : '', cur.includes(p.id) || projs.length === 1, p.id));
+    const plIn = planList.map((x, k) => row(pl, x.name || `플랜 ${k + 1}`, x.savedAt ? new Date(x.savedAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '', true, String(k)));
+    $('#pubPlanWrap').hidden = !planList.length;
+    const upd = () => { $('#pubOk').disabled = !pIn.some(i => i.checked); };
+    pIn.forEach(i => i.onchange = upd); upd();
+    $('#pubModal').hidden = false;
+    const close = v => { $('#pubModal').hidden = true; res(v); };
+    $('#pubCancel').onclick = () => close(null);
+    $('#pubOk').onclick = () => close({ projects: pIn.filter(i => i.checked).map(i => i.value), plans: plIn.filter(i => i.checked).map(i => planList[Number(i.value)]) });
+    $('#pubModal').onclick = e => { if (e.target === e.currentTarget) close(null); };
+  });
+}
+const inPj = (t, pid) => t.project === pid || (Array.isArray(t.projects) && t.projects.includes(pid)); // 여러 프로젝트에 올린 작업물
 function pickBox(title, desc, options, current){
   return new Promise(res => {
     $('#pkTitle').textContent = title; $('#pkDesc').textContent = desc || '';
@@ -1623,8 +1680,10 @@ function aabb(b){
   return { x0: cx - hw, z0: cz - hd, x1: cx + hw, z1: cz + hd };
 }
 const worldPts = b => outline(b).map(([u, v]) => fromLocal(b, u, v));
+// 직각삼각형: 직각이 왼쪽 아래 → 돌릴 때마다 시계 방향으로
+const RTRI = [[[0, 0], [1, 1], [0, 1]], [[0, 0], [1, 0], [0, 1]], [[0, 0], [1, 0], [1, 1]], [[1, 0], [1, 1], [0, 1]]];
 const TRI = [[[.5, 0], [1, 1], [0, 1]], [[0, 0], [1, .5], [0, 1]], [[0, 0], [1, 0], [.5, 1]], [[1, 0], [1, 1], [0, .5]]];
-const isPolyShape = b => b.shape === 'tri' || (b.shape === 'poly' && b.pts && b.pts.length > 2);
+const isPolyShape = b => b.shape === 'tri' || b.shape === 'rtri' || (b.shape === 'poly' && b.pts && b.pts.length > 2);
 function inPoly(pts, u, v){ let o = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, zi] = pts[i], [xj, zj] = pts[j]; if ((zi > v) !== (zj > v) && u < (xj - xi) * (v - zi) / (zj - zi) + xi) o = !o; } return o; }
 function polyArea(pts){ let a = 0; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) a += pts[j][0] * pts[i][1] - pts[i][0] * pts[j][1]; return Math.abs(a) / 2; }
 function polyCentroid(pts){ let a = 0, cx = 0, cz = 0; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const f = pts[j][0] * pts[i][1] - pts[i][0] * pts[j][1]; a += f; cx += (pts[j][0] + pts[i][0]) * f; cz += (pts[j][1] + pts[i][1]) * f; } return a ? [cx / (3 * a), cz / (3 * a)] : [.5, .5]; }
@@ -1638,6 +1697,7 @@ function inShape(b, u, v){
 const shapeArea = b => b.w * b.d * (b.shape === 'rect' ? 1 : isPolyShape(b) ? polyArea(outline(b)) : Math.PI / 4);
 function outline(b){
   if (b.shape === 'tri') return TRI[b.rot & 3];
+  if (b.shape === 'rtri') return RTRI[b.rot & 3];
   if (b.shape === 'poly' && b.pts && b.pts.length > 2) return b.pts;
   const e = ell(b); if (!e) return [[0, 0], [1, 0], [1, 1], [0, 1]];
   const N = b.shape === 'circle' ? 64 : 40, pts = [];
@@ -1732,7 +1792,9 @@ function normalize(d){
   o.cards = (Array.isArray(d.cards) ? d.cards : []).slice(0, 200).map(c => ({ id: String(c.id || uid()), ref: String(c.ref || '').slice(0, 60), sheet: String(c.sheet || ''), x: r2(Number(c.x) || 0), z: r2(Number(c.z) || 0), w: Math.max(1, Math.min(200, Number(c.w) || 8)), target: String(c.target || '') })).filter(c => c.ref);
   o.folder = String(d.folder || '').slice(0, 40);
   o.kind = d.kind === 'sketch' ? 'sketch' : 'study';
+  o.madeIn = d.madeIn === 'project' ? 'project' : ''; // 프로젝트 안에서 만든 작업물 (내 작업 목록에는 안 보임)
   o.project = String(d.project || '').slice(0, 40);
+  o.projects = Array.isArray(d.projects) ? d.projects.map(x => String(x).slice(0, 40)).filter(Boolean).slice(0, 10) : [];
   o.cats = d.cats;
   o.sheets = d.sheets;
   // 층마다 층고 (없으면 기본 층고)
@@ -1745,7 +1807,7 @@ function normalize(d){
     if (pts.length >= 3) o.site = { pts };
   }
   // 출입문: 도형 외곽 위 위치(t: 둘레 0~1)와 폭(m)
-  o.doors = (Array.isArray(d.doors) ? d.doors : []).slice(0, 150).map(q => ({ id: String(q.id || uid()).slice(0, 40), box: String(q.box || ''), t: Math.max(0, Math.min(1, Number(q.t) || 0)), w: Math.max(0.3, Math.min(6, Number(q.w) || 0.9)), e: Number.isInteger(q.e) ? q.e : null, o: Number.isFinite(+q.o) && q.o !== null ? Math.max(0, +q.o) : null, ae: !!q.ae, kind: q.kind === 'glass' ? 'glass' : 'door', u: Number.isFinite(+q.u) && q.u !== null ? Math.max(0, Math.min(1, +q.u)) : null, thick: !!q.thick, tag: DOOR_TAGS[q.tag] ? q.tag : '' })).filter(q => o.boxes.some(b => b.id === q.box));
+  o.doors = (Array.isArray(d.doors) ? d.doors : []).slice(0, 150).map(q => ({ id: String(q.id || uid()).slice(0, 40), box: String(q.box || ''), t: Math.max(0, Math.min(1, Number(q.t) || 0)), w: Math.max(0.3, Math.min(6, Number(q.w) || 0.9)), e: Number.isInteger(q.e) ? q.e : null, o: Number.isFinite(+q.o) && q.o !== null ? Math.max(0, +q.o) : null, ae: !!q.ae, kind: q.kind === 'glass' ? 'glass' : 'door', u: Number.isFinite(+q.u) && q.u !== null ? Math.max(0, Math.min(1, +q.u)) : null, thick: !!q.thick, tag: q.kind === 'glass' ? (GLASS_TAGS[q.tag] ? q.tag : 'wall') : DOOR_TAGS[q.tag] ? q.tag : '' })).filter(q => o.boxes.some(b => b.id === q.box));
   // 손으로 그린 점선 테두리 모양: { 점선id: { sheet, pts } } (대지 기준 좌표)
   o.envShapes = {};
   if (d.envShapes && typeof d.envShapes === 'object') for (const [k, v] of Object.entries(d.envShapes).slice(0, 80)) {
@@ -2032,7 +2094,7 @@ function createCard(project){
   return c;
 }
 function projectCard(p){
-  const joined = isMember(p), posts = teamIdx.filter(t => t.project === p.id), mem = [p.by, ...p.members.filter(m => m !== p.by)];
+  const joined = isMember(p), posts = teamIdx.filter(t => inPj(t, p.id)), mem = [p.by, ...p.members.filter(m => m !== p.by)];
   const c = document.createElement('article'); c.className = 'pcard' + (joined ? ' joined' : '');
   const strip = document.createElement('button'); strip.className = 'pthumbs'; strip.setAttribute('aria-label', (p.name || '프로젝트') + ' 열기');
   strip.onclick = () => go('pj-' + p.id);
@@ -2091,7 +2153,7 @@ function renderHome(){
   const ml = $('#mineList'); ml.textContent = '';
   if (!draftsLoaded) ml.innerHTML = '<div class="empty">불러오는 중…</div>';
   else {
-    const list = drafts.filter(p => matches(hay([draftHay(p), (projOf(p.project) || {}).name])));
+    const list = drafts.filter(p => p.madeIn !== 'project' && matches(hay([draftHay(p), (projOf(p.project) || {}).name])));
     if (!readOnly && !q) ml.appendChild(createCard(''));
     if (!list.length && (q || readOnly)) { const d = document.createElement('div'); d.className = 'empty'; d.textContent = q ? `‘${q}’에 맞는 내 작업이 없어요.` : '아직 작업이 없어요.'; ml.appendChild(d); }
     for (const p of list) ml.appendChild(draftCard(p, false));
@@ -2114,7 +2176,7 @@ function renderHome(){
   }
   const member = isMember(P0);
   if (member && !readOnly && !q) { sec('새 작업물 만들기 (만들면 나만 봐요)'); tl.appendChild(createCard(P0.id)); }
-  let items = teamIdx.filter(t => t.project === P0.id).filter(t => matches(postHay(t)));
+  let items = teamIdx.filter(t => inPj(t, P0.id)).filter(t => matches(postHay(t)));
   if (teamFilter === 'pin') items = items.filter(t => isPinned(t.pid));
   if (teamFilter === 'mine') items = items.filter(t => t.owner === me);
   if (teamFilter === 'others') items = items.filter(t => t.owner !== me);
@@ -2131,7 +2193,7 @@ function renderHome(){
       actions: acts, open: () => go((mine ? 'd-' : 'v-') + t.pid) }));
   }
   if (!items.length) { const d = document.createElement('div'); d.className = 'empty'; d.textContent = q ? `‘${q}’에 맞는 작업물이 없어요.` : '아직 공유된 작업물이 없어요.'; tl.appendChild(d); }
-  const myHere = drafts.filter(d => d.project === P0.id && (!d.publishedAt || d.pubSig !== sigOf(d))).filter(p => matches(draftHay(p)));
+  const myHere = drafts.filter(d => inPj(d, P0.id) && (!d.publishedAt || d.pubSig !== sigOf(d))).filter(p => matches(draftHay(p)));
   if (myHere.length && member) { sec('이 프로젝트의 내 작업 (아직 공유 안 됨 · 나만 봄)'); for (const p of myHere) tl.appendChild(draftCard(p, true)); }
 }
 let searchT = null;
@@ -2164,7 +2226,7 @@ $('#pjLeave').onclick = async () => {
 };
 $('#pjDelete').onclick = async () => {
   const p = projOf(curProj); if (!p || p.by !== me) return;
-  const shared = teamIdx.filter(t => t.project === p.id), mine = shared.filter(t => t.owner === me), others = shared.length - mine.length;
+  const shared = teamIdx.filter(t => inPj(t, p.id)), mine = shared.filter(t => t.owner === me), others = shared.length - mine.length;
   const msg = `‘${p.name}’ 프로젝트를 지워요. 각자의 ‘내 작업’은 그대로 남아요.` + (mine.length ? ` 내가 공유한 작업물 ${mine.length}개는 프로젝트에서 내려가요.` : '') + (others ? ` 조원이 공유한 작업물 ${others}개도 더 이상 보이지 않아요.` : '');
   if (!await confirmBox('프로젝트 삭제', msg, '삭제')) return;
   try {
@@ -2173,7 +2235,7 @@ $('#pjDelete').onclick = async () => {
       for (const t of mine) { await store.del(pubItemPath(me, t.pid)); delete posts[t.pid]; }
       await store.save(pubIndexPath(me), { ...idx, posts });
     }
-    for (const d of drafts.filter(d => d.project === p.id)) {
+    for (const d of drafts.filter(d => inPj(d, p.id))) {
       const cur = await store.getDoc(draftPath(d.id));
       if (cur) await store.save(draftPath(d.id), { ...cur, project: '', publishedAt: 0, pubSig: '' });
     }
@@ -2199,7 +2261,7 @@ async function createWork(kind, project){
   if (readOnly) return;
   const id = uid(), now = Date.now(), n = drafts.filter(d => d.kind === kind).length + 1;
   const name = kind === 'sketch' ? `스케치 ${n}` : `스터디 ${n}`;
-  const p = normalize({ name, kind, project: project || '', siteW: 30, siteD: 24, grid: 3, floorH: 3, bcrLimit: kind === 'sketch' ? 0 : 60, farLimit: kind === 'sketch' ? 0 : 200, boxes: [], updatedAt: now });
+  const p = normalize({ name, kind, project: project || '', madeIn: project ? 'project' : '', siteW: 30, siteD: 24, grid: 3, floorH: 3, bcrLimit: kind === 'sketch' ? 0 : 60, farLimit: kind === 'sketch' ? 0 : 200, boxes: [], updatedAt: now });
   try { await store.save(draftPath(id), p); go('d-' + id); }
   catch (e) { toast(saveErrMsg(e)); }
 }
@@ -2243,29 +2305,30 @@ async function copyFromTeam(t){
 }
 async function publish(){
   if (readOnly || localMode || edKind !== 'draft' || !P) return;
-  if (!projOf(P.project)) {
-    const mineP = projects.filter(isMember);
-    if (!mineP.length) { toast('먼저 ‘프로젝트’ 탭에서 프로젝트를 만들거나 참여해 주세요'); return; }
-    const pid = await pickBox('어느 프로젝트에 저장할까요?', '그 프로젝트 참여자만 볼 수 있어요.', mineP.map(p => ({ id: p.id, label: p.name })), null);
-    if (!pid) return;
-    commitMeta(() => { P.project = pid; });
-  }
-  const again = !!P.publishedAt, pj = projOf(P.project);
-  if (!await confirmBox(again ? '프로젝트에 다시 저장' : '프로젝트에 저장', again ? `‘${pj.name}’에 공유한 작업물을 지금 상태로 바꿔요.` : `‘${pj.name}’ 참여자들이 볼 수 있게 저장해요. 다른 사람은 보기·피드백·복제만 할 수 있고, 고치는 건 나만 할 수 있어요.`, '저장', false)) return;
+  const mineP = projects.filter(isMember);
+  if (!mineP.length) { toast('먼저 ‘프로젝트’ 탭에서 프로젝트를 만들거나 참여해 주세요'); return; }
+  const again = !!P.publishedAt;
   await flush();
+  let allPlans = [];
+  try { allPlans = (await store.getColl(draftPath(curPid) + '/plans')).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).slice(0, 12); } catch (e) {}
+  const cur = [...new Set([...(P.projects || []), P.project].filter(id => id && projOf(id)))];
+  const pick = await pickPublish(mineP, cur, allPlans, again);
+  if (!pick || !pick.projects.length) return;
+  commitMeta(() => { P.project = pick.projects[0]; P.projects = pick.projects.slice(0, 10); });
   try {
-    const plans = (await store.getColl(draftPath(curPid) + '/plans')).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).slice(0, 12).map(p => ({ name: p.name, savedAt: p.savedAt, snapshot: p.snapshot }));
+    const plans = pick.plans.map(p => ({ name: p.name, savedAt: p.savedAt, snapshot: p.snapshot }));
     const now = Date.now(), s = calc(P);
-    const item = { ...snapshotOf(P), name: P.name, kind: P.kind, owner: me, publishedAt: now, origin: P.origin, project: P.project, plans };
+    const item = { ...snapshotOf(P), name: P.name, kind: P.kind, owner: me, publishedAt: now, origin: P.origin, project: P.project, projects: P.projects, plans };
     await store.save(pubItemPath(me, curPid), item);
     const idx = (await store.getDoc(pubIndexPath(me))) || {};
     const posts = { ...(idx.posts || {}) };
-    posts[curPid] = { name: P.name, publishedAt: now, siteW: P.siteW, siteD: P.siteD, cats: P.cats, boxes: P.boxes.filter(b => !b.sheet).slice(0, 80).map(b => ({ kind: b.kind, shape: b.shape, rot: b.rot, ang: b.ang, cat: b.cat, x: b.x, z: b.z, w: b.w, d: b.d, lv: b.lv, fl: b.fl, ...(b.shape === 'poly' ? { pts: b.pts } : {}) })), grid: P.grid, site: P.site, kind: P.kind, project: P.project, origin: P.origin, gfa: r2(s.gfa), far: r2(s.far), labels: [...new Set([...P.boxes.map(b => b.label), ...P.sheets.map(x => x.name)].filter(Boolean))].slice(0, 40) };
+    posts[curPid] = { name: P.name, publishedAt: now, siteW: P.siteW, siteD: P.siteD, cats: P.cats, boxes: P.boxes.filter(b => !b.sheet).slice(0, 80).map(b => ({ kind: b.kind, shape: b.shape, rot: b.rot, ang: b.ang, cat: b.cat, x: b.x, z: b.z, w: b.w, d: b.d, lv: b.lv, fl: b.fl, ...(b.shape === 'poly' ? { pts: b.pts } : {}) })), grid: P.grid, site: P.site, kind: P.kind, project: P.project, projects: P.projects, origin: P.origin, gfa: r2(s.gfa), far: r2(s.far), plans: plans.length, labels: [...new Set([...P.boxes.map(b => b.label), ...P.sheets.map(x => x.name)].filter(Boolean))].slice(0, 40) };
     await store.save(pubIndexPath(me), { ...idx, posts });
     commitMeta(() => { P.publishedAt = now; P.pubSig = sigOf(P); });
     setTimeout(() => syncRefUse(true), 800);
-    try { const d = await store.getDoc('prj/' + P.project); if (d) { const { id, ...b } = d; await store.save('prj/' + P.project, { ...b, updatedAt: now }); } } catch (e) {}
-    toast(again ? '프로젝트에 다시 저장했어요' : `‘${pj.name}’에 저장했어요. 참여자들이 볼 수 있어요`);
+    for (const pid of P.projects) { try { const d = await store.getDoc('prj/' + pid); if (d) { const { id, ...b2 } = d; await store.save('prj/' + pid, { ...b2, updatedAt: now }); } } catch (e) {} }
+    const names = P.projects.map(id => (projOf(id) || {}).name).filter(Boolean);
+    toast(`${names.length > 1 ? `프로젝트 ${names.length}곳` : `‘${names[0]}’`}에 ${again ? '다시 ' : ''}저장했어요${plans.length ? ` · 플랜 ${plans.length}개 함께` : ''}`);
   } catch (e) { toast(saveErrMsg(e)); }
 }
 async function unpublish(pid, name){
@@ -2631,9 +2694,10 @@ function setView(v){
   requestRender();
 }
 document.querySelectorAll('#views button').forEach(b => b.onclick = () => setView(b.dataset.v));
+let _edV = null, _rfV = null;
 (function loop(){
   requestAnimationFrame(loop);
-  if ($('#editView').hidden || !P || !$('#refView').hidden || uiMode === 'study') return;
+  if ((_edV || (_edV = $('#editView'))).hidden || !P || !(_rfV || (_rfV = $('#refView'))).hidden || uiMode === 'study') return;
   if (controls) controls.update();
   if (needs) { needs = false; updateLabelFaces(); renderer.render(scene, cam); }
 })();
@@ -2666,12 +2730,13 @@ function openEditor(kind, pid, owner, path0){
   closeEditor();
   rulers = []; doorMode = false; selDoor = null; hiddenLv = new Set();
   edKind = kind; curPid = pid; curOwner = owner; P = null; clearSel(); selCard = null; linkMode = false; sAuto = true; hist = []; fut = []; dirty = false; writing = false; viewPlans = []; mode = 'select';
-  $('#home').hidden = true; $('#editView').hidden = false; $('#edLoading').hidden = false;
+  $('#home').hidden = true; $('#editView').hidden = false; $('#edLoading').hidden = false; document.documentElement.classList.add('editing'); window.scrollTo(0, 0);
   $('#edLoading').textContent = '스터디를 여는 중…';
   edTimer = setTimeout(() => { if (!P) $('#edLoading').textContent = '저장소에 아직 연결되지 않았어요. 네트워크를 확인해 주세요.'; }, 10000);
   const path = path0 || (kind === 'draft' ? draftPath(pid) : owner === '__ex' ? 'examples/' + pid : pubItemPath(owner, pid));
   viewPath = path0 || '';
-  unsubDoc = store.watchDoc(path, onRemote, () => {
+  const myPid = curPid;
+  unsubDoc = store.watchDoc(path, d => { if (curPid === myPid) onRemote(d); }, () => {
     clearTimeout(edTimer);
     if (!P) $('#edLoading').textContent = '불러오지 못했어요. 목록으로 돌아가 다시 열어 주세요.';
     else setSync('연결 끊김', true);
@@ -2679,11 +2744,15 @@ function openEditor(kind, pid, owner, path0){
   if (kind === 'draft') startPlans(pid);
 }
 function closeEditor(){
-  document.body.classList.remove('sketchmode');
+  document.body.classList.remove('sketchmode'); document.documentElement.classList.remove('editing');
   if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+  const nPlans = plans.length;
   stopPlans(); closeChat(); if (myFbDirty) saveMyFb(); stopFeedback();
   clearTimeout(edTimer);
-  if (dirty && P && curPid && edKind === 'draft') { clearTimeout(saveTimer); store.save(draftPath(curPid), clone(P)).catch(() => {}); }
+  // 아무것도 안 그린 채로 닫으면 남기지 않음 (공유한 적 없고 플랜도 없을 때)
+  const empty = P && curPid && edKind === 'draft' && !readOnly && !P.publishedAt && !nPlans && !P.boxes.length && !P.notes.length && !P.flows.length && !P.cards.length && !(P.doors || []).length;
+  if (empty) { clearTimeout(saveTimer); store.del(draftPath(curPid)).catch(() => {}); }
+  else if (dirty && P && curPid && edKind === 'draft') { clearTimeout(saveTimer); store.save(draftPath(curPid), clone(P)).catch(() => {}); }
   dirty = false; drag = null;
   $('#planModal').hidden = true;
 }
@@ -2840,12 +2909,14 @@ function renderFloorBar(){
   }
   if (hiddenLv.size) { const all = document.createElement('button'); all.className = 'allon'; all.textContent = '모두 보이기'; all.onclick = () => { hiddenLv.clear(); buildBoxes(); refreshUI(); }; bar.appendChild(all); }
 }
-let r2Open = false;
+let r2Open = false, r2mOpen = false;
 function r2UI(){
   const v = document.querySelector('#views button.on');
-  $('#r2Lbl').textContent = `보기 ${v ? v.textContent : ''} · 자료`;
+  $('#r2Lbl').textContent = `보기 ${v ? v.textContent : ''}`.trim();
   $('#r2Btn').setAttribute('aria-expanded', r2Open ? 'true' : 'false');
   document.body.classList.toggle('r2open', r2Open);
+  $('#r2mBtn').setAttribute('aria-expanded', r2mOpen ? 'true' : 'false');
+  document.body.classList.toggle('r2mopen', r2mOpen);
 }
 function closeInsp(){ if (!P) return; clearSel(); if (uiMode !== 'study') buildBoxes(); refreshUI(); }
 function refreshUI(){
@@ -3161,7 +3232,13 @@ $('#setOk').onclick = () => {
 
 // 편집 창 닫기: X 버튼, 또는 창 윗부분을 아래로 끌기 (폰·패드 세로 화면의 아래 창)
 $('#inspClose').onclick = closeInsp;
-$('#r2Btn').onclick = () => { r2Open = !r2Open; r2UI(); };
+$('#r2Btn').onclick = () => { r2Open = !r2Open; if (r2Open) r2mOpen = false; r2UI(); };
+// 길게 누를 때 글자 선택 막기 (입력칸 제외)
+const isTextEl = t => !!(t && t.closest && t.closest('input,textarea,select,[contenteditable]'));
+document.addEventListener('selectstart', e => { if (!isTextEl(e.target)) e.preventDefault(); });
+document.addEventListener('contextmenu', e => { if (!isTextEl(e.target)) e.preventDefault(); });
+document.addEventListener('dragstart', e => { if (e.target && (e.target.tagName === 'IMG' || e.target.closest?.('svg'))) e.preventDefault(); });
+$('#r2mBtn').onclick = () => { r2mOpen = !r2mOpen; if (r2mOpen) r2Open = false; r2UI(); };
 document.querySelectorAll('#views button').forEach(b => b.addEventListener('click', () => setTimeout(r2UI, 0)));
 (() => {
   const head = $('#inspHead'), sheet = $('#sheet'); let d = null;
@@ -3206,11 +3283,12 @@ const TOURS = {
     ['#searchBtn', '찾기', '돋보기를 누르면 이름·용도·작성자로 찾을 수 있어요.']
   ],
   study: [
-    ['#stools', '도구', '선택, 도형(사각형·원형·반원·삼각형), 점선 꺾기, 텍스트, 동선 그리기, 자(끌어서 길이 재기, 5개까지 · 끝의 ×로 지움)예요. 동선 그리기에서는 ‘출입문’을 켜고 도형 테두리를 따라 그어 문을 넣어요. 문을 누르면 양 끝 점으로 크기, 가운데를 끌어 외곽을 따라(다른 도형으로도) 옮기고, 두께와 태그(주출입구 등)를 정해요. ‘유리벽’도 같은 방법으로 도형 테두리를 따라 그어 표시해요. ‘이동’을 켜면 그리지 않고 화면만 움직여요. ‘맞춤’이 켜져 있으면 문이 변 가운데·이어진 외곽 가운데에 붙고, 더 끌면 떨어져요. 동선은 기본이 직선(수직·수평·45°)이고 아래 ‘직선’을 끄면 자유롭게 그려요. 점선 꺾기는 점선 테두리를 가로질러 선을 그으면 도형에 맞춰 접혀요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 반원을 따라 그리면 반원대로요. 도형을 옮기면 꺾은 점선도 따라 늘고 줄어요.'],
+    ['#stools', '도구', '선택, 도형(사각형·원형·반원·직각삼각형), 점선 꺾기, 텍스트, 동선 그리기, 자(끌어서 길이 재기, 5개까지 · 끝의 ×로 지움)예요. 동선 그리기에서는 ‘출입문’을 켜고 도형 테두리를 따라 그어 문을 넣어요. 문을 누르면 양 끝 점으로 크기, 가운데를 끌어 외곽을 따라(다른 도형으로도) 옮기고, 두께와 태그(주출입구 등)를 정해요. ‘유리벽’도 같은 방법으로 도형 테두리를 따라 그어 표시해요. ‘이동’을 켜면 그리지 않고 화면만 움직여요. ‘맞춤’이 켜져 있으면 문이 변 가운데·이어진 외곽 가운데에 붙고, 더 끌면 떨어져요. 동선은 기본이 직선(수직·수평·45°)이고 아래 ‘직선’을 끄면 자유롭게 그려요. 점선 꺾기는 점선 테두리를 가로질러 선을 그으면 도형에 맞춰 접혀요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 반원을 따라 그리면 반원대로요. 도형을 옮기면 꺾은 점선도 따라 늘고 줄어요.'],
     ['#pc', '캔버스 조작', '끌면 화면 이동, 짧게 톡 하면 선택, 두 번 톡(마우스는 오른쪽 클릭) 하면 이름·설명·공간 성격(공유·개인) 쓰기, 꾹 누르고 끌면 도형 이동이에요. 빈 곳을 꾹 누르거나 두 번 누르고 끌면 범위 선택(두 번 누르고 그냥 떼면 ‘여러 개 고르기’): 오른쪽으로 끌면 완전히 들어온 것만, 왼쪽으로 끌면 걸친 것도 골라요. Shift로 사진(레퍼런스)도 같이 골라 옮길 수 있어요. 맞붙은 두 도형 사이의 굵은 선을 끌면 붙은 채로 같이 늘고 줄고, 여러 개를 고르면 네 모서리 점으로 한꺼번에 늘리고 줄여요.'],
     ['#sheetBar', '대지(층)', '+ 대지로 위층·지하층을 더해요. 층 탭을 두 번 누르면 이름·글자 크기와 함께 ‘1층으로 지정’(그 아래 층은 지하가 돼요)과 ‘n.5층 추가’가 있어요. n.5층은 대지 오른쪽 위 아이콘으로 접었다 펴요.'],
     ['#sbottom', '아래 상태줄', '배율·격자, 보기 방식, 레퍼런스, 그리고 건폐율·용적률·연면적이 한도와 함께 보여요.'],
     ['#saveBtn', '프로젝트에 저장', '눌러야 조원에게 보여요. 저장 전에는 나만 봐요.'],
+    [null, '키보드 단축키', 'V 선택 · R 사각형 · O 원형 · S 반원 · D 점선 꺾기 · T 텍스트 · W 동선 그리기\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Shift+Z 다시 실행\nCtrl(⌘)+G 그룹으로 묶기 · Ctrl(⌘)+Shift+G 그룹 풀기\n방향키 한 칸 이동 · Delete 지우기 · PageUp/PageDown 한 층 올리고 내리기\nEnter 이름·설명 쓰기 · 0 지금 대지에 맞추기 · Esc 선택 풀기\nSpace(누른 채)+끌기 화면 이동 · Shift+클릭 여러 개 고르기\nShift+끌기: 비율 유지·45° 단위 · Alt+출입문 끌기: 맞춤 잠깐 끔'],
     ['#menuBtn', '메뉴', '대지 크기·경계선과 높낮이, 플랜 저장, 댓글, 내보내기(PNG)가 여기 있어요.']
   ],
   exact: [
@@ -3218,8 +3296,10 @@ const TOURS = {
     ['#floorBar', '층 레이어', '왼쪽 층 목록에서 눈 아이콘으로 층을 끄고 켜요. 층 이름을 누르면 그 층 상자가 전부 선택돼요. 지하층을 고르면 땅이 더 투명해져요.'],
     ['#views2', '보기 방식', '‘글자’로 상자 위에 이름·설명 또는 크기(가로×세로·높이)를 보여 주고, ‘경계선 보기’를 켜면 상자가 반투명해져 겹친 경계가 잘 보여요.'],
     ['#stats', '지하 보기', '지하층이 있으면 땅이 반투명해지고 파낸 자리와 지면선(GL, 벽돌색)이 보여요. 화면을 아래로 돌리면 땅 밑에서 올려다볼 수도 있어요. 지하 면적은 따로 보이고 용적률에서는 빠져요.'],
-    ['#r2Btn', '보기 · 자료', '투시·아이소·평면·입면과 레퍼런스·플랜·대지·댓글·내보내기를 접었다 펴요.'],
-    ['#sheet', '편집 창', '상자를 고르면 열려요. 높이(m)·층수·45° 회전, 화살표 이동(평면 기준)이 있어요. × 또는 아래로 끌어 닫아요.']
+    ['#r2Btn', '보기', '투시·아이소·평면·입면과 글자·경계선 보기를 접었다 펴요.'],
+    ['#r2mBtn', '메뉴', '레퍼런스·플랜·대지·댓글·내보내기가 여기 있어요.'],
+    ['#sheet', '편집 창', '상자를 고르면 열려요. 높이(m)·층수·45° 회전, 화살표 이동(평면 기준)이 있어요. × 또는 아래로 끌어 닫아요.'],
+    [null, '키보드 단축키', 'Ctrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Shift+Z 다시 실행\n방향키 이동 · Delete 지우기 · PageUp/PageDown 한 층 올리고 내리기\nCtrl(⌘)+G 묶기 · Ctrl(⌘)+Shift+G 풀기 · Esc 선택 풀기']
   ]
 };
 let tourEl = null;
@@ -3254,6 +3334,7 @@ function startTour(key){
 function endTour(){ if (tourEl) { tourEl.remove(); tourEl = null; } }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && tourEl) endTour(); });
 $('#helpBtnH').onclick = () => startTour('home');
+$('#setModal').addEventListener('click', e => { if (e.target === e.currentTarget) $('#setCancel').click(); }); // 바깥 어두운 곳을 누르면 닫힘
 $('#helpBtnE').onclick = () => startTour(uiMode === 'study' ? 'study' : 'exact');
 
 /* ---------------- 내보내기 (PNG) ---------------- */
@@ -3489,6 +3570,8 @@ let sv = { k: 15, tx: 0, ty: 0, kBase: 15 }, tool = 'select', studySnap = true, 
 let spaceDown = false, editingId = null, activeSheet = null, rotMode = false;
 let cardShow = true, dockOpen = false, dockTab = '__used', selCard = null, linkMode = false, sAuto = true;
 const DOOR_TAGS = { main: '주출입구', sub: '부출입구', svc: '서비스', exit: '비상구' };
+const GLASS_TAGS = { wall: '유리벽', win: '유리' }; // 색은 같고 표기만 다름
+const opName = dr => dr.kind === 'glass' ? GLASS_TAGS[dr.tag] || '유리벽' : '출입문';
 const DOOR_COLORS = { '': ['#2f7d6b', '#1f5f52'], main: ['#c2410c', '#9a3412'], sub: ['#2c5a8c', '#1e4370'], svc: ['#7a5a86', '#5c4166'], exit: ['#b91c1c', '#8a1414'] }; // 출입문 태그별 색 [평소, 골랐을 때]
 let flowPan = false, doorSnap = true;
 let rulers = [], doorMode = false, glassMode = false, straightMode = true, selDoor = null;
@@ -3503,7 +3586,7 @@ try {
   cardShow = localStorage.getItem('mass-card-show') !== 'off';
   const t = Number(localStorage.getItem('mass-txt')); if (TXT.some(x => x[0] === t)) txtScale = t;
 } catch (e) {}
-const DRAW = ['rect', 'circle', 'semi', 'tri'];
+const DRAW = ['rect', 'circle', 'semi', 'rtri'];
 const FLOWS = { main: { n: '주 동선', c: '#d9480f', w: 3.4, dash: null }, sub: { n: '부 동선', c: '#2c5a8c', w: 2.6, dash: [9, 6] }, service: { n: '서비스', c: '#6b6e73', w: 2.2, dash: [2, 6] } };
 const isSketch = () => P && P.kind === 'sketch';
 const sStep = () => isSketch() ? 0.25 : studySnap ? P.grid / 2 : 0.1;
@@ -3647,7 +3730,14 @@ function pathFrom(pts, ox){ return 'M' + pts.map(([x, z]) => `${r3(x + ox)},${r3
 const tsOf = i => (P.sheets[i] && P.sheets[i].ts) || 1.15;
 // 글자 폭 재기 (캔버스로 실제 폭을 잼)
 const _mctx = document.createElement('canvas').getContext('2d');
-function textW(t, fs, wt = 600){ _mctx.font = `${wt} ${fs}px "IBM Plex Sans KR", sans-serif`; return _mctx.measureText(t).width; }
+// 글자 폭: 100px로 한 번 재 두고 크기에 비례해 씀 (같은 글자를 매번 다시 재지 않게)
+const _twCache = new Map();
+try { document.fonts && document.fonts.addEventListener('loadingdone', () => _twCache.clear()); } catch {}
+function textW(t, fs, wt = 600){
+  const key = wt + '|' + t; let w = _twCache.get(key);
+  if (w === undefined) { _mctx.font = `${wt} 100px "IBM Plex Sans KR", sans-serif`; w = _mctx.measureText(t).width / 100; if (_twCache.size > 4000) _twCache.clear(); _twCache.set(key, w); }
+  return w * fs;
+}
 // 주어진 폭 안에 줄을 나눔 (띄어쓰기 우선, 안 되면 글자 단위). 줄 수를 넘으면 마지막 줄 끝을 …로
 function wrapText(t, fs, maxW, maxLines, wt){
   const out = []; let cur = '';
@@ -3671,6 +3761,7 @@ function labelPlacement(order){
     const b = solids[i], label = roleMode ? (b.cat !== 'free' ? catInfo(b.cat).n : '') : b.label, note = roleMode ? '' : b.note;
     if (!label && !note) continue;
     const si = boxSheetIdx(b), ox = sheetOx(si), oy = sheetOy(si), above = solids.slice(i + 1).filter(o => boxSheetIdx(o) === si).map(canvasBox);
+    if (cardShow) for (const c of P.cards) if (itemSheetIdx(c) === si) { const x0 = ox + c.x, z0 = oy + c.z; above.push({ x0, z0, x1: x0 + c.w, z1: z0 + c.w / refAR(c.ref) + 1.5 }); } // 사진 카드도 피함
     const T = tsOf(si), wPx = Math.min(b.w * k * 0.86, Math.max(textW(label || '', 15 * T), note ? textW(note.slice(0, 16), 11.5 * T, 400) : 0) + 12), hPx = ((label ? 21 : 0) + (note ? 17 : 0)) * T;
     const own = canvasBox(b), cen = centroid(b), [cx, cz] = fromLocal(b, cen[0], cen[1]);
     const rectAt = (u, v, sc) => { const [x, z] = fromLocal(b, u, v), lw = wPx * sc / k, lh = hPx * sc / k; return { x0: x + ox - lw / 2, x1: x + ox + lw / 2, z0: z + oy - lh / 2, z1: z + oy + lh / 2 }; };
@@ -4144,7 +4235,12 @@ function doorsSvg(px){
     }
     const d = 'M' + pts.map(q => `${r3(q[0])},${r3(q[1])}`).join('L'), M = ringAt(R, tt), gl = Math.min(px(7), dr.w / 4), th = dr.thick ? 8.5 : 5;
     const dc = DOOR_COLORS[dr.tag] || DOOR_COLORS[''], glass = dr.kind === 'glass';
-    if (glass) { // 유리벽: 옅은 하늘색 띠 + 가는 두 줄 (창호 표기처럼)
+    if (glass && dr.tag === 'win') { // 유리(창): 같은 색, 가는 띠 + 가운데 줄 + 양 끝 창틀 눈금
+      h += `<path d="${d}" fill="none" stroke="${on ? '#5f9ec9' : '#9cc7e4'}" stroke-opacity=".85" stroke-width="${r3(px(th * 0.55 + 1))}" stroke-linecap="butt" stroke-linejoin="round" pointer-events="none"/>`;
+      h += `<path d="${d}" fill="none" stroke="#2c5a8c" stroke-width="${r3(px(0.9))}" stroke-dasharray="${r3(px(5))} ${r3(px(3))}" stroke-linecap="butt" pointer-events="none"/>`;
+      [[pts[0], pts[1]], [pts[pts.length - 1], pts[pts.length - 2]]].forEach(([a, c]) => { if (!a || !c) return; const L = Math.hypot(c[0] - a[0], c[1] - a[1]) || 1, nx = -(c[1] - a[1]) / L * px(th * 0.55 + 4), nz = (c[0] - a[0]) / L * px(th * 0.55 + 4);
+        h += `<line x1="${r3(a[0] - nx)}" y1="${r3(a[1] - nz)}" x2="${r3(a[0] + nx)}" y2="${r3(a[1] + nz)}" stroke="#2c5a8c" stroke-width="${r3(px(1.4))}" pointer-events="none"/>`; });
+    } else if (glass) { // 유리벽: 옅은 하늘색 굵은 띠 + 가는 줄 (창호 표기처럼)
       h += `<path d="${d}" fill="none" stroke="${on ? '#5f9ec9' : '#9cc7e4'}" stroke-opacity=".85" stroke-width="${r3(px(th + 1))}" stroke-linecap="butt" stroke-linejoin="round" pointer-events="none"/>`;
       h += `<path d="${d}" fill="none" stroke="#2c5a8c" stroke-width="${r3(px(0.9))}" stroke-linecap="butt" pointer-events="none"/>`;
     } else h += `<path d="${d}" fill="none" stroke="${on ? dc[1] : dc[0]}" stroke-width="${r3(px(th + (on ? 1.5 : 0)))}" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`;
@@ -4236,7 +4332,14 @@ function findSeams(sb){
   }
   return out;
 }
+// 끄는 중에는 한 화면(프레임)에 한 번만 다시 그림 (펜슬·빠른 터치에서 버벅임 줄이기)
+let rsDefer = false, rsRaf = 0;
 function renderStudy(){
+  if (rsDefer) { if (!rsRaf) rsRaf = requestAnimationFrame(() => { rsRaf = 0; renderStudyNow(); }); return; }
+  if (rsRaf) { cancelAnimationFrame(rsRaf); rsRaf = 0; }
+  renderStudyNow();
+}
+function renderStudyNow(){
   if (!P || uiMode !== 'study') return;
   LAY = layFrozen && LAY ? LAY : computeLayout();
   let T = 1.15;
@@ -4394,7 +4497,7 @@ function renderStudy(){
   if (gs && gs.type === 'draw') {
     const x0 = Math.min(gs.x0, gs.x1), z0 = Math.min(gs.z0, gs.z1), w = Math.abs(gs.x1 - gs.x0), d = Math.abs(gs.z1 - gs.z0);
     if (w > 0 && d > 0) {
-      const tb = { x: x0, z: z0, w, d, shape: ['circle', 'semi', 'tri'].includes(gs.tool) ? gs.tool : 'rect', rot: 0, ang: 0 };
+      const tb = { x: x0, z: z0, w, d, shape: ['circle', 'semi', 'rtri'].includes(gs.tool) ? gs.tool : 'rect', rot: 0, ang: 0 };
       over += `<path${gs.oy ? ` transform="translate(0 ${r3(gs.oy)})"` : ''} d="${pathFrom(worldPts(tb), gs.ox)}" fill="${gs.tool === 'outer' ? 'none' : 'rgba(37,70,201,.08)'}" stroke="#2c5a8c" stroke-width="${r3(px(1.8))}"${gs.tool === 'outer' ? ` stroke-dasharray="${r3(px(7))} ${r3(px(5))}"` : ''} pointer-events="none"/>`;
     }
   }
@@ -4413,13 +4516,12 @@ function renderStudy(){
     over += `<rect x="${r3(x0)}" y="${r3(z0)}" width="${r3(Math.abs(gs.w1.x - gs.w0.x))}" height="${r3(Math.abs(gs.w1.z - gs.w0.z))}" fill="${cross ? 'rgba(94,123,102,.10)' : 'rgba(44,90,140,.08)'}" stroke="${c}" stroke-width="${r3(px(1.3))}"${cross ? ` stroke-dasharray="${r3(px(6))} ${r3(px(4))}"` : ''} pointer-events="none"/>`;
     over += `<text x="${r3(gs.w1.x + px(cross ? -8 : 8))}" y="${r3(gs.w1.z - px(8))}" text-anchor="${cross ? 'end' : 'start'}" font-size="${r3(px(12))}" font-weight="600" fill="${c}" pointer-events="none">${cross ? '걸친 것도 선택' : '완전히 들어온 것만 선택'}</text>`;
   }
-  shapes += labelsH;
   const cardsH = cardsSvg(px), badges = cardBadges(px), glow = targetGlow(px);
   const doorsH = doorsSvg(px);
   over += rulersSvg(px);
   if (gs && gs.type === 'ruler' && gs.b) over += rulerLine(gs.a, gs.b, px, null);
   let h = `<defs>${defs}</defs><g transform="translate(${r3(sv.tx)},${r3(sv.ty)}) scale(${r3(k)})">${paper}`;
-  h += flowEdit ? `<g opacity=".3" pointer-events="none">${shapes}${cardsH}</g><g pointer-events="none">${bound}</g>` : fbEdit ? `<g pointer-events="none" opacity=".82">${shapes + envH + badges + cardsH}</g>` : shapes + envH + envProbeSvg(px) + glow + badges + cardsH;
+  h += flowEdit ? `<g opacity=".3" pointer-events="none">${shapes}${cardsH}${labelsH}</g><g pointer-events="none">${bound}</g>` : fbEdit ? `<g pointer-events="none" opacity=".82">${shapes + envH + badges + cardsH + labelsH}</g>` : shapes + envH + envProbeSvg(px) + glow + badges + cardsH + labelsH; // 글씨는 사진 카드보다도 위에
   h += `<g${flowEdit ? '' : ' pointer-events="none" opacity=".45"'}>${flows}</g><g${flowEdit ? '' : ' pointer-events="none"'}>${doorsH}</g>${fbEdit ? '' : over}${fbSvg(px)}</g>`; // 동선 그리기가 아닐 땐 동선을 반투명하게
   if (linkMode) { const r = pc.getBoundingClientRect(); h += `<rect x="0" y="0" width="${r.width}" height="${r.height}" fill="none" stroke="#2c5a8c" stroke-width="6" pointer-events="none"/>`; }
   if (!P.boxes.length && !P.notes.length && !gs) {
@@ -4755,7 +4857,7 @@ pc.addEventListener('pointerdown', e => {
     }
     if (!ro && (doorMode || glassMode)) { // 출입문·유리벽 넣기: 도형 가장자리에서 시작해 외곽을 따라 그어서 크기를 정함
       const nb = nearestRing([w.x, w.z]);
-      if (!nb || nb.d > Math.max(px2w(22), P.grid * 0.4)) { gesture = { type: 'none' }; toast('출입문은 도형 가장자리에만 넣을 수 있어요. 도형 테두리에서 시작해 그어 주세요'); return; }
+      if (!nb || nb.d > Math.max(px2w(22), P.grid * 0.4)) { gesture = { type: 'none' }; toast(`${glassMode ? '유리' : '출입문'}은 도형 가장자리에만 넣을 수 있어요. 도형 테두리에서 시작해 그어 주세요`); return; }
       gesture = { type: 'doordraw', box: nb.b.id, t0: nb.t, t1: nb.t, last: nb.t, moved: false }; return;
     }
     selDoor = null;
@@ -4857,7 +4959,8 @@ pc.addEventListener('pointerdown', e => {
   if (!ro) gg.lp = setTimeout(() => { if (gesture === gg && !gg.panMoved) { gesture = { type: 'marquee', w0: gg.w0, w1: gg.w0, add: multiPick, cx: gg.x0, cy: gg.y0, dragged: false }; if (navigator.vibrate) try { navigator.vibrate(12); } catch (err) {} toast('범위를 끌어서 여러 개를 고르세요'); } }, 480);
   gesture = gg;
 });
-pc.addEventListener('pointermove', e => {
+pc.addEventListener('pointermove', e => { rsDefer = true; try { onPcMove(e); } finally { rsDefer = false; } });
+function onPcMove(e){
   if (!pointers.has(e.pointerId)) return;
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   const g = gesture; if (!g) return;
@@ -4917,8 +5020,8 @@ pc.addEventListener('pointermove', e => {
   if (g.type === 'doordraw' || g.type === 'doorend') {
     const dr = g.type === 'doorend' ? (P.doors || []).find(d => d.id === g.id) : null, boxId = dr ? dr.box : g.box, b = getBox(boxId); if (!b) return;
     const R = boxRing(b), n = ringNearest(R, [w.x, w.z]);
-    if (g.type === 'doordraw') { g.t1 += wrapD(n.t - g.last); g.last = n.t; g.moved = true; showTag(e, `출입문 ${f2(Math.max(0.3, Math.round(Math.abs(g.t1 - g.t0) * R.tot / 0.05) * 0.05))}m`); }
-    else { g.cur += wrapD(n.t - g.cur); const sg = Math.sign(g.cur - g.fixed) || 1, wm = Math.min(R.tot * 0.9, Math.max(0.3, Math.round(Math.abs(g.cur - g.fixed) * R.tot / 0.05) * 0.05)); dr.w = r2(wm); setDoorT(dr, R, g.fixed + sg * wm / R.tot / 2); g.moved = true; showTag(e, `출입문 ${f2(dr.w)}m`); }
+    if (g.type === 'doordraw') { g.t1 += wrapD(n.t - g.last); g.last = n.t; g.moved = true; showTag(e, `${glassMode ? '유리' : '출입문'} ${f2(Math.max(0.3, Math.round(Math.abs(g.t1 - g.t0) * R.tot / 0.05) * 0.05))}m`); }
+    else { g.cur += wrapD(n.t - g.cur); const sg = Math.sign(g.cur - g.fixed) || 1, wm = Math.min(R.tot * 0.9, Math.max(0.3, Math.round(Math.abs(g.cur - g.fixed) * R.tot / 0.05) * 0.05)); dr.w = r2(wm); setDoorT(dr, R, g.fixed + sg * wm / R.tot / 2); g.moved = true; showTag(e, `${opName(dr)} ${f2(dr.w)}m`); }
     renderStudy(); return;
   }
   if (g.type === 'flow') {
@@ -5013,7 +5116,7 @@ pc.addEventListener('pointermove', e => {
     if (!g.dragged && Math.hypot(e.clientX - g.cx, e.clientY - g.cy) < 6) return;
     g.dragged = true; g.w1 = w; renderStudy(); return;
   }
-});
+}
 function rehome(){
   // 다른 대지 위로 옮긴 도형은 그 대지 소속으로 바꿈
   for (const x of selBoxes()) {
@@ -5087,7 +5190,7 @@ function endStudyPointer(e){
     let a0 = Math.min(g.t0, g.t1), a1 = Math.max(g.t0, g.t1), wm = Math.round((a1 - a0) * R.tot / 0.05) * 0.05; // 0.05m 단위
     if (wm >= 0.3) a1 = a0 + wm / R.tot;
     if (wm < 0.3) { a0 = g.t0 - def / 2 / R.tot; a1 = g.t0 + def / 2 / R.tot; wm = def; } // 톡 누르면 기본 폭
-    const nd = { id: uid(), box: b.id, t: 0, w: r2(Math.min(wm, R.tot * 0.9)), e: null, u: null, thick: false, tag: '', kind: glassMode ? 'glass' : 'door' }; setDoorT(nd, R, (a0 + a1) / 2);
+    const nd = { id: uid(), box: b.id, t: 0, w: r2(Math.min(wm, R.tot * 0.9)), e: null, u: null, thick: false, tag: glassMode ? 'wall' : '', kind: glassMode ? 'glass' : 'door' }; setDoorT(nd, R, (a0 + a1) / 2);
     commit(() => { P.doors = [...(P.doors || []), nd]; }); selDoor = nd.id; studyUI(); return;
   }
   if (g.type === 'flow') {
@@ -5120,7 +5223,7 @@ function endStudyPointer(e){
       const dw = g.tool === 'outer' ? cell * 6 : cell * 2, dd = g.tool === 'semi' ? dw / 2 : g.tool === 'outer' ? cell * 4 : dw;
       x0 = sn(g.w0.x - dw / 2); z0 = sn(g.w0.z - dd / 2); w = dw; d = dd;
     }
-    const nb = normBox({ id: uid(), kind: 'solid', shape: ['circle', 'semi', 'tri'].includes(g.tool) ? g.tool : 'rect', x: x0, z: z0, w: r2(w), d: r2(d), lv: 0, fl: 1, cat: 'free' }, P.grid);
+    const nb = normBox({ id: uid(), kind: 'solid', shape: ['circle', 'semi', 'rtri'].includes(g.tool) ? g.tool : 'rect', x: x0, z: z0, w: r2(w), d: r2(d), lv: 0, fl: 1, cat: 'free' }, P.grid);
     placeInSheet(nb, g.si);
     commit(() => { P.boxes.push(nb); setSel([nb.id]); });
     rotMode = false; setTool('select');
@@ -5323,7 +5426,7 @@ $('#roleBtn').onclick = () => { roleMode = !roleMode; try { localStorage.setItem
 $('#fixBtn').onclick = () => { const bs = P.boxes.filter(b => misaligned(b) && !b.lock); fixUnit(bs); };
 $('#tUndo').onclick = undo; $('#tRedo').onclick = redo;
 $('#menuBtn').onclick = () => document.body.classList.toggle('menuOpen');
-document.querySelector('.tools2').addEventListener('click', () => document.body.classList.remove('menuOpen'));
+document.querySelector('.tools2').addEventListener('click', e => { document.body.classList.remove('menuOpen'); if (e.target.closest('button') && r2mOpen) { r2mOpen = false; r2UI(); } });
 $('#flowBtn').onclick = () => { flowEdit = true; flowShow = true; try { localStorage.setItem('mass-flow-show', 'on'); } catch (e) {} clearSel(); rotMode = false; selFlow = null; studyUI(); };
 $('#flowDone').onclick = () => { flowEdit = false; selFlow = null; doorMode = false; glassMode = false; flowPan = false; selDoor = null; studyUI(); };
 $('#cardEye').onclick = () => { cardShow = !cardShow; try { localStorage.setItem('mass-card-show', cardShow ? 'on' : 'off'); } catch (e) {} if (!cardShow) selCard = null; studyUI(); };
@@ -5340,7 +5443,7 @@ function removeCard(cid){ commit(() => { P.cards = P.cards.filter(c => c.id !== 
 $('#flowEye').onclick = () => { flowShow = !flowShow; try { localStorage.setItem('mass-flow-show', flowShow ? 'on' : 'off'); } catch (e) {} studyUI(); };
 $('#doorSnapBtn').onclick = () => { doorSnap = !doorSnap; studyUI(); toast(doorSnap ? '출입문을 끌면 변·외곽 가운데에 붙어요. 더 끌면 떨어져요' : '출입문이 어디에도 붙지 않고 자유롭게 움직여요'); };
 $('#flowPanBtn').onclick = () => { flowPan = !flowPan; if (flowPan) { doorMode = false; glassMode = false; selFlow = null; selDoor = null; } studyUI(); };
-$('#glassBtn').onclick = () => { glassMode = !glassMode; if (glassMode) { doorMode = false; flowPan = false; } selFlow = null; studyUI(); if (glassMode) toast('도형 테두리에서 시작해 외곽을 따라 그으면 그 길이만큼 유리벽이 생겨요'); };
+$('#glassBtn').onclick = () => { glassMode = !glassMode; if (glassMode) { doorMode = false; flowPan = false; } selFlow = null; studyUI(); if (glassMode) toast('도형 테두리에서 시작해 외곽을 따라 그으면 그 길이만큼 유리가 생겨요 · 골라서 유리벽/유리를 바꿔요'); };
 $('#doorBtn').onclick = () => { doorMode = !doorMode; if (doorMode) { flowPan = false; glassMode = false; } selFlow = null; studyUI(); if (doorMode) toast('도형 테두리에서 시작해 외곽을 따라 그으면 그 길이만큼 출입문이 생겨요'); };
 $('#straightBtn').onclick = () => { straightMode = !straightMode; studyUI(); toast(straightMode ? '직선 모드: 동선이 수직·수평·45°로만 그려져요' : '자유롭게 그려요'); };
 document.querySelectorAll('#flowTypes button[data-ft]').forEach(b => b.onclick = () => {
@@ -5507,6 +5610,7 @@ const IC = {
   rect: SVGI('<rect x="3" y="5" width="14" height="10" rx="1.2" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7"/>'),
   circle: SVGI('<circle cx="10" cy="10" r="6.6" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7"/>'),
   tri: SVGI('<path d="M10 3.6L17 16H3z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'),
+  rtri: SVGI('<path d="M3.5 3.5L16.5 16.5H3.5z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M3.5 12.5h4v4" fill="none" stroke="currentColor" stroke-width="1.2"/>'),
   poly: SVGI('<path d="M4 6l6-3 6 4-1 8-7 2-5-5z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.4 1.8" stroke-linejoin="round"/>'),
   copy: '<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><rect x="6.5" y="6.5" width="9.5" height="9.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 4H5.6c-.9 0-1.6.7-1.6 1.6v7.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
   unshare: '<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M10 12.5V3.5M6.8 6.6L10 3.4l3.2 3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 10.5v4.4c0 .9.7 1.6 1.6 1.6h7.8c.9 0 1.6-.7 1.6-1.6v-4.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M3.5 17L16.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
@@ -5520,7 +5624,7 @@ const IC = {
   dashed: SVGI('<rect x="3.5" y="4.5" width="13" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2.4"/>'),
   caret: '<svg viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><path d="M2 6.5l3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>'
 };
-const SHAPE_N = { rect: '사각형', circle: '원', semi: '반원', quarter: '사분원', tri: '삼각형', poly: '자유 모양' };
+const SHAPE_N = { rect: '사각형', circle: '원', semi: '반원', quarter: '사분원', tri: '삼각형', rtri: '직각삼각형', poly: '자유 모양' };
 function catList(){ return [...CAT_KEYS.filter(k => k !== 'free'), ...(P.cats || []).map(c => c.id)]; }
 function swatchEl(k, mixed){
   const sw = document.createElement('span');
@@ -5663,7 +5767,7 @@ function studyUI(){
     b.classList.toggle('on', !doorMode && !glassMode && !flowPan && b.dataset.ft === cur);
   });
   $('#doorBtn').classList.toggle('on', doorMode); $('#glassBtn').classList.toggle('on', glassMode); $('#flowPanBtn').classList.toggle('on', flowPan); $('#doorSnapBtn').classList.toggle('on', doorSnap); $('#doorSnapBtn').textContent = doorSnap ? '맞춤 켬' : '맞춤 끔';
-  $('#flowHint').textContent = flowPan ? '끌어서 화면을 움직여요' : glassMode ? '도형 테두리를 따라 그어 유리벽을 넣어요' : doorMode ? '도형 테두리를 따라 그어 출입문을 넣어요' : selFlow ? '선택한 동선' : '화면을 끌어서 동선을 그려요';
+  $('#flowHint').textContent = flowPan ? '끌어서 화면을 움직여요' : glassMode ? '도형 테두리를 따라 그어 유리를 넣어요' : doorMode ? '도형 테두리를 따라 그어 출입문을 넣어요' : selFlow ? '선택한 동선' : '화면을 끌어서 동선을 그려요';
   pressed('#straightBtn', straightMode, '직선'); $('#straightBtn').hidden = !flowEdit || ro;
   $('#zoomBtn').title = '눌러서 지금 대지에 맞추기';
   pressed('#snapBtn', studySnap, '격자'); $('#snapBtn').hidden = ro;
@@ -5717,13 +5821,14 @@ function renderCtx(){
     const f = P.flows.find(x => x.id === selFlow), dr = selDoor && (P.doors || []).find(d => d.id === selDoor);
     if (dr && !ro) {
       ctx.hidden = false;
-      const lb = document.createElement('span'); lb.className = 'lbl'; lb.style.padding = '0 6px'; lb.textContent = dr.kind === 'glass' ? '유리벽' : '출입문'; ctx.appendChild(lb);
+      const lb = document.createElement('span'); lb.className = 'lbl'; lb.style.padding = '0 6px'; lb.textContent = dr.kind === 'glass' ? '유리' : '출입문'; ctx.appendChild(lb);
       const hn = document.createElement('span'); hn.className = 'lbl'; hn.style.padding = '0 6px'; hn.textContent = `${f2(dr.w)}m`; hn.title = '양 끝 점을 끌어 크기, 가운데를 끌어 옮기기'; ctx.appendChild(hn);
       const setD = fn => commit(() => { const x = P.doors.find(d => d.id === selDoor); if (x) fn(x); });
       btn('보통', () => setD(x => { x.thick = false; }), !dr.thick ? 'on' : ''); btn('두껍게', () => setD(x => { x.thick = true; }), dr.thick ? 'on' : '');
       sep();
       if (dr.kind !== 'glass') { for (const [k, n] of Object.entries(DOOR_TAGS)) btn(n, () => setD(x => { x.tag = x.tag === k ? '' : k; }), dr.tag === k ? 'on' : ''); sep(); }
-      btn(dr.kind === 'glass' ? '출입문으로' : '유리벽으로', () => setD(x => { x.kind = x.kind === 'glass' ? 'door' : 'glass'; }));
+      else { for (const [k, n] of Object.entries(GLASS_TAGS)) btn(n, () => setD(x => { x.tag = k; }), (dr.tag || 'wall') === k ? 'on' : ''); sep(); }
+      btn(dr.kind === 'glass' ? '출입문으로' : '유리로', () => setD(x => { x.kind = x.kind === 'glass' ? 'door' : 'glass'; x.tag = x.kind === 'glass' ? 'wall' : ''; }));
       trash(() => { commit(() => { P.doors = P.doors.filter(d => d.id !== selDoor); }); selDoor = null; studyUI(); });
       return;
     }
@@ -5831,7 +5936,7 @@ function renderPop(){
     const ph = document.createElement('p'); ph.className = 'ph2'; ph.textContent = (P.cats || []).length ? '직접 만든 공간(동그라미)은 두 번 눌러 바꾸거나 지워요' : '선택된 종류를 다시 누르면 미지정으로 돌아가요'; pop.appendChild(ph);
   } else if (popKind === 'shape') {
     const b = sb[0];
-    for (const k of ['rect', 'circle', 'semi', 'tri']) { const x = document.createElement('button'); x.className = 'ib' + (b && b.shape === k ? ' on' : ''); x.innerHTML = IC[k]; x.setAttribute('aria-label', SHAPE_N[k]); x.title = SHAPE_N[k]; x.onclick = () => { setShape(k); popKind = null; studyUI(); }; pop.appendChild(x); }
+    for (const k of ['rect', 'circle', 'semi', ...(b && b.shape === 'tri' ? ['tri'] : []), 'rtri']) { const x = document.createElement('button'); x.className = 'ib' + (b && b.shape === k ? ' on' : ''); x.innerHTML = IC[k]; x.setAttribute('aria-label', SHAPE_N[k]); x.title = SHAPE_N[k]; x.onclick = () => { setShape(k); popKind = null; studyUI(); }; pop.appendChild(x); }
   } else if (popKind === 'align') {
     for (const [l, a] of [['왼쪽', 'alL'], ['가운데', 'alC'], ['오른쪽', 'alR'], ['위', 'alT'], ['중간', 'alM'], ['아래', 'alB'], ['가로로 붙이기', 'disX'], ['세로로 붙이기', 'disZ'], ['가로 같은 간격', 'eqX'], ['세로 같은 간격', 'eqZ']]) {
       const x = document.createElement('button'); x.className = 'tb2'; x.textContent = l; x.onclick = () => { $('#iGap').value = 0; act(a); }; pop.appendChild(x);
@@ -6412,7 +6517,7 @@ if (/iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && na
 document.addEventListener('touchmove', e => { if (e.touches.length > 1 && !(e.target.closest && e.target.closest('#pc, #cv'))) e.preventDefault(); }, { passive: false });
 document.addEventListener('dblclick', e => { if (!(e.target.closest && e.target.closest('input, textarea'))) e.preventDefault(); }, { passive: false });
 // 옆으로 밀렸으면 되돌림
-window.addEventListener('scroll', () => { if (window.scrollX) window.scrollTo(0, window.scrollY); }, { passive: true });
+window.addEventListener('scroll', () => { if (window.scrollX || (document.documentElement.classList.contains('editing') && window.scrollY)) window.scrollTo(0, document.documentElement.classList.contains('editing') ? 0 : window.scrollY); }, { passive: true }); // 작업 화면은 위아래로도 밀리지 않게
 
 for (const id of ['#pjDelete', '#shDel']) $(id).innerHTML = IC.trash;
 
