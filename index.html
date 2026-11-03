@@ -459,7 +459,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .bystudy .row{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
 .icon.ic{padding:0;width:42px;display:inline-flex;align-items:center;justify-content:center}
 .icon.ic:disabled{opacity:.35}
-body.exact #tUndo, body.exact #tRedo{display:none !important}
 .ctx .ib{display:inline-flex !important;align-items:center;gap:3px;padding:0 9px !important;color:var(--ink)}
 .ctx .ib.on{background:var(--accent) !important;color:#fff !important}
 .ctx .ib .swc{width:20px;height:20px}
@@ -500,11 +499,11 @@ body.fbmode #stools, body.fbmode #ctx{display:none !important}
 .newcard .plus::after{transform:translate(-50%,-50%) rotate(90deg)}
 .savebtn{height:42px;padding:0 14px;border:1px solid var(--accent);font-weight:700;white-space:nowrap;position:relative}
 .savebtn.dirty::after{content:'';position:absolute;right:-3px;top:-3px;width:11px;height:11px;border-radius:50%;border:2px solid var(--paper)}
-body.sketchmode #uiModeSeg, body.sketchmode #sheetBar, body.sketchmode #snapBtn, body.sketchmode #fixBtn, body.sketchmode #sSum, body.sketchmode #setBtn{display:none !important}
+body.sketchmode #uiModeSeg, body.sketchmode #sheetBar, body.sketchmode #snapBtn, body.sketchmode #fixGrp, body.sketchmode #sSum, body.sketchmode #setBtn{display:none !important}
 body.sketchmode #pc{background:#f7f3ea}
 #lockBtn{display:none !important}
 body.study #cv, body.study #sheet, body.study #hint, body.study .stats, body.study .views{display:none !important}
-body.exact #studyUI, body.exact #stools, body.exact #menuBtn, body.exact #sheetBar, body.exact #flowBar{display:none !important}
+body.exact #studyUI, body.exact #stools, body.exact #sheetBar, body.exact #flowBar{display:none !important}
 body.study .row2{display:none}
 @media (max-width:640px){
   #topArea .bar{flex-wrap:wrap;row-gap:6px}
@@ -938,16 +937,7 @@ html,body{overflow:hidden}
   body.study #topArea .bar{justify-content:flex-start}
   body.study #topArea .bar #tUndo{margin-left:auto}
 }
-@media (min-width:1380px){
-  body.study #topArea{flex-direction:row;flex-wrap:wrap;align-items:center;column-gap:6px}
-  body.study #topArea > *{order:10;flex:1 1 100%}
-  body.study #topArea > .bar{display:contents}
-  body.study #topArea .bar > *{pointer-events:auto;order:5;flex:none}
-  body.study #topArea .bar #backBtn{order:1}
-  body.study #topArea .bar .name{order:2;flex:1 1 140px;min-width:140px;max-width:300px}
-  body.study #topArea .bar #uiModeSeg{order:3}
-  body.study #topArea > #stools{order:4;flex:0 0 auto;margin:0 4px}
-}
+
 /* 스케치 모드: 스케치북 종이 결 + 칸 꼭짓점 점 */
 body.sketchmode #pc{background-color:#f8f4ea;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
 .rcard,.ditem{min-width:0}
@@ -1030,6 +1020,47 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
   body.exact.sideHid .sideTog{right:0}
   body.exact.sideHid .sideTog svg{transform:rotate(180deg)}
 }
+.gone{display:none !important}
+#sizeRow3{align-items:center;gap:8px}
+#size3Btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+#floorBar .fltog{display:flex;align-items:center;justify-content:space-between;gap:8px;border:0;background:none;width:100%;font:inherit;color:inherit;cursor:pointer;padding:4px 8px 2px}
+body.exact #floorBar.folded{min-width:0}
+.ndial{display:flex;justify-content:center;margin:4px 0}
+#nDial{touch-action:none;cursor:pointer;max-width:100%;height:auto;user-select:none}
+.nrow{display:flex;align-items:center;justify-content:center;gap:10px}
+.nrow .lbl{min-width:180px;text-align:center}
+/* 위쪽 줄(목록~?)은 스터디·3D 어느 쪽이든 같은 폭·같은 자리: 버튼이 모드 따라 움직이지 않게 */
+@media (min-width:900px){
+  body.exact #editView .top{right:0}
+  body.exact #topArea .bar{justify-content:flex-start}
+  body.exact #topArea .bar .name, body.study #topArea .bar .name{flex:0 1 320px}
+  body.exact #topArea .bar #tUndo{margin-left:auto}
+  body.exact #topArea > :not(.bar){margin-right:var(--side)}
+  body.exact.sideHid #topArea > :not(.bar){margin-right:0}
+  body.exact #editView .sheet{top:var(--barB, 0px);padding-top:12px}
+}
+@media (min-width:1380px){
+  body.exact #topArea .bar .name, body.study #topArea .bar .name{flex:0 1 300px;min-width:140px;max-width:300px}
+}
+#r2mBtn{display:none !important} /* 3D 메뉴는 위쪽 줄 '메뉴'로 열어요 */
+body.r2mopen #menuBtn{background:var(--ink);color:#fff;border-color:var(--ink)}
+#nDial:focus{outline:none}
+#nDial:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:50%}
+/* 버튼 자리 고정: 글자·숫자가 바뀌어도 다른 버튼이 밀리지 않게 */
+.ctx{left:max(10px, calc(50% - 320px)) !important;transform:none !important}
+#syncPill{min-width:8.2em;text-align:center;justify-content:center;white-space:nowrap}
+#zoomBtn{min-width:4.4em;font-variant-numeric:tabular-nums}
+.ctx .tagb{min-width:5.8em}
+#undoBtn{min-width:7.4em}
+#r2Btn{min-width:10.2em;justify-content:space-between}
+#lblModeBtn{min-width:8.8em}
+#cardEye,#flowEye{min-width:5.2em}
+.sbottom .sum .m{min-width:118px}
+.sbottom .sum .m:last-child{min-width:100px}
+#views button[data-v=elev]{min-width:5.6em}
+.ctx .deg{min-width:3.6em}
+#floorBar .fltog{min-width:100px}
+#fixGrp[hidden]{display:none !important}
 </style>
 <script type="importmap">
 {"imports":{
@@ -1084,6 +1115,7 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
     <svg id="pc" xmlns="http://www.w3.org/2000/svg" role="application" aria-label="평면 스케치 캔버스"></svg>
     <div class="ctx" id="ctx" hidden></div>
     <div class="sbottom" id="sbottom">
+      <div class="bgrp" id="fixGrp" hidden><button id="fixBtn" class="fix">어긋난 맞추기</button></div>
       <div class="bgrp" role="group" aria-label="화면">
         <button id="zoomBtn" title="눌러서 지금 대지에 맞추기">100%</button>
         <button id="snapBtn" aria-pressed="true">격자</button>
@@ -1097,7 +1129,6 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
       </div>
       <div class="bgrp" role="group" aria-label="자료">
         <button id="dockBtn" aria-pressed="false">레퍼런스</button>
-        <button id="fixBtn" class="fix" hidden>어긋난 맞추기</button>
       </div>
       <div class="sum" id="sSum" aria-live="polite"></div>
     </div>
@@ -1149,6 +1180,7 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
         <button data-tool="circle">원형</button>
         <button data-tool="semi">반원</button>
         <button data-tool="rtri">직각삼각형</button>
+        <button data-tool="poly" title="눌러서 꼭짓점을 찍고, 첫 점을 다시 누르거나 두 번 눌러 마무리 (P)">다각형</button>
       </div>
       <div class="tgrp envg" role="group" aria-label="점선">
         <button data-tool="outer" title="점선 테두리를 가로질러 그어서 꺾기"><svg viewBox="0 0 22 20" width="20" height="18" aria-hidden="true"><path d="M3 3h9.5v6.5H19V17H3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2" stroke-linejoin="round"/><path d="M14.5 2.5c0 4 1 5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".55"/></svg>점선 꺾기</button>
@@ -1204,6 +1236,7 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
         <button id="refBtn">레퍼런스</button>
         <button id="planBtn">플랜</button>
         <button id="setBtn">대지</button>
+        <button id="northBtn">방위</button>
         <button id="chatBtn">댓글</button>
         <button id="exportBtn">내보내기</button>
       </div>
@@ -1230,6 +1263,7 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
           <button data-mode="add">추가</button>
         </div>
         <button class="tb" id="multiBtn" aria-pressed="false">여러 개 선택</button>
+        <button class="tb" id="edit3Btn" aria-pressed="false" title="켜면 도형을 누르기만 해도 그 도형 수정 모드로 들어가요">수정 모드</button>
         <span class="spacer"></span>
         <button class="tb strong" id="undoBtn">↶ 되돌리기</button>
         <button class="tb" id="redoBtn" aria-label="다시 하기">↷</button>
@@ -1304,7 +1338,11 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
             <button data-shape="rtri">직각삼각</button>
           </div>
         </div>
-        <div class="ratio single-only">
+        <div class="toolrow single-only gone" id="sizeRow3">
+          <button class="tb" id="size3Btn">크기 바꾸기</button>
+          <span class="lbl" id="size3Info"></span>
+        </div>
+        <div class="ratio single-only gone">
           <span class="lbl">비율 가로:세로</span>
           <button data-ratio="1:1">1:1</button>
           <button data-ratio="2:1">2:1</button>
@@ -1314,13 +1352,13 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
           <button data-ratio="1.618:1">황금비</button>
           <input id="iRatio" aria-label="비율 직접 입력 (예: 4:3)" placeholder="4:3">
         </div>
-        <div class="steps single-only">
-          <div class="st"><span class="lbl" id="lW">가로</span><div class="stepper"><button data-act="w-" aria-label="가로 줄이기">−</button><input id="iw" type="number" inputmode="decimal" step="any"><button data-act="w+" aria-label="가로 늘리기">+</button></div></div>
-          <div class="st"><span class="lbl" id="lD">세로</span><div class="stepper"><button data-act="d-" aria-label="세로 줄이기">−</button><input id="idp" type="number" inputmode="decimal" step="any"><button data-act="d+" aria-label="세로 늘리기">+</button></div></div>
+        <div class="steps single-only gone">
+          <div class="st gone"><span class="lbl" id="lW">가로</span><div class="stepper"><button data-act="w-" aria-label="가로 줄이기">−</button><input id="iw" type="number" inputmode="decimal" step="any"><button data-act="w+" aria-label="가로 늘리기">+</button></div></div>
+          <div class="st gone"><span class="lbl" id="lD">세로</span><div class="stepper"><button data-act="d-" aria-label="세로 줄이기">−</button><input id="idp" type="number" inputmode="decimal" step="any"><button data-act="d+" aria-label="세로 늘리기">+</button></div></div>
           <div class="st"><span class="lbl">높이 (m)</span><div class="stepper"><button data-act="h-" aria-label="높이 줄이기">−</button><input id="ih" type="number" inputmode="decimal" step="0.1" aria-label="높이"><button data-act="h+" aria-label="높이 늘리기">+</button></div></div>
           <div class="st"><span class="lbl">층수</span><div class="stepper"><button data-act="f-" aria-label="층수 줄이기">−</button><input id="ifl" type="number" inputmode="numeric" step="1"><button data-act="f+" aria-label="층수 늘리기">+</button></div></div>
         </div>
-        <div class="acts">
+        <div class="acts gone">
           <div class="pad">
             <button data-act="mL" aria-label="왼쪽으로 한 칸">←</button>
             <button data-act="mU" aria-label="위로 한 칸">↑</button>
@@ -1418,12 +1456,9 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
       <label class="check" for="sSnap"><input id="sSnap" type="checkbox"> 3D 모드에서도 격자에 맞추기 (끄면 0.25m 단위)</label>
     </div>
     <div class="siteRow northRow">
-      <span class="lbl">방위: 평면에서 북쪽이 어느 쪽인가요</span>
-      <div class="acts" id="sNorthBtns">
-        <button data-n="0">↑ 위</button><button data-n="90">→ 오른쪽</button><button data-n="180">↓ 아래</button><button data-n="270">← 왼쪽</button>
-        <label class="nang">직접<input id="sNorth" type="number" inputmode="numeric" step="1" min="0" max="359" aria-label="북쪽 각도 (위=0°, 시계 방향)">°</label>
-      </div>
-      <span class="lbl">위쪽을 0°로 시계 방향 각도예요. 평면의 나침반과 동·서·남·북 입면도가 이 방향을 따라요.</span>
+      <span class="lbl">방위</span>
+      <div class="acts"><button id="sNorthOpen">방위 정하기</button><span class="lbl" id="sNorthInfo"></span></div>
+      <input id="sNorth" type="hidden">
     </div>
     <div class="siteRow">
       <span class="lbl">대지경계선과 높낮이</span>
@@ -1486,6 +1521,16 @@ svg,svg *,img,image,canvas,#pc,#pc *{-webkit-user-drag:none;user-drag:none;-webk
       <button class="btn" id="cmCancel">취소</button>
       <button class="btn primary" id="cmOk">추가</button>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="northModal" hidden>
+  <div class="mbox" role="dialog" aria-labelledby="northTitle">
+    <h2 id="northTitle">방위</h2>
+    <p>가운데 네모가 평면(위쪽이 화면 위)이에요. 바깥 원을 누르거나 끌어서 북쪽을 맞추면 16방위로 딱딱 맞춰져요.</p>
+    <div class="ndial"><svg id="nDial" viewBox="-130 -130 260 260" width="260" height="260" role="slider" aria-label="북쪽 방향" tabindex="0"></svg></div>
+    <div class="nrow"><button class="btn sm" id="nCcw" aria-label="왼쪽으로 한 칸">⟲</button><span id="nInfo" class="lbl"></span><button class="btn sm" id="nCw" aria-label="오른쪽으로 한 칸">⟳</button></div>
+    <div class="mact"><button class="btn" id="nCancel">취소</button><button class="btn primary" id="nOk">적용</button></div>
   </div>
 </div>
 
@@ -1729,10 +1774,34 @@ function inShape(b, u, v){
   return a * a + c * c <= 1 + 1e-9;
 }
 const shapeArea = b => b.w * b.d * (b.shape === 'rect' ? 1 : isPolyShape(b) ? polyArea(outline(b)) : Math.PI / 4);
+// 다각형 변을 곡선(2차 베지어)으로: 제어점이 있는 변만 잘게 나눔
+function polySample(P0, C, seg = 14){
+  const out = [], n = P0.length;
+  for (let i = 0; i < n; i++) {
+    const a = P0[i], c = P0[(i + 1) % n], q = C && C[i];
+    out.push(a);
+    if (q) for (let k = 1; k < seg; k++) { const t = k / seg, m = 1 - t; out.push([m * m * a[0] + 2 * m * t * q[0] + t * t * c[0], m * m * a[1] + 2 * m * t * q[1] + t * t * c[1]]); }
+  }
+  return out;
+}
+// 다각형 꼭짓점·제어점(대지 좌표) ↔ 상자(x, z, w, d, 0~1 점)
+function polyWorld(b){ return { W: b.pts.map(([u, v]) => fromLocal(b, u, v)), C: b.pts.map((_, i) => b.cps && b.cps[i] ? fromLocal(b, b.cps[i][0], b.cps[i][1]) : null) }; }
+function setPolyWorld(b, W, C){
+  const cx0 = b.x + b.w / 2, cz0 = b.z + b.d / 2, a = rad(b.ang || 0), ca = Math.cos(-a), sa = Math.sin(-a);
+  const loc = p => { const dx = p[0] - cx0, dz = p[1] - cz0; return [dx * ca - dz * sa, dx * sa + dz * ca]; };
+  const Lp = W.map(loc), Lc = C.map(c => c ? loc(c) : null), smp = polySample(Lp, Lc.some(Boolean) ? Lc : null);
+  let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity; for (const [x, z] of smp) { x0 = Math.min(x0, x); z0 = Math.min(z0, z); x1 = Math.max(x1, x); z1 = Math.max(z1, z); }
+  const w = Math.max(0.1, x1 - x0), d = Math.max(0.1, z1 - z0), mx = (x0 + x1) / 2, mz = (z0 + z1) / 2, cb = Math.cos(a), sb = Math.sin(a);
+  const ncx = cx0 + mx * cb - mz * sb, ncz = cz0 + mx * sb + mz * cb;
+  b.w = r3n(w); b.d = r3n(d); b.x = r3n(ncx - b.w / 2); b.z = r3n(ncz - b.d / 2);
+  const uv = ([x, z]) => [r3n((x - x0) / w), r3n((z - z0) / d)];
+  b.pts = Lp.map(uv).map(([u, v]) => [Math.min(1, Math.max(0, u)), Math.min(1, Math.max(0, v))]);
+  if (Lc.some(Boolean)) b.cps = Lc.map(c => c ? uv(c) : null); else delete b.cps;
+}
 function outline(b){
   if (b.shape === 'tri') return TRI[b.rot & 3];
   if (b.shape === 'rtri') return RTRI[b.rot & 3];
-  if (b.shape === 'poly' && b.pts && b.pts.length > 2) return b.pts;
+  if (b.shape === 'poly' && b.pts && b.pts.length > 2) return b.cps ? polySample(b.pts, b.cps) : b.pts;
   const e = ell(b); if (!e) return [[0, 0], [1, 0], [1, 1], [0, 1]];
   const N = b.shape === 'circle' ? 64 : 40, pts = [];
   for (let i = 0; i <= N; i++) {
@@ -1757,7 +1826,12 @@ const r3n = v => Math.round(v * 1000) / 1000;
 function normBox(b, grid){
   const o = normBox0(b, grid);
   if (o.shape === 'poly' && !(o.pts && o.pts.length > 2)) o.shape = 'rect';
-  if (o.shape !== 'poly') delete o.pts;
+  if (o.shape !== 'poly') { delete o.pts; delete o.cps; }
+  else { // 곡선 제어점: 변마다 하나 (없으면 직선)
+    const c = Array.isArray(b.cps) ? b.cps : [];
+    o.cps = o.pts.map((_, i) => { const q = c[i]; return Array.isArray(q) && q.length >= 2 && Number.isFinite(+q[0]) && Number.isFinite(+q[1]) ? [Math.min(4, Math.max(-3, r3n(+q[0]))), Math.min(4, Math.max(-3, r3n(+q[1])))] : null; });
+    if (!o.cps.some(Boolean)) delete o.cps;
+  }
   return o;
 }
 function normBox0(b, grid){
@@ -1814,7 +1888,7 @@ function normalize(d){
     siteW: num(d.siteW, 30), siteD: num(d.siteD, 24),
     grid: num(d.grid, 3), floorH: num(d.floorH, 3),
     bcrLimit: num(d.bcrLimit, 0, -1), farLimit: num(d.farLimit, 0, -1),
-    north: (() => { const v = Math.round(Number(d.north) || 0); return ((v % 360) + 360) % 360; })(),
+    north: (() => { const v = Math.round((Number(d.north) || 0) * 2) / 2; return ((v % 360) + 360) % 360; })(),
     snap: d.snap !== false,
     boxes: [],
     updatedAt: Number(d.updatedAt) || 0,
@@ -2358,7 +2432,7 @@ async function publish(){
     await store.save(pubItemPath(me, curPid), item);
     const idx = (await store.getDoc(pubIndexPath(me))) || {};
     const posts = { ...(idx.posts || {}) };
-    posts[curPid] = { name: P.name, publishedAt: now, siteW: P.siteW, siteD: P.siteD, cats: P.cats, boxes: P.boxes.filter(b => !b.sheet).slice(0, 80).map(b => ({ kind: b.kind, shape: b.shape, rot: b.rot, ang: b.ang, cat: b.cat, x: b.x, z: b.z, w: b.w, d: b.d, lv: b.lv, fl: b.fl, ...(b.shape === 'poly' ? { pts: b.pts } : {}) })), grid: P.grid, site: P.site, kind: P.kind, project: P.project, projects: P.projects, origin: P.origin, gfa: r2(s.gfa), far: r2(s.far), plans: plans.length, labels: [...new Set([...P.boxes.map(b => b.label), ...P.sheets.map(x => x.name)].filter(Boolean))].slice(0, 40) };
+    posts[curPid] = { name: P.name, publishedAt: now, siteW: P.siteW, siteD: P.siteD, cats: P.cats, boxes: P.boxes.filter(b => !b.sheet).slice(0, 80).map(b => ({ kind: b.kind, shape: b.shape, rot: b.rot, ang: b.ang, cat: b.cat, x: b.x, z: b.z, w: b.w, d: b.d, lv: b.lv, fl: b.fl, ...(b.shape === 'poly' ? { pts: b.pts, cps: b.cps } : {}) })), grid: P.grid, site: P.site, kind: P.kind, project: P.project, projects: P.projects, origin: P.origin, gfa: r2(s.gfa), far: r2(s.far), plans: plans.length, labels: [...new Set([...P.boxes.map(b => b.label), ...P.sheets.map(x => x.name)].filter(Boolean))].slice(0, 40) };
     await store.save(pubIndexPath(me), { ...idx, posts });
     commitMeta(() => { P.publishedAt = now; P.pubSig = sigOf(P); });
     setTimeout(() => syncRefUse(true), 800);
@@ -2555,7 +2629,8 @@ function labelTexture(title, sub, aspect, outer){
 function boxMesh(b, totalRooms, rank = 0){
   const H = boxH(b), isSel = selSet.has(b.id), out = outside(b), outer = b.kind === 'outer';
   const geo = shapeGeo(b, H);
-  const mesh = new THREE.Mesh(geo, outer ? (isSel ? outerFillSel : outerFill) : b.cat === 'void' ? (isSel ? outerFillSel : voidMat) : b.cat === 'outdoor' && !isSel ? outdoorMat : edgeMode ? xrayMat(colorOf(b), isSel) : solidMat(colorOf(b), isSel));
+  const dimOther = sizeMode && b.id !== sizeMode && !outer;
+  const mesh = new THREE.Mesh(geo, dimOther ? xrayMat(colorOf(b), false) : outer ? (isSel ? outerFillSel : outerFill) : b.cat === 'void' ? (isSel ? outerFillSel : voidMat) : b.cat === 'outdoor' && !isSel ? outdoorMat : edgeMode ? xrayMat(colorOf(b), isSel) : solidMat(colorOf(b), isSel));
   // 스터디 보드에서 아래 레이어일수록 아주 조금 작고(옆) 바닥이 살짝 떠 있게: 겹친 면이 깨져 보이지 않음
   const rk = Math.min(rank, 12), ins = rk ? 0.002 : 0, lift = 0.002 + rk * 0.0005, drop = rk * 0.0005, Hs = Math.max(0.05, H - lift - drop); // 틈이 안 보이게 아주 조금만 (깜빡임은 깊이 정밀도로 막음)
   mesh.scale.set(Math.max(0.6, (b.w - 2 * ins) / b.w), Hs / H, Math.max(0.6, (b.d - 2 * ins) / b.d));
@@ -2613,14 +2688,17 @@ function boxMesh(b, totalRooms, rank = 0){
 }
 function buildHandles(){
   disposeGroup(handleG);
-  const b = getBox(sel); if (!b || edRO() || selSet.size !== 1 || b.lock || b.ang || b.sheet) return;
+  const b = getBox(sel); if (!b || edRO() || selSet.size !== 1 || b.lock || b.sheet || (b.ang && sizeMode !== b.id)) return;
   const R = Math.max(P.siteW, P.siteD), r = Math.max(0.28, R / 90);
   const top = elevOf(b.lv) + boxH(b), cx = -P.siteW / 2 + b.x + b.w / 2, cz = -P.siteD / 2 + b.z + b.d / 2;
-  const spots = { w: [cx + b.w / 2, top, cz], d: [cx, top, cz + b.d / 2], h: [cx, top + r * 2.4, cz] };
+  const base = elevOf(b.lv), midY = base + boxH(b) / 2, ed = sizeMode === b.id;
+  const ca = Math.cos(rad(b.ang || 0)), sa = Math.sin(rad(b.ang || 0)), at = (lx, lz, y) => [cx + lx * ca - lz * sa, y, cz + lx * sa + lz * ca]; // 돌린 도형도 그 방향대로
+  const spots = ed ? { w: at(b.w / 2 + r * 1.6, 0, midY), w0: at(-b.w / 2 - r * 1.6, 0, midY), d: at(0, b.d / 2 + r * 1.6, midY), d0: at(0, -b.d / 2 - r * 1.6, midY), h: [cx, top + r * 2.4, cz], b: [cx, base - r * 2.4, cz] } // 수정 모드: 여섯 방향
+    : { w: [cx + b.w / 2, top, cz], d: [cx, top, cz + b.d / 2], h: [cx, top + r * 2.4, cz] };
   for (const [k, [x, y, z]] of Object.entries(spots)) {
     const g = new THREE.Group(); g.position.set(x, y, z); g.renderOrder = 10;
     const ring = new THREE.Mesh(new THREE.SphereGeometry(r * 1.25, 16, 12), handleRing); ring.renderOrder = 10;
-    const dot = new THREE.Mesh(k === 'h' ? new THREE.ConeGeometry(r, r * 1.8, 16) : new THREE.SphereGeometry(r, 16, 12), handleMat); dot.renderOrder = 11;
+    const dot = new THREE.Mesh(k === 'h' || k === 'b' ? new THREE.ConeGeometry(r, r * 1.8, 16) : new THREE.SphereGeometry(r, 16, 12), handleMat); dot.renderOrder = 11; if (k === 'b') dot.rotation.x = Math.PI;
     const hit = new THREE.Mesh(new THREE.SphereGeometry(r * 3, 8, 6), hitMat); hit.userData.handle = k;
     g.add(ring, dot, hit); handleG.add(g);
   }
@@ -2740,6 +2818,7 @@ function resize(){
 new ResizeObserver(resize).observe(cv);
 new ResizeObserver(applyOffset).observe($('#sheet'));
 new ResizeObserver(applyOffset).observe($('#topArea'));
+{ const setBarB = () => { const b = $('#topArea .bar'), ev = $('#editView'); if (!b || !ev) return; const v = Math.max(0, b.getBoundingClientRect().bottom - ev.getBoundingClientRect().top + 6); document.documentElement.style.setProperty('--barB', v + 'px'); }; new ResizeObserver(setBarB).observe($('#topArea')); window.addEventListener('resize', setBarB); }
 function setView(v){
   view = v;
   const W = P.siteW, D = P.siteD, H = calc(P).height;
@@ -2795,8 +2874,10 @@ let _edV = null, _rfV = null;
 let selSet = new Set(), multiPick = false;
 function setSel(ids, primary){ selSet = new Set(ids); sel = primary !== undefined ? primary : (ids.length ? ids[ids.length - 1] : null); }
 let selCards = new Set(); // 여러 개 고를 때 같이 움직일 사진(레퍼런스) 카드
+let polyTap = { k: '', t: 0 };
+let polyDraft = null, polyHover = null, polySelV = null, curveEdit = false; // 다각형 그리기·꼭짓점 고치기
 let sizeMode = null; // 크기 바꾸기 모드: 이 도형만 손잡이로 늘이고 줄임 (다른 도형은 못 건드림)
-function clearSel(){ selSet = new Set(); sel = null; selCards = new Set(); sizeMode = null; }
+function clearSel(){ selSet = new Set(); sel = null; selCards = new Set(); sizeMode = null; polySelV = null; }
 const getNote = id => P && P.notes ? P.notes.find(n => n.id === id) : null;
 const selNotes = () => P ? P.notes.filter(n => selSet.has(n.id)) : [];
 function pruneSel(){ if (!P) return; for (const id of [...selSet]) if (!getBox(id) && !getNote(id)) selSet.delete(id); if (sel && !selSet.has(sel)) sel = selSet.size ? [...selSet][selSet.size - 1] : null; if (sel && !selSet.size) selSet.add(sel); }
@@ -2978,13 +3059,18 @@ function pickFloor(L){
 // 3D 모드 층 레이어: 왼쪽에 위층부터 한 줄로. 눈 아이콘으로 그 층을 끄고 켜고, 이름을 누르면 그 층 상자를 전부 선택
 const EYE_ON = '<svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true"><path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="2.4" fill="currentColor"/></svg>';
 const EYE_OFF = '<svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true"><path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".45"/><path d="M4 16L16 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+let flFold = false; // 3D 층 목록 접기
 function renderFloorBar(){
   const bar = $('#floorBar'); if (!bar) return;
   const show = uiMode !== 'study' && !isSketch(), ro = edRO();
   bar.hidden = !show; if (!show) return;
   const fl = floorList().slice().reverse(), cur = floorOfSel();
   bar.textContent = '';
-  const lb = document.createElement('span'); lb.className = 'fl'; lb.textContent = '층'; bar.appendChild(lb);
+  const lb = document.createElement('button'); lb.className = 'fl fltog'; lb.setAttribute('aria-expanded', flFold ? 'false' : 'true');
+  lb.innerHTML = `<span>층${flFold ? ` · ${fl.length - [...hiddenLv].filter(L => fl.some(f => f.level === L)).length}/${fl.length}` : ''}</span><svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true" style="transform:rotate(${flFold ? -90 : 0}deg)"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  lb.title = flFold ? '층 목록 펼치기' : '층 목록 접기'; lb.onclick = () => { flFold = !flFold; renderFloorBar(); };
+  bar.appendChild(lb); bar.classList.toggle('folded', flFold);
+  if (flFold) return;
   for (const f of fl) {
     const n = floorIds(f.level).length, row = document.createElement('div'); row.className = 'flrow' + (hiddenLv.has(f.level) ? ' off' : '');
     const eye = document.createElement('button'); eye.className = 'eye'; eye.innerHTML = hiddenLv.has(f.level) ? EYE_OFF : EYE_ON;
@@ -3069,6 +3155,7 @@ function refreshUI(){
   $('#insp').hidden = !b || ro;
   $('#multiBtn').classList.toggle('on', multiPick); $('#multiBtn').setAttribute('aria-pressed', multiPick);
   $('#multiBtn').hidden = mode !== 'select';
+  $('#edit3Btn').hidden = mode !== 'select' || study; $('#edit3Btn').classList.toggle('on', editTap3); $('#edit3Btn').setAttribute('aria-pressed', editTap3);
   if (b && !ro) {
     const anyLock = sb.some(x => x.lock), allLock = sb.every(x => x.lock), grouped = sb.some(x => x.group);
     $('#insp').dataset.state = anyLock ? 'locked' : sb.length > 1 ? 'multi' : 'single';
@@ -3079,8 +3166,11 @@ function refreshUI(){
     $('#gridBtn').hidden = anyLock;
     $('#gapLbl').textContent = uiMode === 'study' ? '간격(칸)' : '간격(m)';
     const fl = floorOfSel();
-    $('#floorRow').hidden = !fl || study; if (fl && document.activeElement !== $('#ifh')) $('#ifh').value = f2(floorHOf(fl.level));
-    $('#iTitle').textContent = fl ? `${fl.name} 전체 · ${sb.length}개` : sb.length > 1 ? `${sb.length}개 선택${grouped && new Set(sb.map(x => x.group)).size === 1 && sb.every(x => x.group) ? ' · 그룹' : ''}` : b.group ? '선택한 상자 · 그룹 안의 하나' : '선택한 상자';
+    $('#floorRow').hidden = true; // 도형을 고른 채로 층고를 바꾸는 기능은 뺌 (층고는 대지 설정에서)
+    if (sizeMode && (selSet.size !== 1 || sel !== sizeMode)) sizeMode = null;
+    { const sb3 = $('#size3Btn'), on = !study && sizeMode && sizeMode === sel; sb3.classList.toggle('on', !!on); sb3.textContent = on ? '완료' : '크기 바꾸기';
+      const bb = sb.length === 1 ? sb[0] : null; $('#size3Info').textContent = on && bb ? `${f2(bb.w)} × ${f2(bb.d)} m · 높이 ${f2(boxH(bb))}m · 파란 점을 끌어요, 바깥을 누르면 끝나요` : '이 도형만 화면에서 늘이고 줄여요'; } if (fl && document.activeElement !== $('#ifh')) $('#ifh').value = f2(floorHOf(fl.level));
+    $('#iTitle').textContent = fl && sb.length > 1 ? `${fl.name} 전체 · ${sb.length}개` : sb.length > 1 ? `${sb.length}개 선택${grouped && new Set(sb.map(x => x.group)).size === 1 && sb.every(x => x.group) ? ' · 그룹' : ''}` : b.group ? '선택한 상자 · 그룹 안의 하나' : '선택한 상자';
   }
   if (b && !ro && sb.length > 1) {
     $('#iInfo').textContent = `${sb.length}개 · 끌면 같이 움직여요${sb.some(x => x.lock) ? ' · 잠긴 상자가 있어 움직이지 않아요' : ''}`;
@@ -3113,7 +3203,8 @@ function refreshUI(){
   else if (b && sb.some(x => x.lock)) h = '잠긴 상자는 움직이지 않아요 · 잠금 풀기로 풀어요';
   else if (multiPick) h = '탭할 때마다 선택에 더하거나 빼요';
   else if (sb.length > 1) h = '선택한 것을 끌면 같이 움직여요 · 그룹 안 하나만 고르려면 한 번 더 탭';
-  else if (b) h = '파란 점을 끌면 크기·높이, 상자를 끌면 위치가 바뀌어요';
+  else if (b && sizeMode === b.id && !study) h = '수정 모드 · 파란 손잡이로 앞뒤·양옆·위아래를 늘이고 줄여요 · 바깥을 누르면 끝나요';
+  else if (b) h = selSet.size === 1 ? '상자를 끌면 위치가 바뀌어요 · 두 번 누르거나 길게 누르면 수정 모드' : '파란 점을 끌면 크기·높이, 상자를 끌면 위치가 바뀌어요';
   else h = P.boxes.length ? '상자를 탭해서 선택하세요' : '‘추가’를 누르고 대지를 탭하세요';
   if (!drag || !drag.type) $('#hint').textContent = h;
 }
@@ -3312,13 +3403,51 @@ $('#setBtn').onclick = () => {
   $('#siteInfo').textContent = siteInfoText(); $('#siteReset').disabled = !P.site;
   $('#sW').value = f2(P.siteW); $('#sD').value = f2(P.siteD); $('#sG').value = f2(P.grid); $('#sF').value = f2(P.floorH);
   $('#sB').value = P.bcrLimit || ''; $('#sR').value = P.farLimit || ''; $('#sSnap').checked = P.snap;
-  $('#sNorth').value = P.north || 0; northBtnsUI();
+  $('#sNorth').value = P.north || 0; $('#sNorthInfo').textContent = northText(P.north || 0);
   $('#setModal').hidden = false;
 };
 $('#setCancel').onclick = () => $('#setModal').hidden = true;
-function northBtnsUI(){ const v = ((Math.round(Number($('#sNorth').value) || 0) % 360) + 360) % 360; document.querySelectorAll('#sNorthBtns button').forEach(b => b.classList.toggle('on', Number(b.dataset.n) === v)); }
-document.querySelectorAll('#sNorthBtns button').forEach(b => b.onclick = () => { $('#sNorth').value = b.dataset.n; northBtnsUI(); });
-$('#sNorth').addEventListener('input', northBtnsUI);
+// ---- 방위 정하기: 네모(평면) 둘레의 16방위 원을 돌려 북쪽을 맞춤 ----
+const DIR16 = ['북', '북북동', '북동', '동북동', '동', '동남동', '남동', '남남동', '남', '남남서', '남서', '서남서', '서', '서북서', '북서', '북북서'];
+const normDeg = v => ((Math.round(v * 2) / 2 % 360) + 360) % 360;
+function northText(th){ const up = DIR16[Math.round(normDeg(360 - th) / 22.5) % 16]; return th ? `평면 위쪽이 ${up} · 북쪽은 시계 방향 ${f1(th)}°` : '평면 위쪽이 북'; }
+let nVal = 0, nAfter = null;
+function drawDial(){
+  const sv2 = $('#nDial'), R = 112, W0 = P.siteW, D0 = P.siteD, k0 = 120 / Math.max(W0, D0), w = W0 * k0, d = D0 * k0;
+  let h = `<circle r="${R + 14}" fill="#fbf8f1" stroke="#d3c9b6"/><circle r="${R - 14}" fill="none" stroke="#e7e0d2"/>`;
+  h += `<rect x="${-w / 2}" y="${-d / 2}" width="${w}" height="${d}" rx="3" fill="#f3eee3" stroke="#a3492f" stroke-dasharray="6 3 1.5 3"/><text y="${-d / 2 - 6}" text-anchor="middle" font-size="10" fill="#8a8478">평면 위쪽</text>`;
+  for (let i = 0; i < 16; i++) {
+    const a = rad(nVal + i * 22.5), x = Math.sin(a), y = -Math.cos(a), major = i % 4 === 0, mid = i % 2 === 0;
+    h += `<line x1="${x * (R - 12)}" y1="${y * (R - 12)}" x2="${x * (R - (major ? 2 : 7))}" y2="${y * (R - (major ? 2 : 7))}" stroke="${i === 0 ? '#a3492f' : '#8a8478'}" stroke-width="${major ? 2 : 1}"/>`;
+    const lr = R + (major ? 4 : 5), fs = major ? 13 : mid ? 9.5 : 8;
+    h += `<text x="${x * lr}" y="${y * lr + fs * 0.36}" text-anchor="middle" font-size="${fs}" font-weight="${major ? 700 : 500}" fill="${i === 0 ? '#a3492f' : major ? '#27241f' : '#8a8478'}" transform="rotate(0)">${major ? DIR16[i] : mid ? DIR16[i] : '·'}</text>`;
+  }
+  const a = rad(nVal), x = Math.sin(a), y = -Math.cos(a);
+  h += `<path d="M${x * (R - 16)},${y * (R - 16)} L${-y * 7},${x * 7} L${y * 7},${-x * 7}Z" fill="#a3492f" fill-opacity=".85"/><circle r="4" fill="#a3492f"/>`;
+  sv2.innerHTML = h; $('#nInfo').textContent = northText(nVal);
+}
+function openNorth(after){ nVal = normDeg(P.north || 0); nAfter = after || null; drawDial(); $('#northModal').hidden = false; }
+{
+  const dial = $('#nDial'); let dragN = false;
+  const setFrom = e => { const r = dial.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2); if (Math.hypot(dx, dy) < 8) return; const ang = Math.atan2(dx, -dy) * 180 / Math.PI; nVal = normDeg(Math.round(ang / 22.5) * 22.5); drawDial(); };
+  dial.addEventListener('pointerdown', e => { dragN = true; try { dial.setPointerCapture(e.pointerId); } catch (err) {} setFrom(e); });
+  dial.addEventListener('pointermove', e => { if (dragN) setFrom(e); });
+  dial.addEventListener('pointerup', () => { dragN = false; }); dial.addEventListener('pointercancel', () => { dragN = false; });
+  dial.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { nVal = normDeg(nVal + 22.5); drawDial(); e.preventDefault(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { nVal = normDeg(nVal - 22.5); drawDial(); e.preventDefault(); } });
+}
+$('#nCw').onclick = () => { nVal = normDeg(Math.round((nVal + 22.5) / 22.5) * 22.5); drawDial(); };
+$('#nCcw').onclick = () => { nVal = normDeg(Math.round((nVal - 22.5) / 22.5) * 22.5); drawDial(); };
+$('#nCancel').onclick = () => { $('#northModal').hidden = true; };
+$('#northModal').addEventListener('click', e => { if (e.target === e.currentTarget) $('#nCancel').click(); });
+$('#nOk').onclick = () => {
+  $('#northModal').hidden = true;
+  if (nAfter) { nAfter(nVal); return; }
+  if (edRO() || normDeg(P.north || 0) === nVal) return;
+  commit(() => { P.north = nVal; }, { site: true }); if (uiMode !== 'study') setView(view);
+  toast(`방위를 맞췄어요 · ${northText(nVal)}`);
+};
+$('#northBtn').onclick = () => openNorth();
+$('#sNorthOpen').onclick = () => openNorth(v => { $('#sNorth').value = v; $('#sNorthInfo').textContent = northText(v); });
 $('#setOk').onclick = () => {
   const g = (id, def, min, max) => { const v = Number($(id).value); return Number.isFinite(v) && v >= min && v <= max ? v : def; };
   $('#setModal').hidden = true;
@@ -3328,13 +3457,46 @@ $('#setOk').onclick = () => {
     P.bcrLimit = $('#sB').value === '' ? 0 : g('#sB', P.bcrLimit, 0, 100);
     P.farLimit = $('#sR').value === '' ? 0 : g('#sR', P.farLimit, 0, 5000);
     P.snap = $('#sSnap').checked;
-    { const v = Math.round(Number($('#sNorth').value) || 0); P.north = ((v % 360) + 360) % 360; }
+    P.north = normDeg(Number($('#sNorth').value) || 0);
   }, { site: true });
   setView(view);
 };
 
 // 편집 창 닫기: X 버튼, 또는 창 윗부분을 아래로 끌기 (폰·패드 세로 화면의 아래 창)
 $('#inspClose').onclick = closeInsp;
+// 3D 도형 수정 모드: 그 도형만 가까이 보이고(나머지는 옅게) 앞뒤·양옆·위아래 손잡이로 늘이고 줄임
+let editTap3 = false, edCam = null;
+function enterEdit3(id){
+  const b = getBox(id); if (!b || edRO() || b.lock) return;
+  setSel([id], id); sizeMode = id;
+  if (!edCam) edCam = { pos: cam.position.clone(), q: cam.quaternion.clone(), tgt: controls ? controls.target.clone() : null, orthoH, zoom: cam.zoom };
+  buildBoxes();
+  const m = boxMeshes.find(x => x.userData.id === id);
+  if (m) {
+    const bx = new THREE.Box3().setFromObject(m), c = bx.getCenter(new THREE.Vector3()), sz = bx.getSize(new THREE.Vector3()), R = Math.max(1, Math.hypot(sz.x, sz.y, sz.z) / 2);
+    const dir = cam.position.clone().sub(controls ? controls.target : c).normalize();
+    if (cam === persp) cam.position.copy(c).add(dir.multiplyScalar(R * 1.9 / Math.sin(rad(persp.fov) / 2)));
+    else { cam.position.copy(c).add(dir.multiplyScalar(R * 6)); orthoH = R * 1.7; cam.zoom = 1; updateOrtho(); }
+    cam.lookAt(c); if (controls) { controls.target.copy(c); controls.update(); }
+    applyOffset();
+  }
+  refreshUI(); requestRender();
+  $('#hint').textContent = '파란 손잡이로 앞뒤·양옆·위아래를 늘이고 줄여요 · 바깥을 누르면 끝나요';
+}
+function exitEdit3(){
+  if (!sizeMode && !edCam) return;
+  sizeMode = null;
+  if (edCam) { cam.position.copy(edCam.pos); cam.quaternion.copy(edCam.q); orthoH = edCam.orthoH; cam.zoom = edCam.zoom; if (cam === ortho) updateOrtho(); if (controls && edCam.tgt) { controls.target.copy(edCam.tgt); controls.update(); } edCam = null; applyOffset(); }
+  buildBoxes(); refreshUI(); requestRender();
+}
+$('#edit3Btn').onclick = () => { editTap3 = !editTap3; if (editTap3 && sel && selSet.size === 1) enterEdit3(sel); else if (!editTap3) exitEdit3(); refreshUI(); toast(editTap3 ? '수정 모드: 도형을 누르면 바로 늘이고 줄일 수 있어요' : '수정 모드를 껐어요'); };
+// 그 높이(m)에 맞게 층수·높이 정리: 층 높이에 딱 맞으면 층수로, 아니면 높이로
+function setBoxHeight(b, H){
+  H = Math.max(0.3, Math.min(300, Math.round(H * 10) / 10));
+  let acc = 0, n = 0; while (n < 99 && acc + floorHOf(b.lv + n) <= H + 0.01) { acc += floorHOf(b.lv + n); n++; }
+  if (n >= 1 && Math.abs(acc - H) < 0.01) { b.fl = n; b.h = 0; } else { b.fl = Math.max(1, Math.round(H / P.floorH)); b.h = H; }
+}
+$('#size3Btn').onclick = () => { if (!sel || selSet.size !== 1) return; sizeMode = sizeMode === sel ? null : sel; buildBoxes(); refreshUI(); };
 $('#sideTog').onclick = () => {
   const hid = document.body.classList.toggle('sideHid');
   const t = $('#sideTog'); t.setAttribute('aria-label', hid ? '오른쪽 창 펴기' : '오른쪽 창 접기'); t.title = t.getAttribute('aria-label');
@@ -3396,7 +3558,7 @@ const TOURS = {
     ['#sheetBar', '대지(층)', '+ 대지로 위층·지하층을 더해요. 층 탭을 두 번 누르면 이름·글자 크기와 함께 ‘1층으로 지정’(그 아래 층은 지하가 돼요)과 ‘n.5층 추가’가 있어요. n.5층은 대지 오른쪽 위 아이콘으로 접었다 펴요.'],
     ['#sbottom', '아래 상태줄', '배율·격자, 보기 방식, 레퍼런스, 그리고 건폐율·용적률·연면적이 한도와 함께 보여요.'],
     ['#saveBtn', '프로젝트에 저장', '눌러야 조원에게 보여요. 저장 전에는 나만 봐요.'],
-    [null, '키보드 단축키', 'V 선택 · R 사각형 · O 원형 · S 반원 · D 점선 꺾기 · T 텍스트 · W 동선 그리기\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Shift+Z 다시 실행\nCtrl(⌘)+G 그룹으로 묶기 · Ctrl(⌘)+Shift+G 그룹 풀기\n방향키 한 칸 이동 · Delete 지우기 · PageUp/PageDown 한 층 올리고 내리기\nEnter 이름·설명 쓰기 · 0 지금 대지에 맞추기 · Esc 선택 풀기\nSpace(누른 채)+끌기 화면 이동 · Shift+클릭 여러 개 고르기\nShift+끌기: 비율 유지·45° 단위 · Alt+출입문 끌기: 맞춤 잠깐 끔'],
+    [null, '키보드 단축키 (스케치업과 같은 키도 돼요)', 'Space(톡)·V·M 선택 · R 사각형 · C·O 원형 · A 반원 · L·P 다각형 · D 점선 꺾기 · W 동선 · T 자 · Shift+T 텍스트\n고른 도형: P·S 크기 바꾸기 · Q 돌리기 · E·Delete 지우기 · G 그룹 · Enter 이름·설명\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Y 또는 Ctrl+Shift+Z 다시 실행 · Ctrl(⌘)+D·V 복제\nZ 이 대지에 맞추기 · Shift+Z 전체 보기 · H 또는 Space 누른 채 끌기 화면 이동 · Esc 선택 풀기\n방향키 한 칸 이동 · PageUp/PageDown 한 층 올리고 내리기'],
     ['#menuBtn', '메뉴', '대지 크기·경계선과 높낮이, 플랜 저장, 댓글, 내보내기(PNG)가 여기 있어요.']
   ],
   exact: [
@@ -3406,9 +3568,9 @@ const TOURS = {
     ['#stats', '지하 보기', '지하층이 있으면 땅이 반투명해지고 파낸 자리와 지면선(GL, 벽돌색)이 보여요. 화면을 아래로 돌리면 땅 밑에서 올려다볼 수도 있어요. 지하 면적은 따로 보이고 용적률에서는 빠져요.'],
     ['#r2Btn', '보기', '투시·아이소·평면·입면과 글자·경계선 보기를 접었다 펴요.'],
     ['#r2mBtn', '메뉴', '레퍼런스·플랜·대지·댓글·내보내기가 여기 있어요.'],
-    ['#sheet', '편집 창', '상자를 고르면 열려요. 높이(m)·층수·45° 회전, 화살표 이동(평면 기준)이 있어요. × 또는 아래로 끌어 닫아요.'],
+    ['#sheet', '편집 창', '상자를 고르면 열려요. 이름·설명, 모양, 45° 회전이 있어요. 고른 도형을 두 번 누르거나 길게 누르면(또는 ‘수정 모드’를 켜고 누르면) 그 도형만 가까이 보이며 앞뒤·양옆·위아래 손잡이로 늘이고 줄여요. 바깥을 누르면 끝나요.'],
     [null, '여러 개 고르기', '도형을 누르면 그것 하나만 골라져요.\n하나를 고른 뒤 다른 도형을 두 번 누르거나 길게 누르면 같이 골라져요. 이미 고른 도형을 길게 누르면 빠져요.\nPC에서는 Shift를 누른 채 눌러도 돼요.'],
-    [null, '키보드 단축키', 'Ctrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Shift+Z 다시 실행\n방향키 이동 · Delete 지우기 · PageUp/PageDown 한 층 올리고 내리기\nCtrl(⌘)+G 묶기 · Ctrl(⌘)+Shift+G 풀기 · Esc 선택 풀기']
+    [null, '키보드 단축키 (스케치업과 같은 키도 돼요)', 'Space·V·M 선택 · R 사각형 추가 · C 원 추가 · O 투시로 돌리기 · Z 전체 맞춤\n고른 도형: P·S 수정 모드(밀기·끌기) · Q 45° 돌리기 · E·Delete 지우기 · G 그룹\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Y 다시 실행 · Ctrl(⌘)+D·V 복제 · 방향키 이동 · Esc 수정 모드·선택 풀기']
   ]
 };
 let tourEl = null;
@@ -3509,7 +3671,7 @@ async function export3dFit(){
   const dir = keep.pos.clone().sub(keep.tgt || ctr).normalize();
   const corners = []; for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) corners.push(new THREE.Vector3(x, y, z));
   // 카메라를 모형 가운데로 향하게 두고, 모서리 8개가 화면 안에 들어오게
-  const R0 = box.getSize(new THREE.Vector3()).length() || 10;
+  const sz0 = box.getSize(new THREE.Vector3()), R0 = Math.hypot(sz0.x, sz0.y, sz0.z) || 10;
   cam.position.copy(ctr).add(dir.clone().multiplyScalar(R0 * 3)); cam.lookAt(ctr); cam.updateMatrixWorld(true);
   const inv = cam.matrixWorldInverse, vs = corners.map(c => c.clone().applyMatrix4(inv)), cz = ctr.clone().applyMatrix4(inv).z;
   const margin = 1.08;
@@ -3576,16 +3738,25 @@ let down = null;
 function liveHint(b){
   $('#hint').textContent = uiMode === 'study'
     ? `${cellsStr(b.w)}칸 × ${cellsStr(b.d)}칸 · ${ratioStr(b.w, b.d, P.grid)} · ${b.fl}층`
-    : `${f2(b.w)} × ${f2(b.d)} m · ${f1(shapeArea(b))}㎡ · ${b.fl}층`;
+    : `${f2(b.w)} × ${f2(b.d)} m · 높이 ${f2(boxH(b))}m · ${f1(shapeArea(b))}㎡ · ${b.fl}층`;
 }
 cv.addEventListener('pointerdown', e => {
   if (!P) return;
+  if (controls) { const t = e.pointerType === 'touch' || e.pointerType === 'pen'; controls.rotateSpeed = t ? 0.85 : 0.45; controls.panSpeed = t ? 1.45 : 1; controls.zoomSpeed = t ? 1.25 : 0.8; } // 손가락은 더 빠르게, 마우스는 그대로
   if (!e.isPrimary) {
     if (drag) { P = JSON.parse(drag.start); drag = null; controls.enabled = true; buildBoxes(); refreshUI(); }
     down = null; return;
   }
   down = { x: e.clientX, y: e.clientY, t: performance.now() };
   clearTimeout(hold3);
+  if (sizeMode && uiMode !== 'study') { // 크기 바꾸기 중: 파란 점만 끌 수 있고, 다른 곳을 누르면 모드를 끝냄 (그 누름으로 다른 도형이 골라지지 않게)
+    const hk = handleAt(e);
+    if (hk && !edRO()) { drag = { type: hk, start: JSON.stringify(P), moved: false, pid: e.pointerId }; controls.enabled = false; try { cv.setPointerCapture(e.pointerId); } catch (err) {} return; }
+    const h = pick(e);
+    if (!(h && h.object.userData.id === sizeMode)) { down = null; exitEdit3(); }
+    else down = null; // 이 도형 위를 눌러도 움직이지 않음 (화면 돌리기만)
+    return;
+  }
   if (!edRO() && selSet.size && mode === 'select') { // 길게 누르기: 다른 도형을 선택에 더하기 (이미 고른 것이면 빼기)
     const d0 = down;
     hold3 = setTimeout(() => {
@@ -3593,6 +3764,7 @@ cv.addEventListener('pointerdown', e => {
       const h = pick({ clientX: d0.x, clientY: d0.y }); if (!h) return;
       const b = getBox(h.object.userData.id); if (!b) return;
       const grp = groupOf(b).map(x => x.id), on = selSet.has(b.id);
+      if (on && selSet.size === 1 && !b.lock) { down = null; tap3 = { id: null, t: 0, prev: [] }; try { navigator.vibrate && navigator.vibrate(12); } catch (err) {} enterEdit3(b.id); return; } // 고른 도형을 길게 누르면 수정 모드
       if (on && selSet.size <= grp.length) return;
       if (drag) { P = JSON.parse(drag.start); drag = null; controls.enabled = true; }
       const next = new Set(selSet); for (const id of grp) on ? next.delete(id) : next.add(id);
@@ -3624,6 +3796,24 @@ cv.addEventListener('pointermove', e => {
   if (!drag || e.pointerId !== drag.pid) return;
   const b = getBox(sel); if (!b) return;
   const fh = P.floorH;
+  if (sizeMode === b.id && ['w', 'w0', 'd', 'd0'].includes(drag.type)) { // 수정 모드: 앞뒤·양옆 (반대쪽 면은 그대로)
+    const p = planeAt(e, elevOf(b.lv) + boxH(b) / 2); if (!p) return;
+    const P0 = [p.x + P.siteW / 2, p.z + P.siteD / 2], A = rad(b.ang || 0), cs = Math.cos(A), sn2 = Math.sin(A);
+    const isW = drag.type[0] === 'w', sg = drag.type.length === 2 ? -1 : 1, ax = isW ? [cs * sg, sn2 * sg] : [-sn2 * sg, cs * sg], ext = isW ? b.w : b.d;
+    const c0 = [b.x + b.w / 2, b.z + b.d / 2], F = [c0[0] - ax[0] * ext / 2, c0[1] - ax[1] * ext / 2]; // 반대쪽 면 가운데는 그대로
+    const L = Math.max(minV(), snapV((P0[0] - F[0]) * ax[0] + (P0[1] - F[1]) * ax[1])); let ch = false;
+    if (Math.abs(L - ext) > 1e-6) { const nc = [F[0] + ax[0] * L / 2, F[1] + ax[1] * L / 2]; if (isW) b.w = r2(L); else b.d = r2(L); b.x = r2(nc[0] - b.w / 2); b.z = r2(nc[1] - b.d / 2); ch = true; }
+    if (ch) { drag.moved = true; buildBoxes(); liveHint(b); clearTimeout(statT); statT = setTimeout(refreshUI, 80); }
+    return;
+  }
+  if (sizeMode === b.id && (drag.type === 'h' || drag.type === 'b')) { // 수정 모드: 위는 0.1m씩, 아래는 층 높이에 맞춰
+    const p = vertPlaneAt(e, b); if (!p) return;
+    const base = elevOf(b.lv), top = base + boxH(b);
+    if (drag.type === 'h') { const nh = Math.max(0.3, Math.round((p.y - base) * 10) / 10); if (Math.abs(nh - boxH(b)) > 1e-6) { setBoxHeight(b, nh); drag.moved = true; buildBoxes(); liveHint(b); clearTimeout(statT); statT = setTimeout(refreshUI, 80); } }
+    else { let L = b.lv, bd = Infinity; for (let l = -10; l <= 99; l++) { const y = elevOf(l); if (y > top - 0.3) break; const dd = Math.abs(y - p.y); if (dd < bd) { bd = dd; L = l; } }
+      if (L !== b.lv) { b.lv = L; setBoxHeight(b, top - elevOf(L)); drag.moved = true; buildBoxes(); liveHint(b); clearTimeout(statT); statT = setTimeout(refreshUI, 80); } }
+    return;
+  }
   if (drag.type === 'w' || drag.type === 'd') {
     const p = planeAt(e, elevOf(b.lv) + boxH(b)); if (!p) return;
     const nv = drag.type === 'w' ? Math.max(minV(), snapV(p.x + P.siteW / 2 - b.x)) : Math.max(minV(), snapV(p.z + P.siteD / 2 - b.z));
@@ -3683,6 +3873,8 @@ function onTap(e){
     if (!h) { if (!multiPick) clearSel(); }
     else {
       const b = getBox(h.object.userData.id), grp = groupOf(b).map(x => x.id), now = performance.now();
+      if (editTap3 && !edRO() && !e.shiftKey) { enterEdit3(b.id); return; }
+      if (!edRO() && tap3.id === b.id && now - tap3.t < 380 && tap3.prev.length === 1 && tap3.prev[0] === b.id) { tap3 = { id: null, t: 0, prev: [] }; enterEdit3(b.id); return; } // 고른 도형을 두 번 누르면 수정 모드
       const dbl = tap3.id === b.id && now - tap3.t < 380 && tap3.prev.length && !tap3.prev.includes(b.id);
       if (dbl) tap3Keep = tap3.prev;
       tap3 = { id: b.id, t: now, prev: dbl ? [] : [...selSet] };
@@ -3722,6 +3914,20 @@ window.addEventListener('keydown', e => {
   if ($('#editView').hidden || !P || edRO() || !$('#refView').hidden || !$('#chat').hidden || (uiMode === 'study' && (flowEdit || selCard || !$('#lblEd').hidden || !$('#sheetModal').hidden))) return;
   const t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; } // 스케치업 다시 실행
+  if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'd' || e.key.toLowerCase() === 'v') && selSet.size) { e.preventDefault(); act('dup'); return; } // 복제 (복사·붙여넣기)
+  if (uiMode !== 'study' && !e.ctrlKey && !e.metaKey && !e.altKey) { // 3D 단축키 (스케치업과 같은 키)
+    const k = e.key.toLowerCase(), one = sel && selSet.size === 1;
+    if (k === ' ' || k === 'v' || k === 'm') { e.preventDefault(); mode = 'select'; refreshUI(); return; }
+    if (k === 'r' || k === 'c') { mode = 'add'; addShape = k === 'r' ? 'rect' : 'circle'; refreshUI(); return; }
+    if ((k === 'p' || k === 's') && one) { sizeMode === sel ? exitEdit3() : enterEdit3(sel); return; }
+    if (k === 'q' && one) { act('rotR'); return; }
+    if (k === 'e' && selSet.size) { act('del'); return; }
+    if (k === 'z') { if (edCam) exitEdit3(); setView(view); return; }
+    if (k === 'o') { setView('persp'); return; }
+    if (k === 'g' && selSet.size > 1) { act('group'); return; }
+    if (e.key === 'Escape' && sizeMode) { exitEdit3(); return; }
+  }
   if (!sel) return;
   const m = { ArrowLeft: 'mL', ArrowRight: 'mR', ArrowUp: 'mU', ArrowDown: 'mD', Delete: 'del', Backspace: 'del', PageUp: 'lvU', PageDown: 'lvD' }[e.key];
   if (m) { e.preventDefault(); act(m); }
@@ -3733,7 +3939,7 @@ window.addEventListener('keydown', e => {
 /* ---------------- 스터디 모드: 평면 캔버스 ---------------- */
 const pc = $('#pc');
 let sv = { k: 15, tx: 0, ty: 0, kBase: 15 }, tool = 'select', studySnap = true, gesture = null, lastTap = { t: 0, id: null };
-let spaceDown = false, editingId = null, activeSheet = null, rotMode = false;
+let spaceDown = false, spaceUsed = false, editingId = null, activeSheet = null, rotMode = false;
 let cardShow = true, dockOpen = false, dockTab = '__used', selCard = null, linkMode = false, sAuto = true;
 const DOOR_TAGS = { main: '주출입구', sub: '부출입구', svc: '서비스', exit: '비상구' };
 const GLASS_TAGS = { wall: '유리벽', win: '유리' }; // 색은 같고 표기만 다름
@@ -3838,7 +4044,7 @@ let uiModeElevHi = '';
 // 평면 대지 오른쪽 위 작은 나침반
 function compassSvg(ox, oy, px){
   const [nx, nz] = northVec(), c = [ox + P.siteW + P.grid * 0.55, oy - P.grid * 0.55], R = px(13);
-  return `<g pointer-events="none"><circle cx="${r3(c[0])}" cy="${r3(c[1])}" r="${r3(R)}" fill="#fbf8f1" stroke="#a39c8f" stroke-width="${r3(px(1))}"/><path d="M${r3(c[0] + nx * R * 0.85)},${r3(c[1] + nz * R * 0.85)}L${r3(c[0] - nz * R * 0.32)},${r3(c[1] + nx * R * 0.32)}L${r3(c[0] + nz * R * 0.32)},${r3(c[1] - nx * R * 0.32)}Z" fill="#a3492f"/><text x="${r3(c[0] + nx * (R + px(8)))}" y="${r3(c[1] + nz * (R + px(8)) + px(4))}" text-anchor="middle" font-size="${r3(px(11))}" font-weight="700" fill="#a3492f">N</text></g>`;
+  return `<g data-role="compass" style="cursor:pointer"><title>방위 정하기</title><circle cx="${r3(c[0])}" cy="${r3(c[1])}" r="${r3(R)}" fill="#fbf8f1" stroke="#a39c8f" stroke-width="${r3(px(1))}"/><path d="M${r3(c[0] + nx * R * 0.85)},${r3(c[1] + nz * R * 0.85)}L${r3(c[0] - nz * R * 0.32)},${r3(c[1] + nx * R * 0.32)}L${r3(c[0] + nz * R * 0.32)},${r3(c[1] - nx * R * 0.32)}Z" fill="#a3492f"/><text x="${r3(c[0] + nx * (R + px(8)))}" y="${r3(c[1] + nz * (R + px(8)) + px(4))}" text-anchor="middle" font-size="${r3(px(11))}" font-weight="700" fill="#a3492f">N</text></g>`;
 }
 function computeLayout(){
   const n = P.sheets.length, base = SGAP(), L = new Array(n).fill(0), Rr = new Array(n).fill(0);
@@ -4731,6 +4937,7 @@ function renderStudyNow(){
   const sb = selBoxes();
   // 맞붙은 두 도형 사이 이음선: 잡고 끌면 두 도형이 붙은 채로 같이 늘고 줄어듦 (한 면이 통째로 맞닿아야 붙은 것으로 봄)
   if (sizeMode && (sb.length !== 1 || sb[0].id !== sizeMode || ro || flowEdit)) sizeMode = null;
+  if (polySelV != null && !(sb.length === 1 && sb[0].shape === 'poly' && polySelV < sb[0].pts.length)) polySelV = null;
   const seams = !sizeMode && !flowEdit && !ro && tool === 'select' && sb.length && !rotMode ? findSeams(sb) : [], seamSide = new Set();
   for (const sm of seams) { if (sm.a.split(',').some(id => selSet.has(id))) seamSide.add(sm.ax === 'x' ? 'e' : 's'); if (sm.b.split(',').some(id => selSet.has(id))) seamSide.add(sm.ax === 'x' ? 'w' : 'n'); }
   let sizeVeil = '';
@@ -4753,6 +4960,22 @@ function renderStudyNow(){
       over += `<text x="${r3(hx + px(16))}" y="${r3(hz + px(4))}" font-size="${r3(px(12 * T))}" font-family="IBM Plex Mono, monospace" fill="#2c5a8c" pointer-events="none">${b.ang}°</text>`;
     } else {
       if (b.kind === 'outer') { const [mx, mz] = boxCenterCanvas(b); over += `<circle cx="${r3(mx)}" cy="${r3(mz)}" r="${r3(px(22))}" fill="transparent" data-role="handle" data-h="mv" style="cursor:move"/><circle cx="${r3(mx)}" cy="${r3(mz)}" r="${r3(px(7))}" fill="#2c5a8c" stroke="#fff" stroke-width="${r3(px(2.2))}" pointer-events="none"/>`; }
+      if (b.shape === 'poly' && !sizeMode) { // 다각형: 꼭짓점(끌기·누르면 고르기), 변 가운데 +(점 더하기) 또는 곡선 손잡이
+        const { W, C } = polyWorld(b), n = W.length, A = q => [q[0] + ox, q[1] + oy];
+        for (let i = 0; i < n; i++) {
+          const a = W[i], c = W[(i + 1) % n], q = C[i], m = q ? [(a[0] + 2 * q[0] + c[0]) / 4, (a[1] + 2 * q[1] + c[1]) / 4] : [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2];
+          if (curveEdit) {
+            const h0 = A(q || m);
+            if (q) { const [ax, az] = A(a), [cx, cz] = A(c); over += `<path d="M${r3(ax)},${r3(az)}L${r3(h0[0])},${r3(h0[1])}L${r3(cx)},${r3(cz)}" fill="none" stroke="#2c5a8c" stroke-opacity=".5" stroke-width="${r3(px(1))}" stroke-dasharray="${r3(px(3))} ${r3(px(3))}" pointer-events="none"/>`; }
+            over += `<rect x="${r3(h0[0] - px(13))}" y="${r3(h0[1] - px(13))}" width="${r3(px(26))}" height="${r3(px(26))}" fill="transparent" data-role="pc" data-i="${i}" style="cursor:move"/><rect x="${r3(h0[0] - px(5.5))}" y="${r3(h0[1] - px(5.5))}" width="${r3(px(11))}" height="${r3(px(11))}" transform="rotate(45 ${r3(h0[0])} ${r3(h0[1])})" fill="${q ? '#2c5a8c' : '#fff'}" stroke="#2c5a8c" stroke-width="${r3(px(1.6))}" pointer-events="none"/>`;
+          } else {
+            const [mx, mz] = A(m);
+            over += `<circle cx="${r3(mx)}" cy="${r3(mz)}" r="${r3(px(13))}" fill="transparent" data-role="pe" data-i="${i}" style="cursor:copy"/><circle cx="${r3(mx)}" cy="${r3(mz)}" r="${r3(px(6))}" fill="#fff" stroke="#2c5a8c" stroke-opacity=".7" stroke-width="${r3(px(1.2))}" pointer-events="none"/><path d="M${r3(mx - px(3))},${r3(mz)}h${r3(px(6))}M${r3(mx)},${r3(mz - px(3))}v${r3(px(6))}" stroke="#2c5a8c" stroke-width="${r3(px(1.3))}" pointer-events="none"/>`;
+          }
+        }
+        W.forEach((p, i) => { const [x, z] = A(p), on = polySelV === i;
+          over += `<circle cx="${r3(x)}" cy="${r3(z)}" r="${r3(px(15))}" fill="transparent" data-role="pv" data-i="${i}" style="cursor:grab"/><circle cx="${r3(x)}" cy="${r3(z)}" r="${r3(px(on ? 7.5 : 6))}" fill="${on ? '#2c5a8c' : '#fff'}" stroke="#2c5a8c" stroke-width="${r3(px(2))}" pointer-events="none"/>`; });
+      } else
       for (const [key, u, v] of [['nw', 0, 0], ['n', .5, 0], ['ne', 1, 0], ['e', 1, .5], ['se', 1, 1], ['s', .5, 1], ['sw', 0, 1], ['w', 0, .5]]) {
         if (seamSide.has(key)) continue; // 이음선이 있는 면은 이음선으로 조절
         const [x, z] = at(u, v);
@@ -4794,6 +5017,12 @@ function renderStudyNow(){
       const tb = { x: x0, z: z0, w, d, shape: ['circle', 'semi', 'rtri'].includes(gs.tool) ? gs.tool : 'rect', rot: 0, ang: 0 };
       over += `<path${gs.oy ? ` transform="translate(0 ${r3(gs.oy)})"` : ''} d="${pathFrom(worldPts(tb), gs.ox)}" fill="${gs.tool === 'outer' ? 'none' : 'rgba(37,70,201,.08)'}" stroke="#2c5a8c" stroke-width="${r3(px(1.8))}"${gs.tool === 'outer' ? ` stroke-dasharray="${r3(px(7))} ${r3(px(5))}"` : ''} pointer-events="none"/>`;
     }
+  }
+  if (polyDraft) { // 그리는 중인 다각형
+    const ox = sheetOx(polyDraft.si), oy = sheetOy(polyDraft.si), Q = [...polyDraft.pts, ...(polyHover ? [polyHover] : [])].map(([x, z]) => [x + ox, z + oy]);
+    if (Q.length > 1) over += `<path d="M${Q.map(([x, z]) => `${r3(x)},${r3(z)}`).join('L')}${Q.length > 2 ? 'Z' : ''}" fill="rgba(37,70,201,.08)" stroke="#2c5a8c" stroke-width="${r3(px(1.8))}" stroke-linejoin="round" pointer-events="none"/>`;
+    polyDraft.pts.forEach(([x, z], i) => { over += `<circle cx="${r3(x + ox)}" cy="${r3(z + oy)}" r="${r3(px(i ? 5 : 8))}" fill="${i ? '#fff' : 'rgba(44,90,140,.2)'}" stroke="#2c5a8c" stroke-width="${r3(px(1.8))}" pointer-events="none"/>`; });
+    if (polyDraft.pts.length >= 3) { const W2 = polyDraft.pts; over += `<text x="${r3(W2[0][0] + ox + px(12))}" y="${r3(W2[0][1] + oy - px(10))}" font-size="${r3(px(11.5))}" fill="#2c5a8c" font-weight="600" pointer-events="none">여기를 누르면 완성 · ${f1(polyArea([...W2, ...(polyHover ? [polyHover] : [])]))}㎡</text>`; }
   }
   if (gs && gs.type === 'outline' && gs.pts.length > 1) {
     const [sx, sz] = gs.pts[0];
@@ -5102,12 +5331,13 @@ pc.addEventListener('pointerdown', e => {
     gesture = { type: 'none' }; if (!selSet.has(id)) setSel([id]);
     if (ro) setTimeout(() => showShapeInfo(id), 0); else setTimeout(() => openLabelEd(id), 0); studyUI(); return;
   }
-  if (e.button === 1 || e.button === 2 || spaceDown) { sAuto = false; gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty }; return; }
+  if (e.button === 1 || e.button === 2 || spaceDown) { if (spaceDown) spaceUsed = true; sAuto = false; gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty }; return; }
   if (sizeMode) { // 크기 바꾸기 중: 이 도형의 손잡이만 움직이고, 바깥을 누르면 모드를 끝냄
     if (!(role === 'handle' && el.dataset.h !== 'rot' && el.dataset.h !== 'mv')) { if (!((role === 'body' || role === 'label') && id === sizeMode)) sizeMode = null; gesture = { type: 'none' }; studyUI(); return; }
   }
   if (role === 'rulerdel') { gesture = { type: 'none' }; rulers.splice(Number(el.closest('[data-role=rulerdel]').dataset.ri), 1); renderStudy(); return; }
   if (role === 'halftog') { gesture = { type: 'none' }; toggleHalf(el.dataset.sheet); return; }
+  if (role === 'compass') { gesture = { type: 'none' }; if (!ro) openNorth(); return; }
   if (role === 'elevtitle') { gesture = { type: 'none' }; elevDir = el.dataset.dir; setUiMode('exact'); requestAnimationFrame(() => setView('elev')); return; }
   if (role === 'sheettitle') { gesture = { type: 'none' }; activateSheet(el.dataset.sheet, true); return; }
   if (linkMode && !flowEdit) {
@@ -5202,6 +5432,23 @@ pc.addEventListener('pointerdown', e => {
     gesture = { type: 'outline', site: true, si, pts: [[w.x, w.z]], lx: e.clientX, ly: e.clientY, sx: e.clientX, sy: e.clientY, near: false };
     return;
   }
+  if (!ro && tool === 'poly') { // 다각형: 누를 때마다 꼭짓점, 첫 점 근처를 누르거나 두 번 누르면 완성
+    gesture = { type: 'none' };
+    const si = polyDraft ? polyDraft.si : sheetAt(w.x, w.z), ox = sheetOx(si), oy = sheetOy(si), p = [sn(w.x - ox), sn(w.z - oy)], now = performance.now();
+    if (!polyDraft) { activeSheet = P.sheets[si].id; polyDraft = { si, pts: [p], t: now, cx: e.clientX, cy: e.clientY }; renderStudy(); return; }
+    const f = polyDraft.pts[0], near = Math.hypot(p[0] - f[0], p[1] - f[1]) * sv.k < 16;
+    const dbl = now - polyDraft.t < 380 && Math.hypot(e.clientX - polyDraft.cx, e.clientY - polyDraft.cy) < 12;
+    polyDraft.t = now; polyDraft.cx = e.clientX; polyDraft.cy = e.clientY;
+    if ((near && polyDraft.pts.length >= 3) || (dbl && polyDraft.pts.length >= 3)) { finishPoly(); return; }
+    const l = polyDraft.pts[polyDraft.pts.length - 1]; if (Math.hypot(p[0] - l[0], p[1] - l[1]) > 1e-6) polyDraft.pts.push(p);
+    renderStudy(); return;
+  }
+  if (!ro && (role === 'pv' || role === 'pe' || role === 'pc') && sel && getBox(sel)?.shape === 'poly') { // 다각형 꼭짓점·변·곡선 손잡이
+    const b = getBox(sel), i = Number(el.dataset.i), start = JSON.stringify(P), { W, C } = polyWorld(b), bi = boxSheetIdx(b);
+    if (role === 'pe') { const n = W.length, a = W[i], c = W[(i + 1) % n], q = C[i], mid = q ? [(a[0] + 2 * q[0] + c[0]) / 4, (a[1] + 2 * q[1] + c[1]) / 4] : [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2]; W.splice(i + 1, 0, mid); C.splice(i, 1, null, null); setPolyWorld(b, W, C); polySelV = i + 1; gesture = { type: 'pvdrag', i: i + 1, start, ox: sheetOx(bi), oy: sheetOy(bi), moved: true }; renderStudy(); studyUI(); return; }
+    if (role === 'pc') { const now = performance.now(); if (polyTap.k === 'c' + i && now - polyTap.t < 380) { polyTap = { k: '', t: 0 }; C[i] = null; commit(() => { const x = getBox(sel); if (x) setPolyWorld(x, W, C); }); gesture = { type: 'none' }; toast('곧은 변으로 되돌렸어요'); return; } polyTap = { k: 'c' + i, t: now }; gesture = { type: 'pcdrag', i, start, ox: sheetOx(bi), oy: sheetOy(bi), moved: false }; return; }
+    polySelV = i; gesture = { type: 'pvdrag', i, start, ox: sheetOx(bi), oy: sheetOy(bi), moved: false }; studyUI(); return;
+  }
   if (!ro && tool === 'outer') {
     // 점선 꺾기: 점선 테두리를 가로질러 그은 선을 따라 점선이 직각으로 꺾여 들어감
     const si = sheetAt(w.x, w.z); activeSheet = P.sheets[si].id;
@@ -5262,6 +5509,13 @@ function onPcMove(e){
   if (!pointers.has(e.pointerId)) return;
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   const g = gesture; if (!g) return;
+  if (g.type === 'pvdrag' || g.type === 'pcdrag') {
+    const b = getBox(sel); if (!b || b.shape !== 'poly') return;
+    const w = toWorld(e), { W, C } = polyWorld(b);
+    if (g.type === 'pvdrag') { const p = e.altKey ? [w.x - g.ox, w.z - g.oy] : [sn(w.x - g.ox), sn(w.z - g.oy)]; if (Math.hypot(p[0] - W[g.i][0], p[1] - W[g.i][1]) < 1e-6) return; W[g.i] = p; }
+    else { const n = W.length; C[g.i] = [w.x - g.ox, w.z - g.oy]; const a = W[g.i], c = W[(g.i + 1) % n]; if (Math.hypot(C[g.i][0] - (a[0] + c[0]) / 2, C[g.i][1] - (a[1] + c[1]) / 2) * sv.k < 4) C[g.i] = null; }
+    setPolyWorld(b, W, C); g.moved = true; renderStudy(); showTag(e, `면적 ${f1(shapeArea(b))}㎡`); return;
+  }
   if (g.type === 'pinch') {
     if (pointers.size < 2) return;
     const [a, b] = [...pointers.values()], d = Math.hypot(a.x - b.x, a.y - b.y), c = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
@@ -5318,8 +5572,8 @@ function onPcMove(e){
   if (g.type === 'doordraw' || g.type === 'doorend') {
     const dr = g.type === 'doorend' ? (P.doors || []).find(d => d.id === g.id) : null, boxId = dr ? dr.box : g.box, b = getBox(boxId); if (!b) return;
     const R = boxRing(b), n = ringNearest(R, [w.x, w.z]);
-    if (g.type === 'doordraw') { g.t1 += wrapD(n.t - g.last); g.last = n.t; g.moved = true; showTag(e, `${glassMode ? '유리' : '출입문'} ${f2(Math.max(0.3, Math.round(Math.abs(g.t1 - g.t0) * R.tot / 0.05) * 0.05))}m`); }
-    else { g.cur += wrapD(n.t - g.cur); const sg = Math.sign(g.cur - g.fixed) || 1, wm = Math.min(R.tot * 0.9, Math.max(0.3, Math.round(Math.abs(g.cur - g.fixed) * R.tot / 0.05) * 0.05)); dr.w = r2(wm); setDoorT(dr, R, g.fixed + sg * wm / R.tot / 2); g.moved = true; showTag(e, `${opName(dr)} ${f2(dr.w)}m`); }
+    if (g.type === 'doordraw') { g.t1 += wrapD(n.t - g.last); g.last = n.t; g.moved = true; showTag(e, `${glassMode ? '유리' : '출입문'} ${f2(Math.max(0.3, Math.round(Math.abs(g.t1 - g.t0) * R.tot / 0.1) * 0.1))}m`); }
+    else { g.cur += wrapD(n.t - g.cur); const sg = Math.sign(g.cur - g.fixed) || 1, wm = Math.min(R.tot * 0.9, Math.max(0.3, Math.round(Math.abs(g.cur - g.fixed) * R.tot / 0.1) * 0.1)); dr.w = r2(wm); setDoorT(dr, R, g.fixed + sg * wm / R.tot / 2); g.moved = true; showTag(e, `${opName(dr)} ${f2(dr.w)}m`); }
     renderStudy(); return;
   }
   if (g.type === 'flow') {
@@ -5435,6 +5689,7 @@ function endStudyPointer(e){
   gesture = null; hideTag(); layFrozen = false;
   const cancelled = e.type === 'pointercancel';
   if (g.type === 'none') return;
+  if (g.type === 'pvdrag' || g.type === 'pcdrag') { if (g.moved && !cancelled) pushHist(g.start); else if (cancelled && g.moved) P = JSON.parse(g.start); studyUI(); return; }
   if (g.type === 'fbdraw') { if (!cancelled) { const m = fbMarkFrom(g, false); if (m) { m.id = uid(); fbPush(); myFb.marks.push(m); fbChanged(); return; } } renderStudy(); return; }
   if (g.type === 'pan') {
     clearTimeout(g.lp);
@@ -5485,7 +5740,7 @@ function endStudyPointer(e){
     hideTag(); if (cancelled) { renderStudy(); return; }
     const b = getBox(g.box); if (!b) return;
     const R = boxRing(b), def = isSketch() ? 0.9 : Math.max(0.9, Math.min(P.grid * 0.5, 1.8));
-    let a0 = Math.min(g.t0, g.t1), a1 = Math.max(g.t0, g.t1), wm = Math.round((a1 - a0) * R.tot / 0.05) * 0.05; // 0.05m 단위
+    let a0 = Math.min(g.t0, g.t1), a1 = Math.max(g.t0, g.t1), wm = Math.round((a1 - a0) * R.tot / 0.1) * 0.1; // 0.1m 단위
     if (wm >= 0.3) a1 = a0 + wm / R.tot;
     if (wm < 0.3) { a0 = g.t0 - def / 2 / R.tot; a1 = g.t0 + def / 2 / R.tot; wm = def; } // 톡 누르면 기본 폭
     const nd = { id: uid(), box: b.id, t: 0, w: r2(Math.min(wm, R.tot * 0.9)), e: null, u: null, thick: false, tag: glassMode ? 'wall' : '', kind: glassMode ? 'glass' : 'door' }; setDoorT(nd, R, (a0 + a1) / 2);
@@ -5643,6 +5898,7 @@ function hideShapeInfo(){ const el = $('#infoPop'); if (el) el.hidden = true; }
 pc.addEventListener('pointerdown', () => { hideShapeInfo(); clearTimeout(hoverT); hoverId = null; }, { capture: true });
 // 마우스를 도형에 잠깐 올려 두면 접힌 설명·태그를 보여 줌
 let hoverT = 0, hoverId = null;
+pc.addEventListener('pointermove', e => { if (polyDraft && !e.buttons) { const w = toWorld(e); polyHover = [sn(w.x - sheetOx(polyDraft.si)), sn(w.z - sheetOy(polyDraft.si))]; renderStudy(); } });
 pc.addEventListener('pointermove', e => {
   if (e.pointerType !== 'mouse' || e.buttons || gesture) return;
   const el = e.target.closest ? e.target.closest('[data-role=body]') : null, id = el ? el.dataset.id : null;
@@ -5716,14 +5972,32 @@ $('#leCancel').onclick = () => closeLabelEd(false);
 }));
 
 /* --- 도구·막대 --- */
-function setTool(t){ tool = t; sizeMode = null; if (t !== 'select') { if (multiPick) setMultiPick(false); rotMode = false; } if (t === 'outer') toast('점선 테두리를 가로질러 선을 그어 보세요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 원·반원을 따라 그리면 그 곡선대로 꺾여요'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
+function finishPoly(){
+  const d = polyDraft; polyDraft = null; polyHover = null;
+  if (!d || d.pts.length < 3) { toast('꼭짓점을 세 개 이상 찍어 주세요'); renderStudy(); return; }
+  let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity; for (const [x, z] of d.pts) { x0 = Math.min(x0, x); z0 = Math.min(z0, z); x1 = Math.max(x1, x); z1 = Math.max(z1, z); }
+  const w = Math.max(0.1, x1 - x0), dd = Math.max(0.1, z1 - z0);
+  if (polyArea(d.pts) < 0.05) { toast('너무 작거나 한 줄로만 찍혔어요'); renderStudy(); return; }
+  const nb = normBox({ id: uid(), kind: 'solid', shape: 'poly', x: r3n(x0), z: r3n(z0), w: r3n(w), d: r3n(dd), pts: d.pts.map(([x, z]) => [(x - x0) / w, (z - z0) / dd]), lv: 0, fl: 1, cat: 'free' }, P.grid);
+  placeInSheet(nb, d.si);
+  commit(() => { P.boxes.push(nb); setSel([nb.id], nb.id); });
+  polySelV = null; setTool('select'); studyUI();
+  toast(`다각형 완성 · 면적 ${f1(shapeArea(nb))}㎡ · 꼭짓점을 끌어 고치고, 변 가운데 +로 점을 더해요`);
+}
+function delPolyVertex(){
+  const b = getBox(sel); if (!b || b.shape !== 'poly' || polySelV == null) return;
+  if (b.pts.length <= 3) { toast('다각형은 꼭짓점이 세 개는 있어야 해요'); return; }
+  const { W, C } = polyWorld(b), i = polySelV; W.splice(i, 1); C.splice(i, 1); if (i > 0) C[i - 1] = null; else C[C.length - 1] = null;
+  commit(() => { const x = getBox(sel); if (x) setPolyWorld(x, W, C); }); polySelV = null; studyUI();
+}
+function setTool(t){ tool = t; sizeMode = null; if (t !== 'poly') polyDraft = null; if (t === 'poly') toast('눌러서 꼭짓점을 찍어요 · 첫 점을 다시 누르거나 두 번 누르면 완성 · Esc로 취소'); if (t !== 'select') { if (multiPick) setMultiPick(false); rotMode = false; } if (t === 'outer') toast('점선 테두리를 가로질러 선을 그어 보세요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 원·반원을 따라 그리면 그 곡선대로 꺾여요'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
 document.querySelectorAll('#stools [data-tool]').forEach(b => b.onclick = () => setTool(b.dataset.tool));
 $('#zoomBtn').onclick = () => fitSheet(activeIdx(), true);
 $('#snapBtn').onclick = () => { studySnap = !studySnap; try { localStorage.setItem('mass-study-snap', studySnap ? 'on' : 'off'); } catch (e) {} studyUI(); toast(studySnap ? `격자가 보이고 반 칸(${f2(P.grid / 2)}m)씩 맞춰져요` : '격자 없이 자유롭게 움직여요'); };
 $('#roleBtn').onclick = () => { roleMode = !roleMode; try { localStorage.setItem('mass-role', roleMode ? 'on' : 'off'); } catch (e) {} studyUI(); toast(roleMode ? '이름·용도를 가리고 공간의 역할만 보여요' : '이름·용도를 다시 보여요'); };
 $('#fixBtn').onclick = () => { const bs = P.boxes.filter(b => misaligned(b) && !b.lock); fixUnit(bs); };
 $('#tUndo').onclick = undo; $('#tRedo').onclick = redo;
-$('#menuBtn').onclick = () => document.body.classList.toggle('menuOpen');
+$('#menuBtn').onclick = () => { if (uiMode !== 'study') { $('#r2mBtn').click(); return; } document.body.classList.toggle('menuOpen'); }; // 3D에서는 3D 메뉴를 열고 닫음
 document.querySelector('.tools2').addEventListener('click', e => { document.body.classList.remove('menuOpen'); if (e.target.closest('button') && r2mOpen) { r2mOpen = false; r2UI(); } });
 $('#flowBtn').onclick = () => { flowEdit = true; flowShow = true; try { localStorage.setItem('mass-flow-show', 'on'); } catch (e) {} clearSel(); rotMode = false; selFlow = null; studyUI(); };
 $('#flowDone').onclick = () => { flowEdit = false; selFlow = null; doorMode = false; glassMode = false; flowPan = false; selDoor = null; studyUI(); };
@@ -5766,6 +6040,7 @@ function setShape(ns){
     const x = getBox(sel); if (!x || x.lock || ns === x.shape) return;
     if (ns === 'semi') { x.rot = 0; x.d = Math.max(sStep(), sn(x.w / 2)); }
     if (ns === 'circle') x.d = x.w;
+    if (ns === 'poly') { const o = outline(x); x.pts = (o.length > 24 ? o.filter((_, i) => i % Math.ceil(o.length / 24) === 0) : o).map(q => [q[0], q[1]]); delete x.cps; }
     x.shape = ns;
   });
 }
@@ -5908,6 +6183,7 @@ const IC = {
   rect: SVGI('<rect x="3" y="5" width="14" height="10" rx="1.2" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7"/>'),
   circle: SVGI('<circle cx="10" cy="10" r="6.6" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7"/>'),
   tri: SVGI('<path d="M10 3.6L17 16H3z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'),
+  poly: SVGI('<path d="M4 6.5L10 3l6.5 4.5-1.8 8.5H6.2z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="4" cy="6.5" r="1.4" fill="currentColor"/><circle cx="16.5" cy="7.5" r="1.4" fill="currentColor"/>'),
   rtri: SVGI('<path d="M3.5 3.5L16.5 16.5H3.5z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M3.5 12.5h4v4" fill="none" stroke="currentColor" stroke-width="1.2"/>'),
   poly: SVGI('<path d="M4 6l6-3 6 4-1 8-7 2-5-5z" fill="currentColor" fill-opacity=".15" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.4 1.8" stroke-linejoin="round"/>'),
   copy: '<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><rect x="6.5" y="6.5" width="9.5" height="9.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 4H5.6c-.9 0-1.6.7-1.6 1.6v7.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
@@ -5922,7 +6198,7 @@ const IC = {
   dashed: SVGI('<rect x="3.5" y="4.5" width="13" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2.4"/>'),
   caret: '<svg viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><path d="M2 6.5l3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>'
 };
-const SHAPE_N = { rect: '사각형', circle: '원', semi: '반원', quarter: '사분원', tri: '삼각형', rtri: '직각삼각형', poly: '자유 모양' };
+const SHAPE_N = { rect: '사각형', circle: '원', semi: '반원', quarter: '사분원', tri: '삼각형', rtri: '직각삼각형', poly: '다각형' };
 function catList(){ return [...CAT_KEYS.filter(k => k !== 'free'), ...(P.cats || []).map(c => c.id)]; }
 function swatchEl(k, mixed){
   const sw = document.createElement('span');
@@ -6079,7 +6355,7 @@ function studyUI(){
   $('#tUndo').hidden = $('#tRedo').hidden = ro;
   $('#tUndo').disabled = !hist.length; $('#tRedo').disabled = !fut.length;
   const mis = ro || isSketch() ? 0 : P.boxes.filter(b => misaligned(b) && !b.lock).length;
-  $('#fixBtn').hidden = !mis || !studySnap;
+  $('#fixGrp').hidden = !mis || !studySnap;
   $('#fixBtn').textContent = `어긋난 ${mis}개 맞추기`;
   const s = calc(P), over = P.bcrLimit && s.bcr > P.bcrLimit + 1e-9;
   const overF = P.farLimit && s.far > P.farLimit + 1e-9;
@@ -6219,11 +6495,16 @@ function renderCtx(){
   if (sb.length === 1 && !ns.length) {
     const b = sb[0];
     {
+      if (b.shape === 'poly') {
+        const ar = document.createElement('span'); ar.className = 'lbl'; ar.style.padding = '0 6px'; ar.textContent = `면적 ${f1(shapeArea(b))}㎡ · 점 ${b.pts.length}개`; ar.style.minWidth = '9.5em'; ctx.appendChild(ar);
+        if (!b.lock) { btn('곡선', () => { curveEdit = !curveEdit; studyUI(); }, curveEdit ? 'on' : '').title = '변 가운데 마름모를 끌어 휘게 해요 · 두 번 누르면 곧게';
+          const dv = btn('꼭짓점 삭제', delPolyVertex); dv.disabled = polySelV == null || b.pts.length <= 3; dv.title = '꼭짓점을 먼저 눌러 고르세요'; }
+        sep();
+      }
       if (!b.lock) { const db = btn('크기 바꾸기', () => { sizeMode = b.id; rotMode = false; popKind = null; studyUI(); }, 'sizeb'); db.title = '이 도형만 손잡이로 늘이고 줄여요 · 높이는 0.1m씩 · 바깥을 누르면 끝나요'; db.insertAdjacentHTML('afterbegin', '<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" style="margin-right:4px;vertical-align:-3px"><rect x="3.5" y="3.5" width="13" height="13" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.5 2"/><path d="M10.5 9.5l6-6M12.5 3.5h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'); }
       if (b.kind === 'solid') catBtn();
       const shb = ibtn(IC[b.shape] || IC.rect, `모양: ${SHAPE_N[b.shape]} (눌러서 바꾸기)`, () => togglePop('shape'), popKind === 'shape' ? 'open' : ''); shb.dataset.pop = 'shape'; shb.insertAdjacentHTML('beforeend', IC.caret);
       ibtn(IC.rot, rotMode ? `돌리는 중 (${b.ang}°)` : '돌리기', () => { rotMode = !rotMode; popKind = null; studyUI(); }, rotMode ? 'on' : '');
-      if (rotMode) { const d = btn(`${b.ang}°`, () => commit(() => { const x = getBox(sel); if (x) x.ang = 0; }), 'deg'); d.title = '0°로 되돌리기'; }
       if (b.kind === 'solid') ibtn(IC.env, b.env ? '점선 테두리 끄기' : '점선 테두리 두르기', envToggle, b.env ? 'on' : '');
       if (b.kind === 'solid') tagBtn();
       else ibtn(IC.solid, '실선 공간으로 바꾸기', () => commit(() => { const x = getBox(sel); if (x) x.kind = 'solid'; }));
@@ -6234,6 +6515,7 @@ function renderCtx(){
     const linked = P.cards.filter(c => c.target === b.id);
     if (linked.length) btn(`사진 ${linked.length}`, () => focusCard(linked[(linked.findIndex(c => c.id === selCard) + 1) % linked.length].id));
     ibtn(IC.copy, '복제', () => act('dup'), 'cpy'); trash(() => act('del'));
+    if (rotMode) { const d = btn(`${b.ang}°`, () => commit(() => { const x = getBox(sel); if (x) x.ang = 0; }), 'deg'); d.title = '0°로 되돌리기'; } // 맨 끝에 붙여서 다른 버튼 자리가 안 바뀌게
   } else if (!sb.length) {
     const n = ns[0];
     if (ns.length === 1) { ibtn(IC.pen, '글 고치기', () => openLabelEd(n.id), 'pen'); btn(n.size === 1 ? '크게' : n.size === 1.4 ? '더 크게' : '작게', () => commit(() => { const x = getNote(n.id); if (x) x.size = x.size === 1 ? 1.4 : x.size === 1.4 ? 2 : 1; })); sep(); }
@@ -6265,7 +6547,7 @@ function renderPop(){
     const ph = document.createElement('p'); ph.className = 'ph2'; ph.textContent = (P.cats || []).length ? '직접 만든 공간(동그라미)은 두 번 눌러 바꾸거나 지워요' : '선택된 종류를 다시 누르면 미지정으로 돌아가요'; pop.appendChild(ph);
   } else if (popKind === 'shape') {
     const b = sb[0];
-    for (const k of ['rect', 'circle', 'semi', ...(b && b.shape === 'tri' ? ['tri'] : []), 'rtri']) { const x = document.createElement('button'); x.className = 'ib' + (b && b.shape === k ? ' on' : ''); x.innerHTML = IC[k]; x.setAttribute('aria-label', SHAPE_N[k]); x.title = SHAPE_N[k]; x.onclick = () => { setShape(k); popKind = null; studyUI(); }; pop.appendChild(x); }
+    for (const k of ['rect', 'circle', 'semi', ...(b && b.shape === 'tri' ? ['tri'] : []), 'rtri', 'poly']) { const x = document.createElement('button'); x.className = 'ib' + (b && b.shape === k ? ' on' : ''); x.innerHTML = IC[k]; x.setAttribute('aria-label', SHAPE_N[k]); x.title = SHAPE_N[k]; x.onclick = () => { setShape(k); popKind = null; studyUI(); }; pop.appendChild(x); }
   } else if (popKind === 'align') {
     for (const [l, a] of [['왼쪽', 'alL'], ['가운데', 'alC'], ['오른쪽', 'alR'], ['위', 'alT'], ['중간', 'alM'], ['아래', 'alB'], ['가로로 붙이기', 'disX'], ['세로로 붙이기', 'disZ'], ['가로 같은 간격', 'eqX'], ['세로 같은 간격', 'eqZ']]) {
       const x = document.createElement('button'); x.className = 'tb2'; x.textContent = l; x.onclick = () => { $('#iGap').value = 0; act(a); }; pop.appendChild(x);
@@ -6279,20 +6561,36 @@ function renderPop(){
 window.addEventListener('resize', () => { if (popKind) renderPop(); });
 window.addEventListener('keydown', e => {
   if (uiMode !== 'study' || $('#editView').hidden || !P || !$('#refView').hidden || !$('#sheetModal').hidden) return;
-  if (e.code === 'Space' && e.target === document.body) { spaceDown = true; e.preventDefault(); }
+  if (e.code === 'Space' && e.target === document.body) { if (!spaceDown) spaceUsed = false; spaceDown = true; e.preventDefault(); }
   const t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+  if (e.key.toLowerCase() === 'h' && !e.ctrlKey && !e.metaKey) { spaceDown = true; spaceUsed = true; return; } // 스케치업 H: 누르고 있는 동안 화면 이동
   if (e.key === 'Escape' && fbEdit) { exitFb(); return; }
-  if (e.key === 'Escape') { if (sizeMode) sizeMode = null; else if (linkMode) linkMode = false; else if (flowEdit) { flowEdit = false; selFlow = null; } else if (rotMode) rotMode = false; else if (selCard) selCard = null; else clearSel(); studyUI(); return; }
+  if (e.key === 'Enter' && polyDraft) { e.preventDefault(); finishPoly(); return; }
+  if ((e.key === 'Delete' || e.key === 'Backspace') && polySelV != null && sel && getBox(sel)?.shape === 'poly' && !edRO()) { e.preventDefault(); delPolyVertex(); return; }
+  if (e.key === 'Escape') { if (polyDraft) { polyDraft = null; renderStudy(); return; } if (sizeMode) sizeMode = null; else if (linkMode) linkMode = false; else if (flowEdit) { flowEdit = false; selFlow = null; } else if (rotMode) rotMode = false; else if (selCard) selCard = null; else clearSel(); studyUI(); return; }
   if (e.ctrlKey || e.metaKey || edRO()) return;
   if (selCard && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); removeCard(selCard); return; }
   if (flowEdit && selFlow && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); commit(() => { P.flows = P.flows.filter(y => y.id !== selFlow); }); selFlow = null; studyUI(); return; }
-  const m = { v: 'select', r: 'rect', o: 'circle', s: 'semi', d: 'outer', t: 'text' }[e.key.toLowerCase()];
+  // 단축키 (스케치업과 같은 키도): Space·V·M 선택, R 사각형, C·O 원형, A 반원(호), L 다각형(선), P·S 크기 바꾸기(밀기·끌기/배율), Q 돌리기, T 자(줄자), Shift+T 텍스트, E 지우기, D 점선 꺾기, W 동선, H 누르고 끌면 화면 이동, Z 이 대지 맞춤, Shift+Z 전체 보기, G 그룹
+  const k = e.key.toLowerCase(), one = sel && selSet.size === 1 && getBox(sel) && !getBox(sel).lock;
+  if (!flowEdit && !fbEdit) {
+    if ((k === 'p' || k === 's') && one) { sizeMode = sizeMode === sel ? null : sel; rotMode = false; studyUI(); return; }
+    if (k === 'q' && one) { rotMode = !rotMode; sizeMode = null; studyUI(); return; }
+    if (k === 'e' && (selSet.size || selCard)) { e.preventDefault(); if (selCard) removeCard(selCard); else act('del'); return; }
+    if (k === 'z') { e.shiftKey ? fitAll() : fitSheet(activeIdx(), true); return; }
+    if (k === 'g' && selSet.size > 1) { act('group'); return; }
+    if (k === 't') { setTool(e.shiftKey ? 'text' : 'ruler'); return; }
+  }
+  const m = { v: 'select', m: 'select', r: 'rect', c: 'circle', o: 'circle', a: 'semi', s: 'semi', d: 'outer', l: 'poly', p: 'poly' }[k];
   if (m && !flowEdit && !fbEdit) { setTool(m); return; }
   if (e.key.toLowerCase() === 'w') { flowEdit ? $('#flowDone').click() : $('#flowBtn').click(); return; }
   if (e.key === 'Enter' && sel && !flowEdit) { e.preventDefault(); openLabelEd(sel); }
   if (e.key === '0') fitSheet(activeIdx(), true);
 });
-window.addEventListener('keyup', e => { if (e.code === 'Space') spaceDown = false; });
+window.addEventListener('keyup', e => {
+  if (e.code === 'Space') { const tapOnly = spaceDown && !spaceUsed; spaceDown = false; if (tapOnly && uiMode === 'study' && P && !$('#editView').hidden && !(e.target && /INPUT|TEXTAREA/.test(e.target.tagName))) setTool('select'); } // 스케치업 Space: 선택 도구
+  if (e.key.toLowerCase() === 'h') spaceDown = false;
+});
 
 /* --- 레퍼런스 패널 (대지 옆) --- */
 function renderDock(){
