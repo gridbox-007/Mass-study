@@ -221,17 +221,19 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
           <label class="mlf">닉네임<input id="mlNick" name="username" autocomplete="username" maxlength="16" required></label>
           <label class="mlf">비밀번호<input id="mlPw" name="password" type="password" autocomplete="current-password" minlength="8" maxlength="72" required></label>
           <label class="mlf" id="mlPw2W" hidden>비밀번호 한 번 더<input id="mlPw2" type="password" autocomplete="new-password" maxlength="72"></label>
+          <label class="mlold" id="mlOldW" hidden><input id="mlOld" type="checkbox" checked> <span>이 기기에 있던 <b>예전 작업</b>을 이 계정으로 가져오기<br><small>내 예전 작업일 때만 켜 두세요. 다른 사람의 기기라면 꺼 주세요.</small></span></label>
           <p class="mlerr" id="mlErr" role="alert"></p>
           <div class="mact"><button type="button" class="btn" id="mlMode">처음이에요</button><button type="submit" class="btn primary" id="mlOk">로그인</button></div>
           <p class="sub mlnote">비밀번호는 8자 이상이에요. 잊으면 사이트 관리자가 다시 정해 줄 수 있어요.</p>
         </form>`;
         document.body.appendChild(el);
         const st = document.createElement('style');
-        st.textContent = '.mslogin{z-index:90}.mslogin .mbox{max-width:380px;display:flex;flex-direction:column;gap:10px}.mlf{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--mute)}.mlf input{height:44px;border:1px solid var(--line);border-radius:8px;padding:0 12px;font-size:16px;background:#fff;color:var(--ink)}.mlerr{color:#a3492f;font-size:13.5px;min-height:1.2em;margin:0}.mlnote{font-size:12px}';
+        st.textContent = '.mslogin{z-index:90}.mslogin .mbox{max-width:380px;display:flex;flex-direction:column;gap:10px}.mlold{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.45;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--sheet)}.mlold input{width:18px;height:18px;margin-top:1px;flex:none}.mlold small{color:var(--mute);font-size:11.5px}.mlf{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--mute)}.mlf input{height:44px;border:1px solid var(--line);border-radius:8px;padding:0 12px;font-size:16px;background:#fff;color:var(--ink)}.mlerr{color:#a3492f;font-size:13.5px;min-height:1.2em;margin:0}.mlnote{font-size:12px}';
         document.head.appendChild(st);
       }
       let signup = false;
       const paint = () => { $('#mlT').textContent = signup ? '처음 오셨네요' : '로그인'; $('#mlOk').textContent = signup ? '만들고 시작하기' : '로그인'; $('#mlMode').textContent = signup ? '이미 있어요 (로그인)' : '처음이에요'; $('#mlPw2W').hidden = !signup; $('#mlPw').autocomplete = signup ? 'new-password' : 'current-password'; };
+      $('#mlOldW').hidden = !lsGet('ms-key');
       paint(); $('#mlErr').textContent = msg || ''; el.hidden = false; setTimeout(() => $('#mlNick').focus(), 30);
       $('#mlMode').onclick = () => { signup = !signup; $('#mlErr').textContent = ''; paint(); };
       el.querySelector('form').onsubmit = async ev => {
@@ -245,13 +247,13 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
           const email = await emailOf(nick);
           if (signup) {
             const r = await sb.auth.signUp({ email, password: pw });
-            if (r.error) { const m = r.error.message || ''; err(/registered|exists/i.test(m) ? '이미 있는 닉네임이에요. 다른 닉네임으로 하거나 로그인해 주세요' : /password/i.test(m) ? '비밀번호가 너무 쉬워요. 더 길게 만들어 주세요' : '만들지 못했어요: ' + m); return; }
+            if (r.error) { const m = r.error.message || ''; err(/registered|exists/i.test(m) ? '이미 있는 닉네임이에요. 다른 닉네임으로 하거나 로그인해 주세요' : /rate limit|too many/i.test(m) ? '메일 보내기 한도에 걸렸어요. 관리자가 Supabase → Authentication → Sign In / Providers → Email에서 ‘Confirm email’을 끄면 바로 돼요 (메일을 보내지 않아요)' : /password/i.test(m) ? '비밀번호가 너무 쉬워요. 더 길게 만들어 주세요' : '만들지 못했어요: ' + m); return; }
             if (!r.data || !r.data.session) { err('Supabase 설정에서 ‘Confirm email’을 꺼 주세요 (README 참고)'); return; }
           } else {
             const r = await sb.auth.signInWithPassword({ email, password: pw });
-            if (r.error) { err(/invalid|credentials/i.test(r.error.message || '') ? '닉네임 또는 비밀번호가 맞지 않아요' : '로그인하지 못했어요: ' + r.error.message); return; }
+            if (r.error) { err(/not confirmed/i.test(r.error.message || '') ? '아직 확인되지 않은 계정이에요. 관리자가 Supabase에서 ‘Confirm email’을 끈 뒤, README의 ‘확인 안 된 계정 풀기’ SQL을 한 번 실행해 주세요' : /invalid|credentials/i.test(r.error.message || '') ? '닉네임 또는 비밀번호가 맞지 않아요' : '로그인하지 못했어요: ' + r.error.message); return; }
           }
-          el.hidden = true; res({ nick });
+          el.hidden = true; res({ nick, takeOld: !$('#mlOldW').hidden && $('#mlOld').checked });
         } catch (e) { err('서버에 닿지 않아요. 인터넷 연결을 확인해 주세요'); }
         finally { $('#mlOk').disabled = false; }
       };
@@ -294,6 +296,9 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
     catch (e) { fail('Supabase 주소에 닿지 않아요. SUPABASE_URL을 다시 복사해 넣거나, Supabase에서 프로젝트가 Paused면 Restore를 눌러 주세요.'); throw e; }
     window.dispatchEvent(new CustomEvent('ms-auth', { detail: { signedIn: !!sess } }));
     // 소개 페이지: 이미 로그인한 사람·초대 링크·작업 링크로 온 사람은 건너뛰고, 처음 온 사람은 '시작하기'를 누르면 로그인
+    // 로그인하지 않은 브라우저에서 남의 '내 작업' 링크(#d-…)를 열면: 그 작업으로 가지 않고 메인 화면(소개 → 로그인)에서 시작해요.
+    // 로그인 정보는 링크에 들어 있지 않아서, 링크를 받은 사람은 언제나 자기 닉네임으로 새로 로그인해야 해요
+    if (!sess && /^#d-/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
     const intro = document.getElementById('intro');
     if (intro) {
       if (sess || location.hash.length > 1 || /[?&]code=/.test(location.search)) intro.hidden = true;
@@ -312,14 +317,20 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
       if (!me) {
         const nick = (typed && typed.nick) || '';
         if (!nick) { await sb.auth.signOut(); sess = null; note = '닉네임을 확인하려고 한 번 더 로그인해 주세요'; continue; }
-        try { me = await rpc('ms_register', { p_nick: nick, p_oldkey: lsGet('ms-key') || null }); }
+        const takeOld = !!(typed && typed.takeOld && lsGet('ms-key'));
+        try { me = await rpc('ms_register', { p_nick: nick, p_oldkey: takeOld ? lsGet('ms-key') : null }); }
         catch (e) { await sb.auth.signOut(); sess = null; note = /nick_taken/.test(e.message || '') ? '이미 있는 닉네임이에요' : '계정을 만들지 못했어요: ' + (e.message || ''); continue; }
-        if (lsGet('ms-key')) { lsSet('ms-key-moved', lsGet('ms-key')); lsSet('ms-key', ''); setTimeout(() => window.MS_UI && window.MS_UI.toast('이 기기의 예전 작업을 새 계정으로 옮겼어요'), 1800); }
+        if (takeOld) { lsSet('ms-key-moved', lsGet('ms-key')); lsSet('ms-key', ''); setTimeout(() => window.MS_UI && window.MS_UI.toast('이 기기의 예전 작업을 새 계정으로 옮겼어요'), 1800); }
       }
       ME = me.uid; NAME = me.nick; break;
     }
     if (intro) intro.hidden = true;
-    sb.auth.onAuthStateChange(ev => { if (ev === 'SIGNED_OUT') loggedOut(); });
+    // 같은 브라우저의 다른 탭에서 로그아웃하거나 다른 계정으로 들어가면, 이 탭도 곧바로 다시 불러와서 두 계정이 섞이지 않게 해요
+    const bootAuth = sess && sess.user ? sess.user.id : null;
+    sb.auth.onAuthStateChange((ev, s) => {
+      if (ev === 'SIGNED_OUT' || !s) { loggedOut(); return; }
+      if (bootAuth && s.user && s.user.id !== bootAuth) { if (outShown) return; outShown = true; window.MS_UI && window.MS_UI.toast('이 브라우저에서 다른 계정으로 바뀌었어요. 다시 불러올게요'); setTimeout(() => location.reload(), 1200); }
+    });
     window.dispatchEvent(new CustomEvent('ms-auth', { detail: { signedIn: true, nick: NAME } }));
     startLive(); meButton();
     return { db, user, assets, downloads };
@@ -1025,7 +1036,7 @@ body.exact #floorBar .fl{padding:4px 8px 2px}
 #floorBar .allon{font-size:12px;height:28px;color:var(--accent)}
 #views2 button.on{background:var(--sel);color:var(--sel-ink);border-color:var(--sel)}
 .hoverTip{position:fixed;z-index:60;max-width:320px;background:var(--ink);color:#faf7ef;font-size:12.5px;line-height:1.45;padding:6px 10px;border-radius:8px;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.2);white-space:pre-wrap;overflow-wrap:anywhere}
-.ctx .tagb.t-service{color:#7a5a86;font-weight:600}
+.ctx .tagb.t-service{color:#a5533f;font-weight:600}
 .ctx .tagb.t-parking{color:#4a525d;font-weight:600}
 .ctx .dimin{display:inline-flex;align-items:center;gap:4px;padding:0 4px;font-family:var(--mono);font-size:14px}
 .ctx .dimin input{width:52px;height:34px;border:1px solid var(--sel);border-radius:7px;text-align:center;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
@@ -1246,6 +1257,20 @@ body.r2mopen #menuBtn{background:var(--ink);color:#fff;border-color:var(--ink)}
 .polybar button:disabled{opacity:.4}
 body.exact #polyBar{display:none !important}
 @media (pointer:coarse){ .polybar button{height:38px;padding:0 12px} }
+/* 3D 끌어서 여러 개 고르기 네모 */
+.mq3{position:absolute;z-index:5;border:1.5px dashed #2c5a8c;background:rgba(44,90,140,.08);pointer-events:none;border-radius:2px}
+/* 3D 너비·앞뒤·높이 숫자 칸 */
+#dimRow3{display:flex;flex-direction:column;gap:6px}
+#dimRow3 .st{flex-direction:row;align-items:center;gap:10px}
+#dimRow3 .st .lbl{flex:0 0 64px}
+#dimRow3 .st .stepper{flex:0 1 190px;width:auto}
+#dimRow3 .stepper input{min-width:0;font-family:var(--mono)}
+/* 레퍼런스 창 맨 아래 작은 서명 */
+.rbody{display:flex;flex-direction:column}
+.rbody > :not(.madeby){width:100%;flex:none}
+.rbody > .madeby{margin-top:auto;padding-top:28px}
+.madeby{margin:18px 0 2px;text-align:center;font-size:10px;letter-spacing:.06em;color:var(--mute);opacity:.45;user-select:none;pointer-events:none}
+.dock .madeby{margin:6px 0 0}
 </style>
 <script type="importmap">
 {"imports":{
@@ -1482,6 +1507,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
       <div class="tabs" id="dockTabs"></div>
       <div class="dgrid" id="dockGrid"></div>
       <div class="dfoot"><button class="btn sm" id="dockUpload">사진 올리기</button><span class="lbl" id="dockStatus"></span></div>
+      <p class="madeby">made by Gridbox007</p>
     </aside>
     <img class="ghost" id="ghost" alt="" hidden>
     <div class="lblEd" id="lblEd" hidden>
@@ -1581,6 +1607,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
         <button id="northBtn">방위</button>
         <button id="chatBtn">댓글</button>
         <button id="exportBtn">내보내기</button>
+        <button id="dupWorkBtn" title="지금 작업물을 통째로 복사해 새 작업물로 만들어요 (플랜도 같이)">복제</button>
       </div>
       <div class="views" id="views">
         <button data-v="persp">투시</button>
@@ -1604,7 +1631,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
           <button data-mode="select" title="상자를 눌러 고르고, 끌어서 옮겨요">선택·이동</button>
           <button data-mode="add" title="눌러서 새 상자 넣기">추가</button>
         </div>
-        <button class="tb" id="multiBtn" aria-pressed="false" title="켜면 여러 상자를 차례로 골라요">여러 개 선택</button>
+        <button class="tb" id="multiBtn" aria-pressed="false" title="켜면 화면을 끌어 네모로 감싼 상자를 모두 골라요 · 짧게 누르면 하나씩 더하고 빼요">여러 개 선택</button>
         <button class="tb" id="edit3Btn" aria-pressed="false" title="켜면 도형을 누르기만 해도 그 도형 수정 모드로 들어가요">수정 모드</button>
         <span class="spacer"></span>
         <button class="tb strong" id="undoBtn">↶ 되돌리기</button>
@@ -1697,11 +1724,11 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
           <button data-ratio="1.618:1">황금비</button>
           <input id="iRatio" aria-label="비율 직접 입력 (예: 4:3)" placeholder="4:3">
         </div>
-        <div class="steps single-only gone">
-          <div class="st gone"><span class="lbl" id="lW">가로</span><div class="stepper"><button data-act="w-" aria-label="가로 줄이기">−</button><input id="iw" type="number" inputmode="decimal" step="any"><button data-act="w+" aria-label="가로 늘리기">+</button></div></div>
-          <div class="st gone"><span class="lbl" id="lD">세로</span><div class="stepper"><button data-act="d-" aria-label="세로 줄이기">−</button><input id="idp" type="number" inputmode="decimal" step="any"><button data-act="d+" aria-label="세로 늘리기">+</button></div></div>
+        <div class="steps single-only" id="dimRow3">
+          <div class="st"><span class="lbl" id="lW">가로</span><div class="stepper"><button data-act="w-" aria-label="가로 줄이기">−</button><input id="iw" type="number" inputmode="decimal" step="any"><button data-act="w+" aria-label="가로 늘리기">+</button></div></div>
+          <div class="st"><span class="lbl" id="lD">세로</span><div class="stepper"><button data-act="d-" aria-label="세로 줄이기">−</button><input id="idp" type="number" inputmode="decimal" step="any"><button data-act="d+" aria-label="세로 늘리기">+</button></div></div>
           <div class="st"><span class="lbl">높이 (m)</span><div class="stepper"><button data-act="h-" aria-label="높이 줄이기">−</button><input id="ih" type="number" inputmode="decimal" step="0.1" aria-label="높이"><button data-act="h+" aria-label="높이 늘리기">+</button></div></div>
-          <div class="st"><span class="lbl">층수</span><div class="stepper"><button data-act="f-" aria-label="층수 줄이기">−</button><input id="ifl" type="number" inputmode="numeric" step="1"><button data-act="f+" aria-label="층수 늘리기">+</button></div></div>
+          <div class="st gone"><span class="lbl">층수</span><div class="stepper"><button data-act="f-" aria-label="층수 줄이기">−</button><input id="ifl" type="number" inputmode="numeric" step="1"><button data-act="f+" aria-label="층수 늘리기">+</button></div></div>
         </div>
         <div class="acts gone">
           <div class="pad">
@@ -1744,6 +1771,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
       <span class="lbl" id="refStatus">조원 모두가 같은 레퍼런스를 봐요. 내가 올린 사진만 지울 수 있어요.</span>
     </div>
     <div class="rgrid" id="refGrid"></div>
+    <p class="madeby">made by Gridbox007</p>
   </div>
 </section>
 
@@ -1962,7 +1990,7 @@ const CATS = {
   public:    { n: '공용 공간', ex: '홀·라운지·로비', c: '#e3b673', t: '#27241f' },
   corridor:  { n: '동선', ex: '복도·통로', c: '#e7e0cf', t: '#27241f' },
   outdoor:   { n: '외부 공간', ex: '중정·선큰·테라스', c: '#cfe0bd', t: '#27241f' },
-  service:   { n: '서비스 공간', ex: '화장실·설비·창고', c: '#b9a7c9', t: '#27241f' },
+  service:   { n: '서비스 공간', ex: '화장실·설비·창고', c: '#e7a99a', t: '#27241f' },
   parking:   { n: '주차장', ex: '지상 주차 · 용적률에서 빠짐', c: '#9ea5ae', t: '#27241f' },
   void:      { n: '보이드', ex: '아트리움·오픈 투 빌로우', c: '#eef1f4', t: '#3b4a5a', hatch: true },
   free:      { n: '미지정', ex: '자유 도형·기타', c: '#f6f4ee', t: '#27241f' }
@@ -2545,7 +2573,7 @@ function draftCard(p, inTeam){
   const unsaved = team && p.pubSig !== sigOf(p);
   const badge = team ? (unsaved ? '공유 후 바뀜' : '공유됨') : '나만 봄';
   const acts = [['열기', () => go('d-' + p.id), 'main']];
-  if (!readOnly) { if (!inTeam) acts.push(['복제', () => dupDraft(p)]); acts.push(['삭제', () => deleteDraft(p)]); }
+  if (!readOnly) { acts.push(['복제', () => dupDraft(p)]); acts.push(['삭제', () => deleteDraft(p)]); }
   const sketch = p.kind === 'sketch', pj = !inTeam && projOf(p.project);
   return card({ name: p.name, data: p, status: badge, statusCls: team ? (unsaved ? 'changed' : 'shared') : 'private', cls: inTeam ? 'mine' : '',
     cells: [['종류', sketch ? '스케치' : '스터디'], ['수정', ago(p.updatedAt)], sketch ? ['도형', `${p.boxes.length}개`] : ['용적률', `${f1(s.far)}%`]],
@@ -2729,7 +2757,8 @@ function renderHome(){
   sec(`공유된 작업물 ${items.length}개`);
   for (const t of items) {
     const mine = t.owner === me, nf = fbCountFor(t.owner, t.pid);
-    const acts = mine ? [['고치기', () => go('d-' + t.pid), 'main'], ['보기', () => go('v-' + t.pid)], ['공유 내리기', () => unpublish(t.pid, t.name)]]
+    const myDraft = mine ? drafts.find(d => d.id === t.pid) : null;
+    const acts = mine ? [['고치기', () => go('d-' + t.pid), 'main'], ['보기', () => go('v-' + t.pid)], ...(myDraft && !readOnly ? [['복제', () => dupDraft(myDraft)]] : []), ['공유 내리기', () => unpublish(t.pid, t.name)]]
       : [['보기', () => go('v-' + t.pid), 'main'], ...(readOnly || !member ? [] : [['복제', () => copyFromTeam(t), 'txt']])];
     if (!readOnly && member) acts.push([isPinned(t.pid) ? '고정 풀기' : '고정', () => togglePin(t.pid)]);
     tl.appendChild(card({ name: t.name || '이름 없음', data: t, status: mine ? '내 작업물' : '', statusCls: 'mine', cls: mine ? 'mine' : '', pinned: isPinned(t.pid),
@@ -2847,8 +2876,9 @@ async function dupDraft(p){
   try {
     await store.save(draftPath(id), normalize({ ...rest, name: (p.name + ' 사본').slice(0, 40), updatedAt: Date.now(), publishedAt: 0, pubSig: '' }));
     for (const { id: plid, ...pl } of await store.getColl(draftPath(p.id) + '/plans')) await store.save(`${draftPath(id)}/plans/${uid()}`, pl);
-    toast('복제했어요');
-  } catch (e) { toast(saveErrMsg(e)); }
+    toast('복제했어요 · 이름 끝에 ‘사본’이 붙어요');
+    return id;
+  } catch (e) { toast(saveErrMsg(e)); return null; }
 }
 async function deleteDraft(p){
   const extra = p.publishedAt ? ' 프로젝트에 저장한 것은 남아 있어요. 내리려면 프로젝트에서 ‘내리기’를 누르세요.' : '';
@@ -3397,7 +3427,12 @@ function closeEditor(){
 function onRemote(data){
   clearTimeout(edTimer);
   if (!data) {
-    if (!P) $('#edLoading').textContent = edKind === 'draft' ? '이 스터디를 찾을 수 없어요. 삭제되었을 수 있어요.' : '올린 사람이 이 스터디를 내렸어요.';
+    if (!P) {
+      $('#edLoading').textContent = edKind === 'draft' ? '이 스터디를 찾을 수 없어요. 삭제되었거나, 다른 사람의 작업 링크일 수 있어요.' : '이 작업물을 볼 수 없어요. 내려졌거나, 참여하지 않은 프로젝트의 작업물이에요.';
+      // 남의 작업 링크·지워진 작업: 빈 화면에 머물지 않고 잠시 뒤 목록(메인 화면)으로
+      const pid0 = curPid, k0 = edKind;
+      setTimeout(() => { if (!P && curPid === pid0 && !$('#editView').hidden) { toast(k0 === 'draft' ? '이 링크의 작업을 찾을 수 없어 목록으로 왔어요' : '이 작업물을 볼 수 없어 목록으로 왔어요'); go(k0 === 'draft' ? 'mine' : 'team'); } }, 1800);
+    }
     else { toast(edKind === 'draft' ? '이 스터디가 삭제되었어요' : '올린 사람이 이 스터디를 내렸어요'); dirty = false; go(edKind === 'draft' ? 'mine' : 'team'); }
     return;
   }
@@ -3607,6 +3642,7 @@ function refreshUI(){
   $('#viewBanner').hidden = !viewing;
   if (viewing) $('#viewWho').textContent = fbEdit ? `${who(curOwner)}님의 작업물 위에 내 피드백을 그리는 중` : curOwner === '__ex' ? '예시 · 보기 전용' : curOwner === me ? '내가 공유한 작업물 · 보기 전용' : `${who(curOwner)}님의 작업물 · 보기 전용 (원본은 작성자만 고쳐요)`;
   $('#copyBtn').hidden = readOnly || curOwner === me || !!viewPath || fbEdit;
+  $('#dupWorkBtn').hidden = readOnly || edKind !== 'draft';
   $('#copyBtn').textContent = curOwner === '__ex' ? '복제해서 시작' : '복제해서 내 작업으로';
   $('#fbBtn').hidden = readOnly || curOwner === me || curOwner === '__ex' || fbEdit || uiMode !== 'study';
   $('#editTools').hidden = ro;
@@ -3661,8 +3697,8 @@ function refreshUI(){
     $('#iInfo').textContent = study
       ? `${cellsStr(b.w)}칸 × ${cellsStr(b.d)}칸 · 비율 ${ratioStr(b.w, b.d, P.grid)} · ${b.fl}개 층 · ${levelName(b.lv)}부터${outside(b) ? ' · 대지 밖' : ''}`
       : `${f2(b.w)}×${f2(b.d)}m · 바닥 ${f1(fa)}㎡ × ${b.fl}개 층 = ${f1(fa * b.fl)}㎡ · 높이 ${f2(boxH(b))}m · ${levelName(b.lv)}부터${outside(b) ? ' · 대지 밖' : ''}`;
-    $('#lW').textContent = study ? '가로 (칸)' : '가로 X (m)';
-    $('#lD').textContent = study ? '세로 (칸)' : '세로 Y (m)';
+    $('#lW').textContent = study ? '가로 (칸)' : '너비 (m)';
+    $('#lD').textContent = study ? '세로 (칸)' : '앞뒤 (m)';
     if (document.activeElement !== $('#iw')) $('#iw').value = study ? cellsStr(b.w) : f2(b.w);
     if (document.activeElement !== $('#idp')) $('#idp').value = study ? cellsStr(b.d) : f2(b.d);
     if (document.activeElement !== $('#ifl')) $('#ifl').value = b.fl;
@@ -3681,7 +3717,7 @@ function refreshUI(){
   if (ro) h = '드래그로 돌려 보기 · 두 손가락으로 확대';
   else if (mode === 'add') h = addKind === 'outer' ? '대지를 탭하면 점선 외곽이 놓여요' : '대지나 상자 윗면·옆면을 탭하면 붙어서 놓여요';
   else if (b && sb.some(x => x.lock)) h = '잠긴 상자는 움직이지 않아요 · 잠금 풀기로 풀어요';
-  else if (multiPick) h = '탭할 때마다 선택에 더하거나 빼요';
+  else if (multiPick) h = uiMode === 'study' ? '탭할 때마다 선택에 더하거나 빼요' : '화면을 끌어 네모로 감싸면 그 안의 상자를 모두 골라요 · 짧게 누르면 하나씩 더하고 빼요';
   else if (sb.length > 1) h = '선택한 것을 끌면 같이 움직여요 · 그룹 안 하나만 고르려면 한 번 더 탭';
   else if (b && sizeMode === b.id && !study) h = '수정 모드 · 파란 손잡이로 앞뒤·양옆·위아래를 늘이고 줄여요 · 바깥을 누르면 끝나요';
   else if (b) h = selSet.size === 1 ? '상자를 끌면 위치가 바뀌어요 · 두 번 누르거나 길게 누르면 수정 모드' : '파란 점을 끌면 크기·높이, 상자를 끌면 위치가 바뀌어요';
@@ -3832,13 +3868,14 @@ function numInput(id, key){
       if (key === 'fl') { b.fl = Math.min(99, Math.max(1, Math.round(v))); b.h = 0; }
       else if (key === 'h') b.h = v > 0 ? Math.min(300, r2(v)) : 0;
       else if (uiMode === 'study') b[key] = Math.max(1, Math.round(v)) * P.grid;
-      else b[key] = Math.max(minV(), P.snap ? snapV(v) : r2(v));
+      else b[key] = Math.max(0.1, Math.min(500, r2(v)));
       remember(b);
     });
     refreshUI();
   });
 }
 numInput('#iw', 'w'); numInput('#idp', 'd'); numInput('#ifl', 'fl'); numInput('#ih', 'h');
+['#iw', '#idp', '#ih'].forEach(q => $(q).addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); $(q).blur(); } }));
 $('#ifh').addEventListener('change', () => { const f = floorOfSel(), v = Number($('#ifh').value); if (!f || !(v > 0)) return; commit(() => { P.floorHs = { ...P.floorHs, [Math.floor(f.level)]: Math.max(1, Math.min(30, r2(v))) }; }); refreshUI(); });
 function applyRatio(str){
   const m = String(str).replace(/\s/g, '').match(/^(\d*\.?\d+)[:/](\d*\.?\d+)$/);
@@ -4166,6 +4203,13 @@ function xUI(){
   $('#xGo').disabled = xMode === 'sheets' && !xPick.size;
 }
 $('#exportBtn').onclick = () => { document.body.classList.remove('menuOpen'); openExport(); };
+$('#dupWorkBtn').onclick = async () => {
+  document.body.classList.remove('menuOpen');
+  if (!P || edKind !== 'draft' || edRO() || !curPid) return;
+  try { await store.save(draftPath(curPid), clone(P)); } catch (e) {}
+  const nid = await dupDraft({ ...clone(P), id: curPid });
+  if (nid && await confirmBox('복제했어요', `‘${(P.name + ' 사본').slice(0, 40)}’이 내 작업에 생겼어요. 지금 열까요?`, '사본 열기', false)) go('d-' + nid);
+};
 $('#xWhole').onclick = () => { xMode = 'whole'; xUI(); };
 $('#xAll').onclick = () => { xMode = 'sheets'; const all = P.sheets.every(s => xPick.has(s.id)); xPick = new Set(all ? [] : P.sheets.map(s => s.id)); document.querySelectorAll('#xList button').forEach((b, i) => b.classList.toggle('on', xPick.has(P.sheets[i].id))); xUI(); };
 $('#xCancel').onclick = () => { $('#exportModal').hidden = true; };
@@ -7752,6 +7796,58 @@ boot();
     const c = m.querySelector('[id$="Cancel"],[id$="Close"],[id$="close"],[data-close]') || [...m.querySelectorAll('button')].find(b => /^(취소|닫기)$/.test(b.textContent.trim()));
     if (c && !c.hidden) c.click(); else if (!c) m.hidden = true;
   });
+})();
+
+// 3D '여러 개 선택'이 켜져 있으면: 화면을 끌어 네모를 그리면 그 안에 걸친 상자를 모두 선택에 더해요 (화면은 돌지 않음).
+// 짧게 누르면 지금처럼 하나씩 더하고 빼요
+(() => {
+  let mq = null, box = null;
+  const ev = $('#editView');
+  const on3 = () => P && uiMode !== 'study' && multiPick && mode === 'select' && !sizeMode && !edRO();
+  const rectEl = () => box || (box = Object.assign(document.createElement('div'), { className: 'mq3', hidden: true }), ev.appendChild(box), box);
+  function draw(){ const el = rectEl(), x = Math.min(mq.x0, mq.x1), y = Math.min(mq.y0, mq.y1), r = ev.getBoundingClientRect(); el.hidden = false; Object.assign(el.style, { left: (x - r.left) + 'px', top: (y - r.top) + 'px', width: Math.abs(mq.x1 - mq.x0) + 'px', height: Math.abs(mq.y1 - mq.y0) + 'px' }); }
+  function hits(){
+    const r = cv.getBoundingClientRect(), X0 = Math.min(mq.x0, mq.x1), X1 = Math.max(mq.x0, mq.x1), Y0 = Math.min(mq.y0, mq.y1), Y1 = Math.max(mq.y0, mq.y1), ids = new Set();
+    for (const m of boxMeshes) {
+      const id = m.userData && m.userData.id; if (!id || m.visible === false) continue;
+      const bx = new THREE.Box3().setFromObject(m); if (bx.isEmpty && bx.isEmpty()) continue;
+      let sx0 = Infinity, sy0 = Infinity, sx1 = -Infinity, sy1 = -Infinity, front = false;
+      for (let k = 0; k < 8; k++) {
+        const v = new THREE.Vector3(k & 1 ? bx.max.x : bx.min.x, k & 2 ? bx.max.y : bx.min.y, k & 4 ? bx.max.z : bx.min.z).project(cam);
+        if (!(v.z < 1)) continue; front = true;
+        const px = r.left + (v.x + 1) / 2 * r.width, py = r.top + (1 - v.y) / 2 * r.height;
+        sx0 = Math.min(sx0, px); sx1 = Math.max(sx1, px); sy0 = Math.min(sy0, py); sy1 = Math.max(sy1, py);
+      }
+      if (front && sx0 < X1 && sx1 > X0 && sy0 < Y1 && sy1 > Y0) ids.add(id);
+    }
+    return ids;
+  }
+  const stop = e => { e.stopPropagation(); e.preventDefault(); };
+  ev.addEventListener('pointerdown', e => {
+    if (e.target !== cv || !on3()) return;
+    if (!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) { if (mq) { mq = null; rectEl().hidden = true; } return; }
+    stop(e); clearTimeout(hold3);
+    mq = { x0: e.clientX, y0: e.clientY, x1: e.clientX, y1: e.clientY, pid: e.pointerId, moved: false };
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  }, true);
+  ev.addEventListener('pointermove', e => {
+    if (!mq || e.pointerId !== mq.pid) return; stop(e);
+    mq.x1 = e.clientX; mq.y1 = e.clientY;
+    if (!mq.moved && Math.hypot(mq.x1 - mq.x0, mq.y1 - mq.y0) > 6) mq.moved = true;
+    if (mq.moved) draw();
+  }, true);
+  const end = e => {
+    if (!mq || e.pointerId !== mq.pid) return; stop(e);
+    const m = mq; mq = null; rectEl().hidden = true;
+    try { cv.releasePointerCapture(e.pointerId); } catch (err) {}
+    if (e.type === 'pointercancel') return;
+    if (!m.moved) { onTap(e); return; } // 짧게 누름: 하나씩 더하고 빼기
+    mq = m; const got = hits(); mq = null;
+    const next = new Set(selSet); for (const id of got) { const b = getBox(id); if (b) for (const x of groupOf(b)) next.add(x.id); }
+    setSel([...next]); buildBoxes(); refreshUI();
+    toast(got.size ? `${selSet.size}개 선택 · 더 끌어서 더하거나, 눌러서 빼요` : '네모 안에 걸친 상자가 없어요');
+  };
+  ev.addEventListener('pointerup', end, true); ev.addEventListener('pointercancel', end, true);
 })();
 </script>
 </body>
