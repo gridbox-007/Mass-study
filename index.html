@@ -1271,6 +1271,88 @@ body.exact #polyBar{display:none !important}
 .rbody > .madeby{margin-top:auto;padding-top:28px}
 .madeby{margin:18px 0 2px;text-align:center;font-size:10px;letter-spacing:.06em;color:var(--mute);opacity:.45;user-select:none;pointer-events:none}
 .dock .madeby{margin:6px 0 0}
+/* 돌리는 중 맨 끝에 각도(°) 칸이 붙어도 다른 버튼 자리가 그대로이게: 가운데 정렬 막대를 그 칸 폭의 절반만큼 옮김 */
+.ctx .deg{min-width:45px !important;max-width:45px;padding:0 4px !important;overflow:hidden}
+@media (min-width:600px){ .ctx:has(> .deg){transform:translateX(calc(-50% + 24.5px)) !important} }
+/* 3D 조작 방식 고르기 */
+.kopt{display:flex;flex-direction:column;gap:4px;text-align:left;width:100%;cursor:pointer;color:var(--ink)}
+.kopt .lbl{line-height:1.55}
+/* 3D 여러 개 선택 중 막대 */
+.mp3{max-width:calc(100% - 24px)}
+#mp3T{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media (min-width:900px){ .mp3{left:calc((100% - var(--side)) / 2)} body.sideHid .mp3{left:50%} }
+@media (max-width:640px){ #mp3T{font-size:12px} }
+/* 3D에서는 아래 안내(힌트)와 알림이 겹치지 않게 */
+body.exact .toast{bottom:calc(env(safe-area-inset-bottom) + 64px)}
+@media (max-width:899px){ body.exact .toast{bottom:calc(env(safe-area-inset-bottom) + 44vh)} }
+/* 스터디 막대 잠그기 버튼: 글자가 바뀌어도 폭 그대로 */
+.ctx .lockb{min-width:5.2em}
+.ctx .morep{min-width:5.4em}
+/* 화면을 옮기는 중 */
+#pc.panning{cursor:grabbing !important}
+/* 고른 도형 이름 (막대 맨 앞) */
+.ctx .selname{flex:none;max-width:8.5em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;font-size:13px;color:#2c5a8c;padding:0 8px 0 6px;border-right:1px solid var(--line);margin-right:2px;line-height:28px}
+/* ===== 6차 2D 스터디 '디지털 건축 스케치북' (스터디 편집 화면에만, 3D·목록은 그대로) ===== */
+html.editing body.study{--sb-paper:#f8f5ef;--sb-desk:#ebe6dc;--sb-line:#e0d8ca;--sb-line2:#ebe5da;--sb-ink:#2f2a25;--sb-mute:#7a7065;--sb-sage:#56705d;--sb-sage-t:#e6ece5;--sb-brown:#7a5a43;--sb-sh:0 1px 2px rgba(60,45,30,.05),0 4px 14px rgba(60,45,30,.05)}
+/* 작업대(책상): 아주 옅은 종이결 — 캔버스 바탕에만 */
+html.editing body.study #pc{background-color:var(--sb-desk);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* 머리줄: 흩어진 상자들을 노트 머리처럼 한 장으로 — 안의 버튼은 납작하게 */
+html.editing body.study #topArea .bar{background:var(--sb-paper);border:1px solid var(--sb-line);border-radius:12px;padding:4px 5px;box-shadow:var(--sb-sh);pointer-events:auto}
+html.editing body.study #topArea .bar .icon,html.editing body.study #topArea .bar #tUndo,html.editing body.study #topArea .bar #tRedo,html.editing body.study #topArea .bar .help{border-color:transparent !important;background:transparent !important;box-shadow:none !important;color:var(--sb-ink)}
+html.editing body.study #topArea .bar .icon:hover:not(:disabled),html.editing body.study #topArea .bar .help:hover{background:var(--sb-sage-t) !important}
+html.editing body.study #topArea .bar .name{border-color:transparent;background:transparent;box-shadow:none;font-size:16px;font-weight:700;color:var(--sb-ink);letter-spacing:-.01em}
+html.editing body.study #topArea .bar .name:hover{background:#fff8}
+html.editing body.study #topArea .bar .name:focus{background:#fff;border-color:var(--sb-line)}
+html.editing body.study #topArea .bar #backBtn{color:var(--sb-mute)}
+html.editing body.study #topArea .bar #backBtn::before{content:'‹ ';font-size:17px;line-height:1}
+html.editing body.study #uiModeSeg{background:var(--sb-desk);border-color:transparent !important;border-radius:9px;padding:2px}
+html.editing body.study #uiModeSeg button{border-radius:7px;background:transparent;color:var(--sb-mute)}
+html.editing body.study #uiModeSeg button.on{background:var(--sb-paper) !important;color:var(--sb-ink) !important;box-shadow:0 1px 2px rgba(60,45,30,.12);border-color:transparent !important}
+html.editing body.study .savebtn{background:#2f2a25 !important;border-color:#2f2a25 !important;color:#fbf8f2 !important;border-radius:9px !important;font-weight:700}
+html.editing body.study .savebtn:hover{background:#1f1b17 !important}
+html.editing body.study .savebtn.saved{background:transparent !important;color:#2f2a25 !important;border-color:#cfc5b6 !important}
+html.editing body.study #syncPill{background:transparent;border-color:transparent;padding:0 4px;font-size:12px}
+/* 도구: 한 장의 팔레트 (묶음은 가는 선으로 나눔) */
+html.editing body.study #stools{background:var(--sb-paper);border:1px solid var(--sb-line);border-radius:12px;padding:3px 4px;box-shadow:var(--sb-sh);gap:0;align-self:flex-start;max-width:100%;pointer-events:auto}
+html.editing body.study #stools .tgrp{background:transparent !important;border:0 !important;box-shadow:none !important;border-radius:0;padding:0 4px}
+html.editing body.study #stools .tgrp + .tgrp{border-left:1px solid var(--sb-line2) !important}
+html.editing body.study #stools .tgrp button{color:var(--sb-ink);border-radius:8px}
+html.editing body.study #stools .tgrp button:hover:not(.on){background:var(--sb-sage-t)}
+html.editing body.study #stools .tgrp button.on{background:var(--sb-sage) !important;color:#fbfcf9 !important;font-weight:600}
+html.editing body.study #stools .tgrp[data-gl]::before{border-right:0;color:#a89c8e;font-size:10.5px}
+/* 층 고르기: 도면을 넘기는 색인 탭처럼 (도구 버튼과 모양을 다르게) */
+html.editing body.study .sheetbar{gap:2px;align-items:flex-end}
+html.editing body.study .sheetbar button{background:transparent !important;border:1px solid transparent !important;border-bottom:2px solid transparent !important;box-shadow:none;border-radius:8px 8px 0 0 !important;color:var(--sb-mute) !important;font-weight:500}
+html.editing body.study .sheetbar button:hover:not(.on){color:var(--sb-ink) !important;background:#fff6 !important}
+html.editing body.study .sheetbar button.on,html.editing body.study .sheetbar .all.on{background:var(--sb-paper) !important;border-color:var(--sb-line) !important;border-bottom:2px solid var(--sb-sage) !important;color:var(--sb-ink) !important;font-weight:700}
+html.editing body.study .sheetbar .add{color:var(--sb-sage) !important}
+html.editing body.study .sheetbar .sep,html.editing body.study .sheetbar hr{opacity:.5}
+/* 아래쪽: 떠 있는 상자 여러 개 대신 아래에 붙은 한 줄 (왼쪽 보기 설정 · 오른쪽 수치) */
+html.editing body.study .sbottom{left:0 !important;right:0 !important;justify-content:flex-start;background:var(--sb-paper);border-top:1px solid var(--sb-line);padding:5px max(12px, env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 5px) max(12px, env(safe-area-inset-left));gap:4px}
+html.editing body.study .sbottom .bgrp{background:transparent !important;border:0 !important;box-shadow:none !important;padding:0 6px 0 0}
+html.editing body.study .sbottom .bgrp + .bgrp{border-left:1px solid var(--sb-line2) !important;padding-left:6px}
+html.editing body.study .sbottom .bgrp button{color:var(--sb-ink)}
+html.editing body.study .sbottom .bgrp button:hover:not(:disabled){background:var(--sb-sage-t)}
+html.editing body.study .sbottom .bgrp button[aria-pressed="true"]{background:var(--sb-sage-t);color:var(--sb-sage)}
+html.editing body.study .sbottom .sum{margin-left:auto;background:transparent;border:0;border-left:1px solid var(--sb-line2);border-radius:0}
+html.editing body.study .sbottom .sum .m{padding:2px 14px;min-height:38px}
+html.editing body.study .sbottom .sum .m + .m{border-left:0}
+html.editing body.study .sbottom .sum i{font-size:10px;letter-spacing:.04em;color:var(--sb-mute)}
+html.editing body.study .sbottom .sum b{font-size:15px;font-weight:600;color:var(--sb-ink)}
+html.editing body.study .sbottom .sum small{font-size:10.5px}
+html.editing body.study .sbottom .sum .m.over{background:transparent}
+html.editing body.study .sbottom .sum .m.over b{color:#a5533f}
+html.editing body.study .sbottom .sum .m.over i::after{content:' · 초과';color:#a5533f}
+/* 고른 도형 막대: 설계 노트 카드 */
+html.editing body.study .ctx{background:var(--sb-paper) !important;border:1px solid var(--sb-line) !important;border-radius:12px !important;box-shadow:0 6px 20px rgba(60,45,30,.10) !important}
+html.editing body.study .ctx .selname{color:var(--sb-brown)}
+html.editing body.study .ctx button:not(.on):hover{background:var(--sb-sage-t)}
+html.editing body.study .ctx button.on{background:var(--sb-sage) !important;border-color:var(--sb-sage) !important;color:#fff !important}
+/* 휴대폰·태블릿 세로: 머리줄이 두 줄이 되어도 한 장으로 보이게 */
+@media (max-width:640px){
+  html.editing body.study #topArea .bar{border-radius:12px;padding:4px}
+  html.editing body.study .sbottom .sum{margin-left:6px}
+}
 </style>
 <script type="importmap">
 {"imports":{
@@ -1495,7 +1577,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
         <button id="fbEye" aria-pressed="true" hidden title="피드백 보이기·숨기기">피드백</button>
       </div>
       <div class="bgrp" role="group" aria-label="자료">
-        <button id="dockBtn" aria-pressed="false" title="레퍼런스 사진 창 열기·닫기">레퍼런스</button>
+        <button id="dockBtn" aria-pressed="false" title="레퍼런스 사진 창 열기·닫기">레퍼런스</button><button id="planQuick" title="지금 배치를 안(플랜)으로 저장하거나, 저장한 안을 불러와요 · Ctrl+Shift+S">플랜</button>
       </div>
       <div class="sum" id="sSum" aria-live="polite"></div>
     </div>
@@ -1556,7 +1638,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
       <div class="tgrp aux" role="group" aria-label="보조 도구" data-gl="보조">
         <button data-tool="text" class="ticon" aria-label="텍스트" title="눌러서 글자 넣기"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4.5 5h11M10 5v11M7.6 16h4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>텍스트</button>
         <button id="flowBtn" title="주·부·서비스 동선, 출입문, 유리를 그려요">동선 그리기</button>
-        <button data-tool="ruler" title="일직선 자: 끌어서 길이 재기 (5개까지)">길이 재기</button>
+        <button data-tool="ruler" title="보조선 자 (CAD X라인처럼): 끌어서 방향을 정하면 양쪽 끝까지 이어진 선이 생겨요 · 도형을 옮기거나 그릴 때 선에 붙어요 · Shift는 45° 단위 (8개까지)">보조선 자</button>
       </div>
     </div>
     <div class="flowbar sitebar" id="siteBar" hidden>
@@ -1607,6 +1689,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
         <button id="northBtn">방위</button>
         <button id="chatBtn">댓글</button>
         <button id="exportBtn">내보내기</button>
+        <button id="keysBtn" title="3D에서 마우스로 돌리고 옮기는 방식 (모바일과 같게 / 스케치업과 같게)">조작 방식</button>
         <button id="dupWorkBtn" title="지금 작업물을 통째로 복사해 새 작업물로 만들어요 (플랜도 같이)">복제</button>
       </div>
       <div class="views" id="views">
@@ -1990,7 +2073,7 @@ const CATS = {
   public:    { n: '공용 공간', ex: '홀·라운지·로비', c: '#e3b673', t: '#27241f' },
   corridor:  { n: '동선', ex: '복도·통로', c: '#e7e0cf', t: '#27241f' },
   outdoor:   { n: '외부 공간', ex: '중정·선큰·테라스', c: '#cfe0bd', t: '#27241f' },
-  service:   { n: '서비스 공간', ex: '화장실·설비·창고', c: '#e7a99a', t: '#27241f' },
+  service:   { n: '글라스', ex: '유리 매스·커튼월·온실', c: '#cfe3f0', t: '#2d4a60', glass: true }, // 예전 '서비스 공간' 자리 (같은 키라 저장된 도형은 그대로 글라스가 돼요)
   parking:   { n: '주차장', ex: '지상 주차 · 용적률에서 빠짐', c: '#9ea5ae', t: '#27241f' },
   void:      { n: '보이드', ex: '아트리움·오픈 투 빌로우', c: '#eef1f4', t: '#3b4a5a', hatch: true },
   free:      { n: '미지정', ex: '자유 도형·기타', c: '#f6f4ee', t: '#27241f' }
@@ -1998,7 +2081,7 @@ const CATS = {
 const CAT_KEYS = Object.keys(CATS);
 const CAT_WORDS = [
   ['parking', ['주차', 'parking']],
-  ['service', ['화장실', '화장', 'wc', '설비', '창고', '기계실', '전기실', '샤워', '탈의']],
+  ['service', ['글라스', '유리', 'glass', '커튼월', '온실', '유리박스']],
   ['vertical', ['계단', '엘리베이터', '승강기', 'ev', '경사로', '램프', '슬로프']],
   ['corridor', ['복도', '통로', '회랑', '브릿지', '브리지']],
   ['void', ['보이드', 'void', '아트리움', '오픈', '개방']],
@@ -2027,7 +2110,9 @@ const safeSeg = s => String(s).replace(/[^A-Za-z0-9_\-.~:@+]/g, '_').slice(0, 15
 function hash(s){ let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
 
 let toastT = null;
+let toastLast = { m: '', t: 0 };
 function toast(msg, action){
+  { const now = Date.now(); if (!action && msg === toastLast.m && now - toastLast.t < 2500 && !$('#toast').hidden) return; toastLast = { m: msg, t: now }; } // 같은 알림이 연달아 쌓이지 않게
   $('#toastMsg').textContent = msg;
   const a = $('#toastAct');
   if (action) { a.hidden = false; a.textContent = action.label; a.onclick = () => { $('#toast').hidden = true; action.fn(); }; }
@@ -2095,7 +2180,7 @@ function setUiMode(m, temp){
   document.querySelectorAll('#uiModeSeg button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
   if (typeof closeLabelEd === 'function') closeLabelEd(false);
   if (P) {
-    if (m === 'exact') { buildBoxes(); requestAnimationFrame(() => { resize(); setView(view); }); }
+    if (m === 'exact') { buildBoxes(); requestAnimationFrame(() => { resize(); setView(view); }); if (!temp && !keys3d && hasMouse()) setTimeout(() => openKeys3d(true), 350); }
     else requestAnimationFrame(() => { if (!sFitted) fitStudy(); else renderStudy(); });
     refreshUI();
   }
@@ -2219,7 +2304,7 @@ function normBox0(b, grid){
     shape: SHAPES.includes(b.shape) ? b.shape : 'rect',
     rot: ((Math.round(Number(b.rot) || 0) % 4) + 4) % 4,
     ang: (() => { let a = Number(b.ang) || 0; a = ((a % 360) + 540) % 360 - 180; return a === -180 ? 180 : Math.round(a * 10) / 10; })(),
-    cat: b.tag === 'parking' || (b.tag === 'service' && (!b.cat || b.cat === 'free')) ? b.tag : // 예전 '서비스·주차' 성격 태그는 공간 종류로 옮김
+    cat: b.tag === 'parking' && (!b.cat || b.cat === 'free') ? b.tag : // 예전 '주차' 성격 태그는 공간 종류로 옮김 (예전 '서비스' 태그는 글라스로 바뀌지 않게 그대로 둠)
       CAT_KEYS.includes(b.cat) || /^u[a-z0-9]{2,30}$/.test(String(b.cat || '')) ? b.cat : 'free',
     sheet: b.sheet ? String(b.sheet).slice(0, 40) : '',
     x: Number(b.x) || 0, z: Number(b.z) || 0,
@@ -2237,7 +2322,7 @@ function normBox0(b, grid){
     group: b.group ? String(b.group).slice(0, 40) : ''
   };
 }
-const SNAPKEYS = ['siteW', 'siteD', 'grid', 'floorH', 'floorHs', 'north', 'site', 'envShapes', 'doors', 'bcrLimit', 'farLimit', 'snap', 'boxes', 'notes', 'sheets', 'flows', 'cards', 'cats'];
+const SNAPKEYS = ['siteW', 'siteD', 'grid', 'floorH', 'floorHs', 'north', 'site', 'envShapes', 'doors', 'bcrLimit', 'farLimit', 'snap', 'boxes', 'notes', 'sheets', 'flows', 'cards', 'cats', 'guides'];
 // 층 이름: 지하는 '지하 1층', 반 층은 '1.5층'
 function levelName(L){ if (L < 0) return `지하 ${-Math.floor(L)}층`; const n = Math.floor(L); return L - n > 1e-6 ? `${n + 1}.5층` : `${n + 1}층`; }
 const isHalf = L => Math.abs(L - Math.round(L)) > 1e-6;
@@ -2275,6 +2360,8 @@ function normalize(d){
     origin: d.origin && typeof d.origin === 'object' ? { owner: String(d.origin.owner || ''), pid: String(d.origin.pid || ''), name: String(d.origin.name || '').slice(0, 40) } : null
   };
   for (const b of (Array.isArray(d.boxes) ? d.boxes : []).slice(0, 400)) o.boxes.push(normBox(b, o.grid));
+  { const okP = q => Array.isArray(q) && q.length === 2 && q.every(v => Number.isFinite(Number(v)));
+    o.guides = (Array.isArray(d.guides) ? d.guides : []).filter(g => g && okP(g.a) && okP(g.b)).slice(0, 8).map(g => ({ a: [r2(Number(g.a[0])), r2(Number(g.a[1]))], b: [r2(Number(g.b[0])), r2(Number(g.b[1]))] })); } // 보조선 자
   o.notes = (Array.isArray(d.notes) ? d.notes : []).slice(0, 200).map(n => ({ id: String(n.id || uid()), sheet: String(n.sheet || ''), x: Number(n.x) || 0, z: Number(n.z) || 0, text: String(n.text || '').slice(0, 80), size: [1, 1.4, 2].includes(Number(n.size)) ? Number(n.size) : 1 }));
   o.flows = (Array.isArray(d.flows) ? d.flows : []).slice(0, 200).map(f => ({ id: String(f.id || uid()), sheet: String(f.sheet || ''), type: ['main', 'sub', 'service'].includes(f.type) ? f.type : 'main', both: !!f.both, pts: (Array.isArray(f.pts) ? f.pts : []).slice(0, 300).map(q => [r2(Number(q && q[0]) || 0), r2(Number(q && q[1]) || 0)]) })).filter(f => f.pts.length >= 2);
   o.cards = (Array.isArray(d.cards) ? d.cards : []).slice(0, 200).map(c => ({ id: String(c.id || uid()), ref: String(c.ref || '').slice(0, 60), sheet: String(c.sheet || ''), x: r2(Number(c.x) || 0), z: r2(Number(c.z) || 0), w: Math.max(1, Math.min(200, Number(c.w) || 8)), target: String(c.target || '') })).filter(c => c.ref);
@@ -3084,9 +3171,17 @@ function buildSite(){
   requestRender();
 }
 function outside(b){ const e = 1e-6, a = aabb(b); return a.x0 < -e || a.z0 < -e || a.x1 > P.siteW + e || a.z1 > P.siteD + e; }
-const voidMat = new THREE.MeshBasicMaterial({ color: '#9fb6cf', transparent: true, opacity: 0.22, depthWrite: false, side: THREE.DoubleSide });
+// 글라스: 투명한 하늘색 덩어리 + 푸른 회색 테두리 (그림자 없음)
+const glassMat = new THREE.MeshBasicMaterial({ color: '#8fbcd9', transparent: true, opacity: 0.3, depthWrite: false, side: THREE.DoubleSide });
+const glassEdge = new THREE.LineBasicMaterial({ color: '#4e7896' });
+// 보이드: 비어 있는 공간이라 면은 거의 안 보이게, 테두리는 점선으로 (아트리움·오픈 투 빌로우)
+const voidMat = new THREE.MeshBasicMaterial({ color: '#b8c2cc', transparent: true, opacity: 0.06, depthWrite: false, side: THREE.DoubleSide });
+const voidDash = new THREE.LineDashedMaterial({ color: '#6b7886', dashSize: 0.35, gapSize: 0.28 });
 // 외부 공간: 투명한 초록 덩어리 + 초록 점선 (지붕·벽이 없는 열린 곳)
-const outdoorMat = new THREE.MeshBasicMaterial({ color: '#a9cf8f', transparent: true, opacity: 0.26, depthWrite: false, side: THREE.DoubleSide });
+const outdoorMat = new THREE.MeshBasicMaterial({ color: '#a9cf8f', transparent: true, opacity: 0.05, depthWrite: false, side: THREE.DoubleSide });
+// 외부 공간(테라스): 바닥판 테두리와 난간 선
+const terraceEdge = new THREE.LineBasicMaterial({ color: '#4f6b3e' });
+const terraceRail = new THREE.LineBasicMaterial({ color: '#5d7a4a' });
 const outdoorDash = new THREE.LineDashedMaterial({ color: '#4f7a3c', dashSize: 0.45, gapSize: 0.3 });
 function shapeGeo(b, H){
   const s = new THREE.Shape();
@@ -3126,16 +3221,17 @@ function boxMesh(b, totalRooms, rank = 0){
   const H = boxH(b), isSel = selSet.has(b.id), out = outside(b), outer = b.kind === 'outer';
   const geo = shapeGeo(b, H);
   const dimOther = sizeMode && b.id !== sizeMode && !outer;
-  const mesh = new THREE.Mesh(geo, dimOther ? xrayMat(colorOf(b), false) : outer ? (isSel ? outerFillSel : outerFill) : b.cat === 'void' ? (isSel ? outerFillSel : voidMat) : b.cat === 'outdoor' && !isSel ? outdoorMat : edgeMode ? xrayMat(colorOf(b), isSel) : solidMat(colorOf(b), isSel));
+  const mesh = new THREE.Mesh(geo, dimOther ? xrayMat(colorOf(b), false) : outer ? (isSel ? outerFillSel : outerFill) : b.cat === 'void' ? (isSel ? outerFillSel : voidMat) : b.cat === 'outdoor' && !isSel ? outdoorMat : b.cat === 'service' && !isSel && !edgeMode ? glassMat : edgeMode ? xrayMat(colorOf(b), isSel) : solidMat(colorOf(b), isSel));
   // 스터디 보드에서 아래 레이어일수록 아주 조금 작고(옆) 바닥이 살짝 떠 있게: 겹친 면이 깨져 보이지 않음
   const rk = Math.min(rank, 12), ins = rk ? 0.002 : 0, lift = 0.002 + rk * 0.0005, drop = rk * 0.0005, Hs = Math.max(0.05, H - lift - drop); // 틈이 안 보이게 아주 조금만 (깜빡임은 깊이 정밀도로 막음)
   mesh.scale.set(Math.max(0.6, (b.w - 2 * ins) / b.w), Hs / H, Math.max(0.6, (b.d - 2 * ins) / b.d));
   mesh.position.set(-P.siteW / 2 + b.x + b.w / 2, elevOf(b.lv) + lift + Hs / 2, -P.siteD / 2 + b.z + b.d / 2);
   mesh.rotation.y = -rad(b.ang || 0);
-  mesh.castShadow = !outer && b.cat !== 'void' && b.cat !== 'outdoor'; mesh.receiveShadow = !outer; mesh.userData.id = b.id; mesh.renderOrder = outer ? 2 : 0;
+  mesh.castShadow = !outer && b.cat !== 'void' && b.cat !== 'outdoor' && b.cat !== 'service'; mesh.receiveShadow = !outer; mesh.userData.id = b.id; mesh.renderOrder = outer ? 2 : 0;
   const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), outer ? (isSel ? dashSel : b.lock ? dashLock : out ? dashOut : dashMat) : edgeMode ? (isSel ? edgeXSel : edgeX) : (isSel ? edgeSel : b.lock ? edgeLock : out ? edgeOut : edgeMat));
-  const openSp = b.cat === 'outdoor' && !isSel && !outer;
-  if (openSp) edges.material = outdoorDash;
+  const openSp = (b.cat === 'outdoor' || b.cat === 'void') && !isSel && !outer;
+  if (openSp) edges.material = b.cat === 'void' ? voidDash : outdoorDash;
+  else if (b.cat === 'service' && !isSel && !outer && !edgeMode && !b.lock && !out) edges.material = glassEdge;
   if (edgeMode && !outer && !openSp) { // 경계선 보기: 선을 굵은 막대로 그려서 또렷하게 (WebGL 선은 굵기가 1로 고정이라)
     edges.visible = false;
     const pa = edges.geometry.attributes.position, R = Math.max(P.siteW, P.siteD), t = Math.max(0.05, R / 260), bar = isSel ? edgeBarSel : edgeBar;
@@ -3147,6 +3243,22 @@ function boxMesh(b, totalRooms, rank = 0){
   }
   if (outer || openSp) edges.computeLineDistances();
   mesh.add(edges);
+  if (b.cat === 'outdoor' && !isSel && !outer && !dimOther) { // 테라스: 바닥판(두께 최대 0.3m) + 높이 1.1m 난간, 위쪽 덩어리는 비워 둠
+    edges.visible = false;
+    const t = Math.min(0.3, Math.max(0.08, H * 0.3)), rh = Math.min(1.1, Math.max(t + 0.2, H - 0.05));
+    const slab = new THREE.Mesh(shapeGeo(b, t), solidMat(colorOf(b), false));
+    slab.position.y = -H / 2 + t / 2; slab.castShadow = true; slab.receiveShadow = true; slab.userData.id = b.id;
+    slab.add(new THREE.LineSegments(new THREE.EdgesGeometry(slab.geometry, 25), terraceEdge));
+    mesh.add(slab);
+    const pts = outline(b), n = pts.length, step = n > 12 ? Math.ceil(n / 12) : 1, rp = [], y0 = -H / 2 + t, y1 = -H / 2 + rh;
+    for (let k = 0; k < n; k++) {
+      const a = pts[k], c = pts[(k + 1) % n], ax = a[0] * b.w - b.w / 2, az = a[1] * b.d - b.d / 2, cx = c[0] * b.w - b.w / 2, cz = c[1] * b.d - b.d / 2;
+      rp.push(ax, y1, az, cx, y1, cz);
+      if (k % step === 0) rp.push(ax, y0, az, ax, y1, az);
+    }
+    const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.Float32BufferAttribute(rp, 3));
+    mesh.add(new THREE.LineSegments(rg, terraceRail));
+  }
   if (b.fl > 1) {
     const pts = outline(b), p = [];
     for (let i = 1; i < b.fl; i++) {
@@ -3277,13 +3389,23 @@ function updateLabelFaces(){
     if (face === 'nx') { sm.position.set(-L.w / 2 - e, 0, 0); sm.rotation.set(0, -Math.PI / 2, 0); }
   }
 }
+// 3D 마우스 조작 방식: 'mobile' = 왼쪽 끌기 돌리기 · 휠 확대 · 오른쪽 끌기 이동 / 'sketchup' = 휠 클릭 돌리기 · Shift+휠 클릭 이동 · 왼쪽 끌기 네모로 여러 개 고르기
+let keys3d = ''; try { keys3d = localStorage.getItem('mass-3d-keys') || ''; } catch (e) {}
+const keysEff = () => keys3d === 'sketchup' ? 'sketchup' : 'mobile';
+const hasMouse = () => { try { return matchMedia('(any-pointer: fine)').matches; } catch (e) { return true; } };
+function applyKeys(){
+  if (!controls) return;
+  const rot = controls.enableRotate !== false, M = THREE.MOUSE, mb = controls.mouseButtons;
+  if (keysEff() === 'sketchup') { mb.LEFT = null; mb.MIDDLE = rot ? M.ROTATE : M.PAN; mb.RIGHT = M.PAN; } // 왼쪽은 고르기·네모 고르기에만
+  else { mb.LEFT = rot ? M.ROTATE : M.PAN; mb.MIDDLE = M.DOLLY; mb.RIGHT = M.PAN; }
+}
 function makeControls(){
   if (controls) controls.dispose();
   controls = new OrbitControls(cam, cv);
   controls.enableDamping = true; controls.dampingFactor = 0.14; controls.rotateSpeed = 0.45; controls.zoomSpeed = 0.8; // 돌리는 감도 낮춤
   controls.maxPolarAngle = Math.PI / 2;
   controls.screenSpacePanning = true;
-  controls.mouseButtons.MIDDLE = THREE.MOUSE.ROTATE; // 휠 클릭 끌기 = 돌리기, Shift를 누르고 끌면 화면 이동 (스케치업과 같게)
+  applyKeys();
   controls.addEventListener('change', requestRender);
 }
 function vpSize(){ return [cv.clientWidth || 1, cv.clientHeight || 1]; }
@@ -3349,7 +3471,8 @@ function setView(v){
   makeControls(); controls.target.copy(tgt);
   const rot = v === 'persp' || v === 'iso';
   controls.enableRotate = rot;
-  if (!rot) { controls.touches.ONE = THREE.TOUCH.PAN; controls.mouseButtons.LEFT = THREE.MOUSE.PAN; controls.mouseButtons.MIDDLE = THREE.MOUSE.PAN; }
+  if (!rot) controls.touches.ONE = THREE.TOUCH.PAN;
+  applyKeys();
   controls.update(); applyOffset();
   document.querySelectorAll('#views button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   { const eb = document.querySelector('#views button[data-v=elev]'); if (eb) { eb.textContent = `입면 · ${(ELEV_DIRS.find(d => d[0] === elevDir) || ['', '남'])[1]}`; eb.title = '다시 누르면 남 → 동 → 북 → 서'; } }
@@ -3396,7 +3519,7 @@ function syncIdle(){ setSync(edKind !== 'draft' ? '보기 전용' : localMode ? 
 let viewPath = '';
 function openEditor(kind, pid, owner, path0){
   closeEditor();
-  rulers = []; doorMode = false; selDoor = null; hiddenLv = new Set();
+  doorMode = false; selDoor = null; hiddenLv = new Set();
   edKind = kind; curPid = pid; curOwner = owner; P = null; clearSel(); selCard = null; linkMode = false; sAuto = true; hist = []; fut = []; dirty = false; writing = false; viewPlans = []; mode = 'select';
   $('#home').hidden = true; $('#editView').hidden = false; $('#edLoading').hidden = false; document.documentElement.classList.add('editing'); window.scrollTo(0, 0);
   $('#edLoading').textContent = '스터디를 여는 중…';
@@ -3657,7 +3780,7 @@ function refreshUI(){
   og.hidden = !P.origin || !P.origin.name || edKind !== 'draft';
   if (!og.hidden) og.innerHTML = `복제본 · 원본 <b>${esc(P.origin.name)}</b> · 작성자 ${esc(P.origin.owner === '__ex' ? '예시' : who(P.origin.owner))}`;
   $('#chatBtn').hidden = localMode;
-  $('#planBtn').hidden = viewing && !viewPlans.length; $('#r2pBtn').hidden = $('#planBtn').hidden;
+  $('#planBtn').hidden = viewing && !viewPlans.length; $('#r2pBtn').hidden = $('#planBtn').hidden; $('#planQuick').hidden = $('#planBtn').hidden;
   document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
   document.querySelectorAll('#kindSeg button').forEach(b => b.classList.toggle('on', b.dataset.kind === addKind));
   document.querySelectorAll('#shapeSeg button').forEach(b => b.classList.toggle('on', b.dataset.shape === addShape));
@@ -3669,6 +3792,7 @@ function refreshUI(){
   const b = getBox(sel), sb = selBoxes();
   $('#insp').hidden = !b || ro;
   $('#multiBtn').classList.toggle('on', multiPick); $('#multiBtn').setAttribute('aria-pressed', multiPick);
+  upd3Pill();
   $('#multiBtn').hidden = mode !== 'select';
   $('#edit3Btn').hidden = mode !== 'select' || study; $('#edit3Btn').classList.toggle('on', editTap3); $('#edit3Btn').setAttribute('aria-pressed', editTap3);
   if (b && !ro) {
@@ -3718,6 +3842,7 @@ function refreshUI(){
   else if (mode === 'add') h = addKind === 'outer' ? '대지를 탭하면 점선 외곽이 놓여요' : '대지나 상자 윗면·옆면을 탭하면 붙어서 놓여요';
   else if (b && sb.some(x => x.lock)) h = '잠긴 상자는 움직이지 않아요 · 잠금 풀기로 풀어요';
   else if (multiPick) h = uiMode === 'study' ? '탭할 때마다 선택에 더하거나 빼요' : '화면을 끌어 네모로 감싸면 그 안의 상자를 모두 골라요 · 짧게 누르면 하나씩 더하고 빼요';
+  else if (uiMode !== 'study' && keysEff() === 'sketchup' && hasMouse() && !sel) h = '빈 곳에서 끌면 네모로 여러 개 골라요 · 휠 클릭으로 돌리고 Shift+휠 클릭으로 옮겨요';
   else if (sb.length > 1) h = '선택한 것을 끌면 같이 움직여요 · 그룹 안 하나만 고르려면 한 번 더 탭';
   else if (b && sizeMode === b.id && !study) h = '수정 모드 · 파란 손잡이로 앞뒤·양옆·위아래를 늘이고 줄여요 · 바깥을 누르면 끝나요';
   else if (b) h = selSet.size === 1 ? '상자를 끌면 위치가 바뀌어요 · 두 번 누르거나 길게 누르면 수정 모드' : '파란 점을 끌면 크기·높이, 상자를 끌면 위치가 바뀌어요';
@@ -3772,7 +3897,7 @@ function copySel(cut){
   clip = JSON.parse(JSON.stringify({ boxes, notes })); clipCnt = {};
   const n = boxes.length + notes.length;
   if (cut) { if (boxes.some(b => b.lock)) { toast('잠긴 상자가 있어 복사만 했어요'); return true; } act('del'); toast(`${n}개를 잘라 냈어요 · Ctrl+V로 붙여 넣어요`); }
-  else toast(`${n}개를 복사했어요 · Ctrl+V로 붙여 넣어요`);
+  else tip('copy', `${n}개를 복사했어요 · Ctrl+V로 붙여 넣어요`, `${n}개 복사`);
   return true;
 }
 function pasteClip(){
@@ -4102,7 +4227,7 @@ const TOURS = {
     ['#sheetBar', '대지(층)', '+ 대지로 위층·지하층을 더해요. 층 탭을 두 번 누르면 이름·글자 크기와 함께 ‘1층으로 지정’(그 아래 층은 지하가 돼요)과 ‘n.5층 추가’가 있어요. n.5층은 대지 오른쪽 위 아이콘으로 접었다 펴요.'],
     ['#sbottom', '아래 상태줄', '배율·격자, 보기 방식, 레퍼런스, 그리고 건폐율·용적률·연면적이 한도와 함께 보여요.'],
     ['#saveBtn', '프로젝트에 저장', '눌러야 조원에게 보여요. 저장 전에는 나만 봐요.'],
-    [null, '키보드 단축키 (스케치업과 같은 키도 돼요)', 'Space(톡)·V·M 선택 · R 사각형 · C·O 원형 · A 반원 · L·P 다각형 · D 점선 꺾기 · W 동선 · T 자 · Shift+T 텍스트\n고른 도형: P·S 크기 바꾸기 · Q 돌리기 · E·Delete 지우기 · G 그룹 · Enter 이름·설명\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Y 또는 Ctrl+Shift+Z 다시 실행 · Ctrl(⌘)+C 복사 · Ctrl(⌘)+V 붙여넣기(다른 층 대지를 보고 있으면 그 층에) · Ctrl(⌘)+X 잘라내기 · Ctrl(⌘)+D 복제\nZ 이 대지에 맞추기 · Shift+Z 전체 보기 · H 또는 Space 누른 채 끌기 화면 이동 · Esc 선택 풀기\n방향키 한 칸 이동 · PageUp/PageDown 한 층 올리고 내리기'],
+    [null, '키보드 단축키 (스케치업과 같은 키도 돼요)', 'Space(톡)·V·M 선택 · R 사각형 · C·O 원형 · A 반원 · L·P 다각형 · D 점선 꺾기 · W 동선 · T 보조선 자 · Shift+T 텍스트\n고른 도형: P·S 크기 바꾸기 · Q 돌리기 · E·Delete 지우기 · G 그룹 · Enter 이름·설명\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Y 또는 Ctrl+Shift+Z 다시 실행 · Ctrl(⌘)+C 복사 · Ctrl(⌘)+V 붙여넣기(다른 층 대지를 보고 있으면 그 층에) · Ctrl(⌘)+X 잘라내기 · Ctrl(⌘)+D 복제\nZ 이 대지에 맞추기 · Shift+Z 전체 보기 · H 또는 Space 누른 채 끌기 화면 이동 · Esc 선택 풀기\n방향키 한 칸 이동 · PageUp/PageDown 한 층 올리고 내리기'],
     ['#menuBtn', '메뉴', '대지 크기·경계선과 높낮이, 플랜 저장, 댓글, 내보내기(PNG)가 여기 있어요.']
   ],
   exact: [
@@ -4438,7 +4563,12 @@ function onTap(e){
         for (const id of grp) on ? next.delete(id) : next.add(id);
         setSel([...next], on ? undefined : b.id);
       } else if (b.group && selSet.size > 1 && selSet.has(b.id) && grp.every(id => selSet.has(id))) setSel([b.id]);
-      else setSel(grp, b.id);
+      else {
+        const again = selSet.size === grp.length && grp.every(id => selSet.has(id)) && sel === b.id;
+        setSel(grp, b.id);
+        if (again) { const ids = [...new Set(hitsAt(e).map(x => x.object.userData.id).filter(Boolean))], t0 = now; // 두 번 누르기(수정 모드)가 아니면 잠시 뒤 뒤쪽 상자로
+          if (ids.length > 1) setTimeout(() => { if (tap3.t !== t0 || sel !== b.id) return; const nx = ids[(ids.indexOf(b.id) + 1) % ids.length], nb = getBox(nx); if (!nb) return; setSel(groupOf(nb).map(x => x.id), nx); buildBoxes(); refreshUI(); tip('cycle3', `겹친 상자 ${ids.indexOf(nx) + 1}/${ids.length} · 한 번 더 누르면 다음 상자`); }, 400); }
+      }
     }
     buildBoxes(); refreshUI(); return;
   }
@@ -4484,11 +4614,12 @@ window.addEventListener('keydown', e => {
     if (k === 'o') { setView('persp'); return; }
     if (k === 'g' && selSet.size > 1) { act('group'); return; }
     if (e.key === 'Escape' && sizeMode) { exitEdit3(); return; }
+    if (e.key === 'Escape' && multiPick) { multiPick = false; refreshUI(); return; } // 여러 개 선택 끝내기
   }
   if (!sel) return;
   const m = { ArrowLeft: 'mL', ArrowRight: 'mR', ArrowUp: 'mU', ArrowDown: 'mD', Delete: 'del', Backspace: 'del', PageUp: 'lvU', PageDown: 'lvD' }[e.key];
   if (m) { e.preventDefault(); act(m); }
-  if (e.key === 'Escape' && uiMode !== 'study') { clearSel(); buildBoxes(); refreshUI(); }
+  if (e.key === 'Escape' && uiMode !== 'study') { if (multiPick) { multiPick = false; refreshUI(); return; } clearSel(); buildBoxes(); refreshUI(); }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') { e.preventDefault(); act(e.shiftKey ? 'ungroup' : 'group'); }
 
 });
@@ -4503,7 +4634,9 @@ const GLASS_TAGS = { wall: '유리벽', win: '유리' }; // 색은 같고 표기
 const opName = dr => dr.kind === 'glass' ? GLASS_TAGS[dr.tag] || '유리벽' : '출입문';
 const DOOR_COLORS = { '': ['#2f7d6b', '#1f5f52'], main: ['#c2410c', '#9a3412'], sub: ['#2c5a8c', '#1e4370'], svc: ['#7a5a86', '#5c4166'], exit: ['#b91c1c', '#8a1414'] }; // 출입문 태그별 색 [평소, 골랐을 때]
 let flowPan = false, doorSnap = true;
-let rulers = [], doorMode = false, glassMode = false, straightMode = true, selDoor = null;
+let doorMode = false, glassMode = false, straightMode = true, selDoor = null;
+// 보조선 자는 작업물(P.guides)에 저장돼요. 아래 코드는 rulers로 읽어요
+Object.defineProperty(window, 'rulersArr', { get: () => (P && Array.isArray(P.guides)) ? P.guides : [] });
 let flowShow = true, flowEdit = false, flowType = 'main', selFlow = null, txtScale = 1.15, leCat = 'free', leCatTouched = false;
 let popKind = null, popFor = '', chipTap = { id: null, t: 0 }, tabTap = { id: null, t: 0 }, allView = false, roleMode = false, elevView = false;
 try { roleMode = localStorage.getItem('mass-role') === 'on'; } catch (e) {}
@@ -4567,7 +4700,7 @@ function elevSvg(px){
       let A = 0; for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n]; A += p[0] * q[1] - q[0] * p[1]; }
       const fc = []; // 면마다 바깥쪽 방향과 보이는 정도
       for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n], dx = q[0] - p[0], dz = q[1] - p[1], Ln = Math.hypot(dx, dz) || 1; const nx = (A > 0 ? dz : -dz) / Ln, nz = (A > 0 ? -dx : dx) / Ln; fc.push({ p, q, nx, nz, c: nx * e.f[0] + nz * e.f[1], len: Ln }); }
-      const openSp = b.cat === 'outdoor', col = colorOf(b), st = openSp ? '#4f7a3c' : '#2b2823';
+      const openSp = b.cat === 'outdoor' || b.cat === 'void', glassSp = b.cat === 'service', col = colorOf(b), st = b.cat === 'outdoor' ? '#4f7a3c' : b.cat === 'void' ? '#6b7886' : glassSp ? '#4e7896' : '#2b2823';
       let faces = '', lines = '', umin = Infinity, umax = -Infinity;
       fc.forEach((F, i) => {
         if (F.c <= 0.02 || F.len < 1e-6) return;
@@ -4584,7 +4717,7 @@ function elevSvg(px){
       if (!faces) continue;
       // 여러 층 상자는 층 사이에 옅은 선
       if (!(b.h > 0)) for (let k = 1; k < b.fl; k++) { const yy = Y(elevOf(b.lv + k)); lines += `<line x1="${r3(umin)}" y1="${r3(yy)}" x2="${r3(umax)}" y2="${r3(yy)}" stroke="${st}" stroke-opacity=".3" stroke-width="${r3(px(0.7))}"/>`; }
-      h += openSp ? `<g fill-opacity=".45" stroke-dasharray="${r3(px(5))} ${r3(px(3))}">${faces + lines}</g>` : faces + lines;
+      h += openSp ? `<g fill-opacity="${b.cat === 'void' ? '.15' : '.45'}" stroke-dasharray="${r3(px(5))} ${r3(px(3))}">${faces + lines}</g>` : glassSp ? `<g fill-opacity=".7">${faces + lines}</g>` : faces + lines;
       drawn.push({ x0: umin, x1: umax, z0: Y(y1), z1: Y(y0) });
       const lb = b.label || ''; if (lb) { const fs = px(11), tw = textW(lb, fs, 600); if (tw < umax - umin - px(6) && (y1 - y0) > px(14)) { const cx = (umin + umax) / 2, cy = Y((y0 + y1) / 2); labs.push({ k: drawn.length - 1, r: { x0: cx - tw / 2 - px(2), x1: cx + tw / 2 + px(2), z0: cy - fs * 0.7, z1: cy + fs * 0.5 }, t: `<text x="${r3(cx)}" y="${r3(cy + px(4))}" text-anchor="middle" font-size="${r3(fs)}" font-weight="600" fill="#27241f" fill-opacity=".8">${esc(lb)}</text>` }); } }
     }
@@ -5297,14 +5430,52 @@ function straightPts(pts){
   return out;
 }
 // 자: 화면 좌표 대신 대지 기준으로 저장(대지 배치가 바뀌어도 그대로)
+// 보조선 자: 화면 전체 좌표로 기억해요 (대지가 모두 한 격자라 다른 층 대지까지 그대로 이어져요)
 function rulersSvg(px){
   let h = '';
-  rulers.forEach((r, i) => {
-    const si = P.sheets.findIndex(s => s.id === r.sheet); if (si < 0 && !isSketch()) return; if (si >= 0 && !sheetVis(si)) return;
-    const ox = si >= 0 ? sheetOx(si) : 0, oy = si >= 0 ? sheetOy(si) : 0, a = [r.a[0] + ox, r.a[1] + oy], c = [r.b[0] + ox, r.b[1] + oy];
-    h += rulerLine(a, c, px, i);
-  });
+  rulersArr.forEach((r, i) => { h += xLine(r.a, r.b, px, i); });
   return h;
+}
+function xLine(a, c, px, i){
+  const L = Math.hypot(c[0] - a[0], c[1] - a[1]); if (L < 1e-6) return '';
+  const ux = (c[0] - a[0]) / L, uz = (c[1] - a[1]) / L, col = '#23857f'; // 대지선(벽돌색)과 헷갈리지 않게 청록색
+  const r = pc.getBoundingClientRect(), k = sv.k, vx = -sv.tx / k + r.width / k / 2, vz = -sv.ty / k + r.height / k / 2;
+  const R = Math.hypot(r.width, r.height) / k + Math.hypot(a[0] - vx, a[1] - vz) + 10;
+  const p = [a[0] - ux * R, a[1] - uz * R], q = [a[0] + ux * R, a[1] + uz * R];
+  let h = `<line x1="${r3(p[0])}" y1="${r3(p[1])}" x2="${r3(q[0])}" y2="${r3(q[1])}" stroke="${col}" stroke-opacity=".85" stroke-width="${r3(px(1.2))}" stroke-dasharray="${r3(px(10))} ${r3(px(5))}" pointer-events="none"/>`;
+  h += `<circle cx="${r3(a[0])}" cy="${r3(a[1])}" r="${r3(px(3.5))}" fill="${col}" pointer-events="none"/>`;
+  if (i != null && !edRO()) { const nx = -uz, nz = ux, d = [a[0] + nx * px(16), a[1] + nz * px(16)]; h += `<g data-role="rulerdel" data-ri="${i}" style="cursor:pointer"><title>이 보조선 지우기</title><circle cx="${r3(d[0])}" cy="${r3(d[1])}" r="${r3(px(13))}" fill="transparent"/><circle cx="${r3(d[0])}" cy="${r3(d[1])}" r="${r3(px(8))}" fill="${col}"/><path d="M${r3(d[0] - px(3))},${r3(d[1] - px(3))}L${r3(d[0] + px(3))},${r3(d[1] + px(3))}M${r3(d[0] + px(3))},${r3(d[1] - px(3))}L${r3(d[0] - px(3))},${r3(d[1] + px(3))}" stroke="#fff" stroke-width="${r3(px(1.6))}" stroke-linecap="round"/></g>`; }
+  return h;
+}
+// 보조선에 붙이기: 화면 10px 안으로 가까이 오면 선 위로 (두 선이 같이 가까우면 만나는 점으로)
+const xThr = () => px2w(10);
+function xLines(){ return rulersArr.map(r => { const L = Math.hypot(r.b[0] - r.a[0], r.b[1] - r.a[1]); if (L < 1e-9) return null; const ux = (r.b[0] - r.a[0]) / L, uz = (r.b[1] - r.a[1]) / L; return { a: r.a, ux, uz, nx: -uz, nz: ux }; }).filter(Boolean); }
+function xsnapPt(x, z){
+  if (!rulersArr.length) return null;
+  const thr = xThr(), near = [];
+  for (const l of xLines()) { const d = (x - l.a[0]) * l.nx + (z - l.a[1]) * l.nz; if (Math.abs(d) < thr) near.push({ ...l, d }); }
+  if (!near.length) return null;
+  near.sort((p, q) => Math.abs(p.d) - Math.abs(q.d));
+  const A = near[0], B = near.find(q => q !== A && Math.abs(q.ux * A.ux + q.uz * A.uz) < 0.98);
+  if (B) { const den = A.ux * B.uz - A.uz * B.ux, t = ((B.a[0] - A.a[0]) * B.uz - (B.a[1] - A.a[1]) * B.ux) / den; return [A.a[0] + A.ux * t, A.a[1] + A.uz * t]; }
+  return [x - A.d * A.nx, z - A.d * A.nz];
+}
+// 그리는 점: 보조선이 가까우면 선 위로, 아니면 지금처럼 격자에
+const snLine = (lx, lz, ox, oy) => { const q = xsnapPt(lx + ox, lz + oy); return q ? [r2(q[0] - ox), r2(q[1] - oy)] : [sn(lx), sn(lz)]; };
+// 옮기는 도형: 꼭짓점이 보조선에 가까우면 그 선에 맞닿게 (방향이 다른 선 두 개까지)
+// raw = 격자에 맞추기 전 손 위치까지의 차이: 손이 선에 가까우면(격자 칸이 커도) 선에 붙어요
+function xlineMove(items, raw = [0, 0]){
+  if (!rulersArr.length || !items.length) return [0, 0];
+  const thr = xThr(), pts = [];
+  for (const b of items) { const i = boxSheetIdx(b), ox = sheetOx(i), oy = sheetOy(i); for (const [x, z] of worldPts(b)) pts.push([x + ox, z + oy]); }
+  let sx = 0, sz = 0; const used = [];
+  for (const l of xLines()) {
+    if (used.some(u => Math.abs(u[0] * l.nx + u[1] * l.nz) > 0.9)) continue;
+    let best = null, bestRaw = Infinity;
+    for (const [x, z] of pts) { const d = (x + sx - l.a[0]) * l.nx + (z + sz - l.a[1]) * l.nz, dr = Math.abs(d + raw[0] * l.nx + raw[1] * l.nz); if (dr < thr && dr < bestRaw) { bestRaw = dr; best = d; } }
+    if (best != null) { sx -= best * l.nx; sz -= best * l.nz; used.push([l.nx, l.nz]); if (used.length >= 2) break; }
+  }
+  return [sx, sz];
 }
 function rulerLine(a, c, px, i){
   const L = Math.hypot(c[0] - a[0], c[1] - a[1]); if (L < 1e-6) return '';
@@ -5358,6 +5529,7 @@ function renderStudy(){
 }
 function renderStudyNow(){
   updPolyBar();
+  { const mp = $('#mpPill'); if (mp && !mp.hidden && multiPick) { const n = selSet.size, sp = mp.querySelector('span'); if (sp) sp.textContent = `여러 개 고르는 중${n ? ` · ${n}개` : ''} · 도형을 눌러 더하고 빼요`; } }
   if (!P || uiMode !== 'study') return;
   LAY = layFrozen && LAY ? LAY : computeLayout();
   let T = 1.15;
@@ -5542,12 +5714,16 @@ function renderStudyNow(){
         }
         W.forEach((p, i) => { const [x, z] = A(p), on = polySelV === i;
           over += `<circle cx="${r3(x)}" cy="${r3(z)}" r="${r3(px(15))}" fill="transparent" data-role="pv" data-i="${i}" style="cursor:grab"/><circle cx="${r3(x)}" cy="${r3(z)}" r="${r3(px(on ? 7.5 : 6))}" fill="${on ? '#2c5a8c' : '#fff'}" stroke="#2c5a8c" stroke-width="${r3(px(2))}" pointer-events="none"/>`; });
-      } else
+      } else {
+      // 화면에서 작은 도형: 변 가운데 손잡이는 빼고, 모서리 손잡이 잡는 범위도 줄여서 가운데를 끌면 도형이 옮겨지게
+      const scr = Math.min(b.w, b.d) * sv.k, small = scr < 64 && !sizeMode, hitU = small ? Math.min(hit, px(Math.max(12, scr * 0.36))) : hit;
       for (const [key, u, v] of [['nw', 0, 0], ['n', .5, 0], ['ne', 1, 0], ['e', 1, .5], ['se', 1, 1], ['s', .5, 1], ['sw', 0, 1], ['w', 0, .5]]) {
         if (seamSide.has(key)) continue; // 이음선이 있는 면은 이음선으로 조절
+        if (small && key.length === 1) continue;
         const [x, z] = at(u, v);
-        over += `<rect x="${r3(x - hit / 2)}" y="${r3(z - hit / 2)}" width="${r3(hit)}" height="${r3(hit)}" fill="transparent" data-role="handle" data-h="${key}"/>`;
+        over += `<rect x="${r3(x - hitU / 2)}" y="${r3(z - hitU / 2)}" width="${r3(hitU)}" height="${r3(hitU)}" fill="transparent" data-role="handle" data-h="${key}"/>`;
         over += `<rect x="${r3(x - hs / 2)}" y="${r3(z - hs / 2)}" width="${r3(hs)}" height="${r3(hs)}" rx="${r3(px(2))}" fill="${sizeMode ? '#2c5a8c' : '#fff'}" stroke="${sizeMode ? '#fff' : '#2c5a8c'}" stroke-width="${r3(px(2))}" pointer-events="none"/>`;
+      }
       }
     }
   } else if (!flowEdit && (selSet.size > 1 || (sb.length && sb[0].lock))) {
@@ -5609,7 +5785,10 @@ function renderStudyNow(){
   const cardsH = cardsSvg(px), badges = cardBadges(px), glow = targetGlow(px);
   const doorsH = doorsSvg(px);
   over += rulersSvg(px);
-  if (gs && gs.type === 'ruler' && gs.b) over += rulerLine(gs.a, gs.b, px, null);
+  if (gs && gs.type === 'move' && gs.moved && gs.guides) over += guidesSvg(gs.guides, px);
+  if (gs && gs.type === 'move' && gs.moved && gs.orig) over += ghostSvg(gs, px);
+  over += overlapSvg(px, gs);
+  if (gs && gs.type === 'ruler' && gs.b) over += xLine(gs.a, gs.b, px, null) + rulerLine(gs.a, gs.b, px, null);
   let h = `<defs>${defs}</defs><g transform="translate(${r3(sv.tx)},${r3(sv.ty)}) scale(${r3(k)})">${paper}`;
   h += flowEdit ? `<g opacity=".3" pointer-events="none">${shapes}${cardsH}${labelsH}</g><g pointer-events="none">${bound}</g>` : fbEdit ? `<g pointer-events="none" opacity=".82">${shapes + envH + badges + cardsH + labelsH}</g>` : shapes + envH + envProbeSvg(px) + glow + badges + cardsH + labelsH + sizeVeil; // 글씨는 사진 카드보다도 위에
   h += `<g${flowEdit ? '' : ' pointer-events="none" opacity=".45"'}>${flows}</g><g${flowEdit ? '' : ' pointer-events="none"'}>${doorsH}</g>${fbEdit ? '' : over}${fbSvg(px)}</g>`; // 동선 그리기가 아닐 땐 동선을 반투명하게
@@ -5634,7 +5813,7 @@ function showTag(e, text){
 }
 const hideTag = () => { $('#sTag').hidden = true; };
 const dimText = (w, d) => isSketch() ? `${f1(w)} × ${f1(d)} m` : `${cellsStr(w)} × ${cellsStr(d)}칸`;
-const HIST_MAX = 20; // 되돌리기는 최근 20번까지 (오래된 기록은 버려서 메모리를 아낌)
+const HIST_MAX = 100; // 되돌리기는 최근 100번까지 (한 번 끌기 = 한 번)
 function pushHist(start){ hist.push(start); if (hist.length > HIST_MAX) hist.splice(0, hist.length - HIST_MAX); fut = []; afterChange(); }
 function abortGesture(){
   if (gesture && ['move', 'resize', 'rotate'].includes(gesture.type) && gesture.moved) { P = JSON.parse(gesture.start); pruneSel(); }
@@ -5893,7 +6072,8 @@ pc.addEventListener('pointerdown', e => {
   if (popKind) { popKind = null; $('#pop').hidden = true; }
   LAY = computeLayout(); layFrozen = true;
   const w = toWorld(e), el = e.target.closest ? e.target.closest('[data-role]') : null;
-  const role = el ? el.dataset.role : null, id = el ? el.dataset.id : null, ro = edRO();
+  let role = el ? el.dataset.role : null, id = el ? el.dataset.id : null; const ro = edRO();
+  if (!id && (!role || role === 'sheet') && tool === 'select' && !e.shiftKey && pointers.size === 1 && !polyDraft) { const nb = nearSmallBox(e.clientX, e.clientY, e.pointerType === 'mouse' ? 8 : 14, e.pointerType === 'mouse' ? 28 : 44); if (nb) { id = nb; role = 'body'; } }
   if (e.button === 2 && id && (getBox(id) || getNote(id)) && (role === 'body' || role === 'note' || role === 'label')) { // 오른쪽 클릭 = 두 번 누르기 (이름·설명 쓰기)
     gesture = { type: 'none' }; if (!selSet.has(id)) setSel([id]);
     if (ro) setTimeout(() => showShapeInfo(id), 0); else setTimeout(() => openLabelEd(id), 0); studyUI(); return;
@@ -5902,7 +6082,7 @@ pc.addEventListener('pointerdown', e => {
   if (sizeMode) { // 크기 바꾸기 중: 이 도형의 손잡이만 움직이고, 바깥을 누르면 모드를 끝냄
     if (!(role === 'handle' && el.dataset.h !== 'rot' && el.dataset.h !== 'mv')) { if (!((role === 'body' || role === 'label') && id === sizeMode)) sizeMode = null; gesture = { type: 'none' }; studyUI(); return; }
   }
-  if (role === 'rulerdel') { gesture = { type: 'none' }; rulers.splice(Number(el.closest('[data-role=rulerdel]').dataset.ri), 1); renderStudy(); return; }
+  if (role === 'rulerdel') { gesture = { type: 'none' }; const ri = Number(el.closest('[data-role=rulerdel]').dataset.ri); commit(() => { if (Array.isArray(P.guides)) P.guides.splice(ri, 1); }); return; }
   if (role === 'halftog') { gesture = { type: 'none' }; toggleHalf(el.dataset.sheet); return; }
   if (role === 'compass') { gesture = { type: 'none' }; if (!ro) openNorth(); return; }
   if (role === 'elevtitle') { gesture = { type: 'none' }; elevDir = el.dataset.dir; setUiMode('exact'); requestAnimationFrame(() => setView('elev')); return; }
@@ -5990,8 +6170,8 @@ pc.addEventListener('pointerdown', e => {
   }
   if (!ro && role === 'sitev' && siteEdit) { gesture = { type: 'none' }; editSiteVertex(Number(el.dataset.vi)); return; }
   if (!ro && tool === 'ruler') {
-    if (rulers.length >= 5) { gesture = { type: 'none' }; toast('자는 5개까지 그릴 수 있어요. 끝의 × 를 눌러 지우고 그려 주세요'); return; }
-    const si = isSketch() ? -1 : sheetAt(w.x, w.z), p0 = [sn(w.x), sn(w.z)];
+    if (rulersArr.length >= 8) { gesture = { type: 'none' }; toast('보조선은 8개까지 그릴 수 있어요. 점 옆의 × 를 눌러 지우고 그려 주세요'); return; }
+    const si = isSketch() ? -1 : sheetAt(w.x, w.z), p0 = xsnapPt(w.x, w.z) || [sn(w.x), sn(w.z)];
     gesture = { type: 'ruler', si, a: p0, b: null }; return;
   }
   if (!ro && tool === 'site') {
@@ -6023,7 +6203,7 @@ pc.addEventListener('pointerdown', e => {
     return;
   }
   if (!ro && DRAW.includes(tool)) {
-    const si = sheetAt(w.x, w.z), ox = sheetOx(si), oy = sheetOy(si), x = sn(w.x - ox), z = sn(w.z - oy);
+    const si = sheetAt(w.x, w.z), ox = sheetOx(si), oy = sheetOy(si), [x, z] = snLine(w.x - ox, w.z - oy, ox, oy);
     activeSheet = P.sheets[si].id;
     gesture = { type: 'draw', tool, si, ox, oy, x0: x, z0: z, x1: x, z1: z, w0: { x: w.x - ox, z: w.z - oy } };
     return;
@@ -6098,7 +6278,7 @@ function onPcMove(e){
     gesture = { type: 'pan', x0: g.x0, y0: g.y0, tx0: g.tx0, ty0: g.ty0, panMoved: true };
     sAuto = false; sv.tx = g.tx0 + e.clientX - g.x0; sv.ty = g.ty0 + e.clientY - g.y0; renderStudy(); return;
   }
-  if (g.type === 'pan') { if (Math.hypot(e.clientX - g.x0, e.clientY - g.y0) > 4) { sAuto = false; if (!g.panMoved) { g.panMoved = true; clearTimeout(g.lp); } } if (!g.panMoved) return; sv.tx = g.tx0 + e.clientX - g.x0; sv.ty = g.ty0 + e.clientY - g.y0; renderStudy(); return; }
+  if (g.type === 'pan') { if (Math.hypot(e.clientX - g.x0, e.clientY - g.y0) > 4) { sAuto = false; if (!g.panMoved) { g.panMoved = true; clearTimeout(g.lp); } } if (!g.panMoved) return; pc.classList.add('panning'); sv.tx = g.tx0 + e.clientX - g.x0; sv.ty = g.ty0 + e.clientY - g.y0; renderStudy(); return; }
   const w = toWorld(e);
   if (g.type === 'fbdraw') {
     const lw = [w.x - g.ox, w.z - (g.oy || 0)];
@@ -6115,8 +6295,9 @@ function onPcMove(e){
     g.dx = dx; g.dz = dz; c.x = r2(g.o[0] + dx); c.z = r2(g.o[1] + dz); renderStudy(); return;
   }
   if (g.type === 'ruler') {
-    let b = [sn(w.x), sn(w.z)];
-    if (e.shiftKey) { const dx = b[0] - g.a[0], dz = b[1] - g.a[1], ang = Math.round(Math.atan2(dz, dx) / (Math.PI / 4)) * (Math.PI / 4), L = Math.hypot(dx, dz); b = [g.a[0] + Math.cos(ang) * L, g.a[1] + Math.sin(ang) * L]; }
+    let b = [w.x, w.z]; // 방향은 손 위치 그대로 (격자에 맞추면 방향이 틀어져요)
+    { const dx = b[0] - g.a[0], dz = b[1] - g.a[1], L = Math.hypot(dx, dz), a0 = Math.atan2(dz, dx), q = Math.PI / (e.shiftKey ? 4 : 2), ang = Math.round(a0 / q) * q;
+      if (L > 1e-9 && (e.shiftKey || Math.abs(a0 - ang) < 4 * Math.PI / 180)) b = [g.a[0] + Math.cos(ang) * L, g.a[1] + Math.sin(ang) * L]; } // 수평·수직 가까우면 딱 맞춤, Shift는 45°
     g.b = b; const L = Math.hypot(b[0] - g.a[0], b[1] - g.a[1]); showTag(e, isSketch() ? `${f2(L)}m` : `${cellsStr(L)}칸 · ${f2(L)}m`); renderStudy(); return;
   }
   if (g.type === 'door') {
@@ -6156,7 +6337,7 @@ function onPcMove(e){
     renderStudy(); return;
   }
   if (g.type === 'draw') {
-    g.x1 = sn(w.x - g.ox); g.z1 = sn(w.z - (g.oy || 0));
+    [g.x1, g.z1] = snLine(w.x - g.ox, w.z - (g.oy || 0), g.ox, g.oy || 0);
     if (g.tool === 'circle' && e.shiftKey) { const s = Math.max(Math.abs(g.x1 - g.x0), Math.abs(g.z1 - g.z0)); g.x1 = g.x0 + Math.sign(g.x1 - g.x0 || 1) * s; g.z1 = g.z0 + Math.sign(g.z1 - g.z0 || 1) * s; }
     const ww = Math.abs(g.x1 - g.x0), dd = Math.abs(g.z1 - g.z0);
     if (ww > 0 && dd > 0) showTag(e, dimText(ww, dd));
@@ -6220,13 +6401,20 @@ function onPcMove(e){
     showTag(e, dimText(b.w, b.d)); return;
   }
   if (g.type === 'move') {
-    if (!g.moved && Math.hypot(e.clientX - g.cx, e.clientY - g.cy) < 5) return;
-    if (selBoxes().some(x => x.lock)) { if (!g.warned) { toast('잠긴 도형은 움직이지 않아요. 잠금을 풀어 주세요'); g.warned = true; } return; }
+    if (!g.moved && Math.hypot(e.clientX - g.cx, e.clientY - g.cy) < (e.pointerType === 'mouse' ? 5 : 10)) return;
+    if (selBoxes().some(x => x.lock)) { gesture = { type: 'pan', x0: g.cx, y0: g.cy, tx0: sv.tx, ty0: sv.ty }; tip('lockpan', '잠긴 도형 위에서 끌면 화면이 움직여요 · 옮기려면 잠금을 풀어요'); return; }
     const dx = sn(w.x - g.w0.x), dz = sn(w.z - g.w0.z);
     g.moved = true;
-    if (dx === g.dx && dz === g.dz) return;
+    if (dx === g.dx && dz === g.dz && !rulersArr.length && !g.snapAny) return;
     g.dx = dx; g.dz = dz;
     for (const x of [...selBoxes(), ...selNotes(), ...P.cards.filter(c => selCards.has(c.id))]) { const o = g.orig[x.id]; if (o) { x.x = r2(o[0] + dx); x.z = r2(o[1] + dz); } }
+    { const raw = [w.x - g.w0.x - dx, w.z - g.w0.z - dz];
+      let [sx, sz] = xlineMove(selBoxes(), raw); g.guides = null;
+      if (!sx && !sz) { const o = objSnap(selBoxes(), raw); sx = o.sx; sz = o.sz; g.guides = o.guides; }
+      g.snapAny = true;
+      if (sx || sz) for (const x of [...selBoxes(), ...selNotes(), ...P.cards.filter(c => selCards.has(c.id))]) { if (g.orig[x.id]) { x.x = r2(x.x + sx); x.z = r2(x.z + sz); } }
+      const pb = getBox(g.id) || selBoxes()[0], po = pb && g.orig[pb.id];
+      if (po) { const mx = r2(pb.x - po[0]), mz = r2(pb.z - po[1]); showTag(e, (mx || mz) ? `${mx ? (mx > 0 ? '→ ' : '← ') + f2(Math.abs(mx)) + 'm' : ''}${mx && mz ? '  ' : ''}${mz ? (mz > 0 ? '↓ ' : '↑ ') + f2(Math.abs(mz)) + 'm' : ''}${g.guides ? ' · 맞춤' : ''}` : '제자리'); } }
     envApply(g);
     renderStudy();
     return;
@@ -6248,6 +6436,7 @@ function rehome(){
   }
 }
 function endStudyPointer(e){
+  pc.classList.remove('panning');
   if (!pointers.has(e.pointerId)) return;
   pointers.delete(e.pointerId);
   const g = gesture; if (!g) return;
@@ -6293,8 +6482,9 @@ function endStudyPointer(e){
     hideTag();
     if (!cancelled && g.b && Math.hypot(g.b[0] - g.a[0], g.b[1] - g.a[1]) > 1e-6) {
       const si = g.si, ox = si >= 0 ? sheetOx(si) : 0, oy = si >= 0 ? sheetOy(si) : 0;
-      rulers.push({ sheet: si >= 0 ? P.sheets[si].id : '', a: [g.a[0] - ox, g.a[1] - oy], b: [g.b[0] - ox, g.b[1] - oy] });
-      if (rulers.length === 5) toast('자는 5개까지예요. 끝의 × 로 지울 수 있어요');
+      commit(() => { if (!Array.isArray(P.guides)) P.guides = []; P.guides.push({ a: [r2(g.a[0]), r2(g.a[1])], b: [r2(g.b[0]), r2(g.b[1])] }); });
+      if (rulersArr.length === 1) tip('xline1', '보조선을 그었어요 · 도형을 옮기거나 그릴 때 이 선에 붙어요 · 작업과 같이 저장돼요 · 점 옆 × 로 지워요');
+      if (rulersArr.length === 8) toast('보조선은 8개까지예요. 점 옆 × 로 지울 수 있어요');
     }
     renderStudy(); return;
   }
@@ -6362,7 +6552,9 @@ function endStudyPointer(e){
     if (cancelled) { if (g.moved && (g.dx || g.dz || g.envChanged)) { P = JSON.parse(g.start); pruneSel(); } studyUI(); return; }
     if (g.held) { studyUI(); return; }
     if (g.single) setSel([g.id]);
-    tapCheck(g.id); studyUI(); return;
+    tapCheck(g.id); studyUI();
+    if (!g.single && selSet.size === 1 && sel === g.id) cycleStudy(g.id, e.clientX, e.clientY);
+    return;
   }
   if (g.type === 'tap') { tapCheck(g.id); studyUI(); return; }
   if (g.type === 'marquee') {
@@ -6575,7 +6767,7 @@ function delPolyVertex(){
   const { W, C } = polyWorld(b), i = polySelV; W.splice(i, 1); C.splice(i, 1); if (i > 0) C[i - 1] = null; else C[C.length - 1] = null;
   commit(() => { const x = getBox(sel); if (x) setPolyWorld(x, W, C); }); polySelV = null; studyUI();
 }
-function setTool(t){ tool = t; sizeMode = null; if (t !== 'poly') polyDraft = null; if (t === 'poly') toast('눌러서 꼭짓점을 찍어요 · 첫 점을 다시 누르거나 두 번 누르면 완성 · Esc로 취소'); if (t !== 'select') { if (multiPick) setMultiPick(false); rotMode = false; } if (t === 'outer') toast('점선 테두리를 가로질러 선을 그어 보세요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 원·반원을 따라 그리면 그 곡선대로 꺾여요'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
+function setTool(t){ tool = t; sizeMode = null; if (t !== 'poly') polyDraft = null; if (t === 'poly') tip('poly', '눌러서 꼭짓점을 찍어요 · 첫 점을 다시 누르거나 두 번 누르면 완성 · Esc로 취소'); if (t !== 'select') { if (multiPick) setMultiPick(false); rotMode = false; } if (t === 'outer') toast('점선 테두리를 가로질러 선을 그어 보세요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 원·반원을 따라 그리면 그 곡선대로 꺾여요'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
 document.querySelectorAll('#stools [data-tool]').forEach(b => b.onclick = () => setTool(b.dataset.tool));
 $('#zoomBtn').onclick = () => fitSheet(activeIdx(), true);
 $('#snapBtn').onclick = () => { studySnap = !studySnap; try { localStorage.setItem('mass-study-snap', studySnap ? 'on' : 'off'); } catch (e) {} studyUI(); toast(studySnap ? `격자가 보이고 반 칸(${f2(P.grid / 2)}m)씩 맞춰져요` : '격자 없이 자유롭게 움직여요'); };
@@ -7099,6 +7291,8 @@ function renderCtx(){
   }
   if (sb.length === 1 && !ns.length) {
     const b = sb[0];
+    { const nm = document.createElement('span'); nm.className = 'selname'; nm.textContent = (b.label || '').trim() || SHAPE_N[b.shape] || '도형'; nm.title = `고른 도형: ${nm.textContent}${b.lock ? ' (잠김)' : ''}`; ctx.appendChild(nm); }
+    if (!multiPick && !edRO()) btn('더 고르기', () => setMultiPick(true), 'morep').title = '지금 고른 것에 다른 도형을 눌러 더하거나 빼요 (손가락에서 편해요)';
     {
       if (b.shape === 'poly') {
         const ar = document.createElement('span'); ar.className = 'lbl'; ar.style.padding = '0 6px'; ar.textContent = `면적 ${f1(shapeArea(b))}㎡ · 점 ${b.pts.length}개`; ar.style.minWidth = '9.5em'; ctx.appendChild(ar);
@@ -7118,6 +7312,7 @@ function renderCtx(){
     if (b.group) btn('그룹 풀기', () => act('ungroup'));
     const linked = P.cards.filter(c => c.target === b.id);
     if (linked.length) btn(`사진 ${linked.length}`, () => focusCard(linked[(linked.findIndex(c => c.id === selCard) + 1) % linked.length].id));
+    { const lb = btn(b.lock ? '잠금 풀기' : '잠그기', () => act('lock'), 'lockb' + (b.lock ? ' on' : '')); lb.title = b.lock ? '다시 옮기고 고칠 수 있게 풀어요' : '실수로 옮기지 않게 잠가요 · 잠긴 도형 위에서 끌면 화면이 움직여요'; }
     ibtn(IC.copy, '복제', () => act('dup'), 'cpy'); trash(() => act('del'));
     if (rotMode) { const d = btn(`${b.ang}°`, () => commit(() => { const x = getBox(sel); if (x) x.ang = 0; }), 'deg'); d.title = '0°로 되돌리기'; } // 맨 끝에 붙여서 다른 버튼 자리가 안 바뀌게
   } else if (!sb.length) {
@@ -7127,12 +7322,14 @@ function renderCtx(){
     ibtn(IC.copy, '복제', () => act('dup'), 'cpy'); trash(() => act('del'));
   } else {
     const c = document.createElement('span'); c.className = 'cnt'; c.textContent = `${sb.length + ns.length}개${oneGroup ? ' · 그룹' : ''}`; ctx.appendChild(c);
+    btn(multiPick ? '고르기 끝' : '더 고르기', () => setMultiPick(!multiPick), 'morep' + (multiPick ? ' on' : '')).title = multiPick ? '여러 개 고르기를 끝내요 (고른 것은 그대로)' : '다른 도형을 눌러 더하거나 빼요';
     if (!oneGroup) btn('그룹으로 묶기', () => act('group'), 'on');
     if (grouped) btn('그룹 풀기', () => act('ungroup'));
     if (solids.length) { catBtn(); tagBtn(); const allEnv = solids.every(b => b.env) && new Set(solids.map(b => b.env)).size === 1; ibtn(IC.env, allEnv ? '점선 테두리 끄기' : '한 점선 테두리로 두르기', envToggle, allEnv ? 'on' : ''); }
     const ab = btn('정렬', () => togglePop('align'), popKind === 'align' ? 'ib open' : 'ib'); ab.dataset.pop = 'align'; ab.insertAdjacentHTML('beforeend', ' ' + IC.caret);
     if (misSel.length && !isSketch()) btn('칸에 맞추기', () => fixUnit(misSel));
     ibtn(IC.copy, '복제', () => act('dup'), 'cpy'); trash(() => act('del'));
+    btn('선택 풀기', () => { clearSel(); if (multiPick) setMultiPick(false); else studyUI(); }).title = '고른 것을 모두 풀어요 (Esc)';
   }
 }
 function renderPop(){
@@ -7172,7 +7369,7 @@ window.addEventListener('keydown', e => {
   if (e.key === 'Enter' && polyDraft) { e.preventDefault(); finishPoly(); return; }
   if ((e.key === 'Backspace' || e.key === 'Delete') && polyDraft) { e.preventDefault(); polyUndo(); return; }
   if ((e.key === 'Delete' || e.key === 'Backspace') && polySelV != null && sel && getBox(sel)?.shape === 'poly' && !edRO()) { e.preventDefault(); delPolyVertex(); return; }
-  if (e.key === 'Escape') { if (polyDraft) { polyDraft = null; renderStudy(); return; } if (sizeMode) sizeMode = null; else if (linkMode) linkMode = false; else if (flowEdit) { flowEdit = false; selFlow = null; } else if (rotMode) rotMode = false; else if (selCard) selCard = null; else clearSel(); studyUI(); return; }
+  if (e.key === 'Escape') { if (polyDraft) { polyDraft = null; renderStudy(); return; } if (sizeMode) sizeMode = null; else if (linkMode) linkMode = false; else if (flowEdit) { flowEdit = false; selFlow = null; } else if (rotMode) rotMode = false; else if (selCard) selCard = null; else { clearSel(); if (multiPick) { setMultiPick(false); return; } } studyUI(); return; }
   if (e.ctrlKey || e.metaKey || edRO()) return;
   if (selCard && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); removeCard(selCard); return; }
   if (flowEdit && selFlow && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); commit(() => { P.flows = P.flows.filter(y => y.id !== selFlow); }); selFlow = null; studyUI(); return; }
@@ -7371,7 +7568,7 @@ $('#fbBtn').onclick = () => {
   fbEdit = true; fbHidden.delete(me); fbShow = true; myFb = clone(fbData[me] || { marks: [] }); fbHist = [];
   clearSel(); selCard = null; document.body.classList.add('fbmode'); refreshFbSubs();
   if (uiMode !== 'study') setUiMode('study', true);
-  refreshUI(); toast('한 손가락으로 그려요 · 두 손가락으로 화면을 옮겨요');
+  refreshUI(); tip('fbdraw', '한 손가락으로 그려요 · 두 손가락으로 화면을 옮겨요');
 };
 $('#fbDone').onclick = () => exitFb();
 $('#fbUndo').onclick = () => { if (!fbHist.length) return; myFb.marks = JSON.parse(fbHist.pop()); fbChanged(); };
@@ -7423,6 +7620,8 @@ function renderPlans(){
 $('#planBtn').onclick = () => { $('#planName').value = ''; renderPlans(); $('#planModal').hidden = false; };
 $('#planClose').onclick = () => $('#planModal').hidden = true;
 $('#r2pBtn').onclick = () => { r2mOpen = false; r2UI(); $('#planBtn').click(); };
+$('#planQuick').onclick = () => $('#planBtn').click();
+addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 's' && P && !$('#editView').hidden && !$('#planBtn').hidden) { e.preventDefault(); $('#planBtn').click(); } });
 $('#planSave').onclick = async () => {
   if (edRO() || !P) return;
   if (plans.length >= 12) { toast('플랜은 12개까지 저장해요. 안 쓰는 플랜을 지워 주세요.'); return; }
@@ -7803,7 +8002,8 @@ boot();
 (() => {
   let mq = null, box = null;
   const ev = $('#editView');
-  const on3 = () => P && uiMode !== 'study' && multiPick && mode === 'select' && !sizeMode && !edRO();
+  const base3 = () => P && uiMode !== 'study' && mode === 'select' && !sizeMode && !edRO();
+  const on3 = e => base3() && (multiPick || (e.pointerType === 'mouse' && e.button === 0 && (keysEff() === 'sketchup' || e.shiftKey) && !pick(e)));
   const rectEl = () => box || (box = Object.assign(document.createElement('div'), { className: 'mq3', hidden: true }), ev.appendChild(box), box);
   function draw(){ const el = rectEl(), x = Math.min(mq.x0, mq.x1), y = Math.min(mq.y0, mq.y1), r = ev.getBoundingClientRect(); el.hidden = false; Object.assign(el.style, { left: (x - r.left) + 'px', top: (y - r.top) + 'px', width: Math.abs(mq.x1 - mq.x0) + 'px', height: Math.abs(mq.y1 - mq.y0) + 'px' }); }
   function hits(){
@@ -7824,10 +8024,11 @@ boot();
   }
   const stop = e => { e.stopPropagation(); e.preventDefault(); };
   ev.addEventListener('pointerdown', e => {
-    if (e.target !== cv || !on3()) return;
+    if (e.target !== cv) return;
     if (!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) { if (mq) { mq = null; rectEl().hidden = true; } return; }
+    if (!on3(e)) return;
     stop(e); clearTimeout(hold3);
-    mq = { x0: e.clientX, y0: e.clientY, x1: e.clientX, y1: e.clientY, pid: e.pointerId, moved: false };
+    mq = { x0: e.clientX, y0: e.clientY, x1: e.clientX, y1: e.clientY, pid: e.pointerId, moved: false, add: multiPick || e.shiftKey };
     try { cv.setPointerCapture(e.pointerId); } catch (err) {}
   }, true);
   ev.addEventListener('pointermove', e => {
@@ -7843,12 +8044,178 @@ boot();
     if (e.type === 'pointercancel') return;
     if (!m.moved) { onTap(e); return; } // 짧게 누름: 하나씩 더하고 빼기
     mq = m; const got = hits(); mq = null;
-    const next = new Set(selSet); for (const id of got) { const b = getBox(id); if (b) for (const x of groupOf(b)) next.add(x.id); }
+    const next = m.add ? new Set(selSet) : new Set(); for (const id of got) { const b = getBox(id); if (b) for (const x of groupOf(b)) next.add(x.id); }
     setSel([...next]); buildBoxes(); refreshUI();
-    toast(got.size ? `${selSet.size}개 선택 · 더 끌어서 더하거나, 눌러서 빼요` : '네모 안에 걸친 상자가 없어요');
+    if (got.size) tip('mq3' + (m.add ? 'a' : ''), `${selSet.size}개 선택${m.add ? ' · 더 끌어서 더하거나, 눌러서 빼요' : ' · Shift를 누르고 끌면 더해요'}`); else toast('네모 안에 걸친 상자가 없어요');
   };
   ev.addEventListener('pointerup', end, true); ev.addEventListener('pointercancel', end, true);
 })();
+
+// 3D 조작 방식 고르기 창 (처음 3D를 켤 때 한 번, 그 뒤로는 메뉴 → 조작 방식)
+function openKeys3d(first){
+  let m = $('#keysModal');
+  if (!m) {
+    m = document.createElement('div'); m.className = 'modal'; m.id = 'keysModal'; m.hidden = true;
+    m.innerHTML = `<div class="mbox" role="dialog" aria-labelledby="kmT"><h2 id="kmT">3D 조작 방식</h2>
+      <p class="sub" id="kmD"></p>
+      <button type="button" class="xopt kopt" data-k="mobile"><b>모바일과 같게</b><span class="lbl">왼쪽 끌기 = 돌리기 · 휠 = 확대·축소 · 오른쪽 끌기 = 화면 이동<br>여러 개 고르기: ‘여러 개 선택’ 버튼, 또는 빈 곳에서 Shift + 왼쪽 끌기</span></button>
+      <button type="button" class="xopt kopt" data-k="sketchup"><b>스케치업과 같게</b><span class="lbl">휠 클릭 끌기 = 돌리기 · Shift + 휠 클릭 끌기 = 화면 이동 · 휠 = 확대·축소<br>빈 곳에서 왼쪽 끌기 = 네모로 여러 개 고르기 (Shift를 누르면 더하기)</span></button>
+      <p class="sub">손가락 조작(휴대폰·아이패드)은 어느 쪽이든 그대로예요. 나중에 메뉴 → ‘조작 방식’에서 바꿀 수 있어요.</p>
+      <div class="mact"><button class="btn" id="kmCancel">나중에</button><button class="btn primary" id="kmOk">이걸로 할게요</button></div></div>`;
+    document.body.appendChild(m);
+    m.querySelectorAll('.kopt').forEach(b => b.onclick = () => { m.dataset.pick = b.dataset.k; m.querySelectorAll('.kopt').forEach(x => x.classList.toggle('on', x === b)); });
+    $('#kmCancel').onclick = () => { m.hidden = true; };
+    $('#kmOk').onclick = () => {
+      keys3d = m.dataset.pick === 'sketchup' ? 'sketchup' : 'mobile'; try { localStorage.setItem('mass-3d-keys', keys3d); } catch (e) {}
+      m.hidden = true; applyKeys(); refreshUI(); toast(keys3d === 'sketchup' ? '스케치업과 같은 조작으로 바꿨어요' : '모바일과 같은 조작으로 바꿨어요');
+    };
+  }
+  m.dataset.pick = keysEff();
+  m.querySelectorAll('.kopt').forEach(x => x.classList.toggle('on', x.dataset.k === m.dataset.pick));
+  $('#kmD').textContent = first ? '3D에서 마우스로 돌리고 옮기는 방식을 골라 주세요.' : '마우스로 3D를 다루는 방식을 바꿔요.';
+  $('#kmCancel').textContent = first ? '나중에' : '취소';
+  m.hidden = false;
+}
+$('#keysBtn').onclick = () => { document.body.classList.remove('menuOpen'); openKeys3d(false); };
+// 3D 여러 개 선택 중 안내 막대: 몇 개 골랐는지 · 모두 풀기 · 끝내기
+function upd3Pill(){
+  let el = $('#mpPill3');
+  const on = multiPick && uiMode !== 'study' && P && !$('#editView').hidden;
+  if (!on) { if (el) el.hidden = true; return; }
+  if (!el) {
+    el = document.createElement('div'); el.id = 'mpPill3'; el.className = 'mpPill mp3';
+    el.innerHTML = '<span id="mp3T"></span><button id="mp3Clr">모두 풀기</button><button id="mp3End">끝내기</button>';
+    $('#editView').appendChild(el);
+    $('#mp3Clr').onclick = () => { clearSel(); buildBoxes(); refreshUI(); };
+    $('#mp3End').onclick = () => { multiPick = false; refreshUI(); };
+  }
+  el.hidden = false; el.style.top = ($('#topArea').offsetHeight + 10) + 'px';
+  const n = selBoxes().length;
+  $('#mp3T').textContent = `여러 개 고르는 중${n ? ` · ${n}개` : ''} · 끌어서 네모로 감싸거나 눌러서 더하고 빼요`;
+  $('#mp3Clr').hidden = !n;
+}
+
+// 사용법 안내는 같은 내용을 3번까지만 (그다음엔 short가 있으면 짧게, 없으면 안 띄움)
+function tip(key, msg, short){
+  let n = 0; try { n = Number(localStorage.getItem('mass-tip-' + key)) || 0; localStorage.setItem('mass-tip-' + key, String(n + 1)); } catch (e) {}
+  if (n < 3) toast(msg); else if (short) toast(short);
+}
+// ---- 도형끼리 붙기: 옮기는 도형 묶음의 왼쪽·가운데·오른쪽(위·가운데·아래)이 같은 대지·같은 층의 다른 도형과 화면 10px 안이면 맞춰요
+function boxAABB(b){ const i = boxSheetIdx(b), ox = sheetOx(i), oy = sheetOy(i); let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity; for (const [x, z] of worldPts(b)) { x0 = Math.min(x0, x + ox); x1 = Math.max(x1, x + ox); z0 = Math.min(z0, z + oy); z1 = Math.max(z1, z + oy); } return { x0, z0, x1, z1, si: i }; }
+const lvRange = b => [b.lv, b.lv + Math.max(b.fl, 0.5)];
+function objSnap(items, raw){
+  const out = { sx: 0, sz: 0, guides: null };
+  if (!items.length || !P) return out;
+  const ids = new Set(items.map(b => b.id)), A = items.map(boxAABB), si = A[0].si;
+  if (A.some(a => a.si !== si)) return out;
+  const M = { x0: Math.min(...A.map(a => a.x0)), x1: Math.max(...A.map(a => a.x1)), z0: Math.min(...A.map(a => a.z0)), z1: Math.max(...A.map(a => a.z1)) };
+  const lr = [Math.min(...items.map(b => lvRange(b)[0])), Math.max(...items.map(b => lvRange(b)[1]))];
+  const thr = px2w(10), others = P.boxes.filter(o => !ids.has(o.id) && !o.sheet === !items[0].sheet && (o.sheet || '') === (items[0].sheet || '') && lvRange(o)[0] < lr[1] - 1e-9 && lvRange(o)[1] > lr[0] + 1e-9 && boxSheetIdx(o) === si);
+  if (!others.length) return out;
+  const mine = ax => ax === 'x' ? [M.x0, (M.x0 + M.x1) / 2, M.x1] : [M.z0, (M.z0 + M.z1) / 2, M.z1];
+  const best = { x: null, z: null };
+  for (const o of others) {
+    const B = boxAABB(o), near = Math.max(0, Math.max(B.z0 - M.z1, M.z0 - B.z1), Math.max(B.x0 - M.x1, M.x0 - B.x1));
+    if (near > px2w(260)) continue; // 너무 멀리 있는 도형과는 맞추지 않음
+    for (const ax of ['x', 'z']) {
+      const them = ax === 'x' ? [B.x0, (B.x0 + B.x1) / 2, B.x1] : [B.z0, (B.z0 + B.z1) / 2, B.z1], r = ax === 'x' ? raw[0] : raw[1];
+      mine(ax).forEach((v, mi) => them.forEach((t, ti) => {
+        if ((mi === 1) !== (ti === 1)) return; // 가운데는 가운데끼리, 변은 변끼리 (붙이기·나란히)
+        const d = t - v, dr = Math.abs(d - r);
+        if (dr < thr && (!best[ax] || dr < best[ax].dr)) best[ax] = { d, dr, t, B };
+      }));
+    }
+  }
+  const gl = [];
+  if (best.x) { out.sx = best.x.d; const B = best.x.B; gl.push({ x: best.x.t, a: Math.min(M.z0, B.z0), b: Math.max(M.z1, B.z1) }); }
+  if (best.z) { out.sz = best.z.d; const B = best.z.B; gl.push({ z: best.z.t, a: Math.min(M.x0, B.x0), b: Math.max(M.x1, B.x1) }); }
+  out.guides = gl.length ? gl : null;
+  return out;
+}
+function guidesSvg(gl, px){
+  let h = '';
+  for (const q of gl) {
+    const e = px(14);
+    h += q.x != null ? `<line x1="${r3(q.x)}" y1="${r3(q.a - e)}" x2="${r3(q.x)}" y2="${r3(q.b + e)}" stroke="#d4387a" stroke-width="${r3(px(1.3))}" pointer-events="none"/>` : `<line x1="${r3(q.a - e)}" y1="${r3(q.z)}" x2="${r3(q.b + e)}" y2="${r3(q.z)}" stroke="#d4387a" stroke-width="${r3(px(1.3))}" pointer-events="none"/>`;
+  }
+  return h;
+}
+// ---- 겹침 표시: 고른 도형(또는 옮기는 중인 도형)이 같은 층의 다른 매스와 겹친 부분에 빨간 빗금 (보이드·외부 공간은 겹쳐도 괜찮아서 빼요)
+const isConvex = pts => { let sg = 0; for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length], c = pts[(i + 2) % pts.length], cr = (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]); if (Math.abs(cr) < 1e-9) continue; const s1 = Math.sign(cr); if (!sg) sg = s1; else if (s1 !== sg) return false; } return true; };
+function clipPoly(subj, clip){ // Sutherland–Hodgman (clip는 볼록)
+  let area = 0; for (let i = 0; i < clip.length; i++) { const a = clip[i], b = clip[(i + 1) % clip.length]; area += a[0] * b[1] - b[0] * a[1]; }
+  const sgn = area >= 0 ? 1 : -1; let out = subj;
+  for (let i = 0; i < clip.length && out.length; i++) {
+    const a = clip[i], b = clip[(i + 1) % clip.length], inside = p => sgn * ((b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])) >= -1e-9;
+    const inp = out; out = [];
+    for (let j = 0; j < inp.length; j++) {
+      const P1 = inp[j], P0 = inp[(j + inp.length - 1) % inp.length], i1 = inside(P1), i0 = inside(P0);
+      const X = () => { const dx = P1[0] - P0[0], dz = P1[1] - P0[1], ex = b[0] - a[0], ez = b[1] - a[1], den = dx * ez - dz * ex; if (Math.abs(den) < 1e-12) return P1; const t = ((a[0] - P0[0]) * ez - (a[1] - P0[1]) * ex) / den; return [P0[0] + dx * t, P0[1] + dz * t]; };
+      if (i1) { if (!i0) out.push(X()); out.push(P1); } else if (i0) out.push(X());
+    }
+  }
+  return out;
+}
+const ovOK = b => b.kind === 'solid' && b.cat !== 'void' && b.cat !== 'outdoor';
+function overlapSvg(px, gs){
+  if (!P || isSketch()) return '';
+  const subj = selBoxes().filter(ovOK); if (!subj.length || subj.length > 12) return '';
+  let h = '', n = 0;
+  for (const b of subj) {
+    const A = boxAABB(b), Pb = worldPts(b).map(([x, z]) => [x + sheetOx(A.si), z + sheetOy(A.si)]), cb = isConvex(Pb), rb = lvRange(b);
+    for (const o of P.boxes) {
+      if (o.id === b.id || selSet.has(o.id) && o.id < b.id || !ovOK(o) || (o.sheet || '') !== (b.sheet || '')) continue;
+      const ro = lvRange(o); if (!(ro[0] < rb[1] - 1e-9 && ro[1] > rb[0] + 1e-9)) continue;
+      const B = boxAABB(o); if (B.si !== A.si || B.x0 >= A.x1 - 1e-6 || A.x0 >= B.x1 - 1e-6 || B.z0 >= A.z1 - 1e-6 || A.z0 >= B.z1 - 1e-6) continue;
+      const Po = worldPts(o).map(([x, z]) => [x + sheetOx(B.si), z + sheetOy(B.si)]);
+      let I = cb ? clipPoly(Po, Pb) : isConvex(Po) ? clipPoly(Pb, Po) : [[Math.max(A.x0, B.x0), Math.max(A.z0, B.z0)], [Math.min(A.x1, B.x1), Math.max(A.z0, B.z0)], [Math.min(A.x1, B.x1), Math.min(A.z1, B.z1)], [Math.max(A.x0, B.x0), Math.min(A.z1, B.z1)]];
+      if (I.length < 3 || polyArea(I) < 0.05) continue;
+      n++; h += `<path d="M${I.map(q => r3(q[0]) + ',' + r3(q[1])).join('L')}Z" fill="url(#ovh)" stroke="#c0392b" stroke-width="${r3(px(1.2))}" stroke-dasharray="${r3(px(4))} ${r3(px(3))}" pointer-events="none"><title>다른 매스와 겹쳐요 (건축·연면적은 겹친 곳을 한 번만 세요)</title></path>`;
+    }
+  }
+  if (!n) return '';
+  return `<defs><pattern id="ovh" patternUnits="userSpaceOnUse" width="${r3(px(7))}" height="${r3(px(7))}" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="${r3(px(7))}" stroke="#c0392b" stroke-opacity=".55" stroke-width="${r3(px(1.4))}"/></pattern></defs>` + h;
+}
+// ---- 스터디: 겹친 도형 차례로 고르기 (이미 고른 도형을 다시 누르면 바로 아래 도형)
+function cycleStudy(id, cx, cy){
+  const t0 = lastTap.t;
+  const stack = [...new Set(document.elementsFromPoint(cx, cy).map(el => el.closest && el.closest('#pc [data-role=body]')).filter(Boolean).map(el => el.dataset.id).filter(Boolean))];
+  if (stack.length < 2) return;
+  setTimeout(() => { // 두 번 누르기(이름 쓰기)가 아니었을 때만
+    if (lastTap.t !== t0 || lastTap.id !== id || sel !== id || gesture) return;
+    const nx = stack[(stack.indexOf(id) + 1) % stack.length], nb = getBox(nx); if (!nb) return;
+    setSel(groupOf(nb).map(x => x.id), nx); studyUI();
+    tip('cycle', `겹친 도형 ${stack.indexOf(nx) + 1}/${stack.length} · 한 번 더 누르면 다음 도형`);
+  }, 400);
+}
+
+// 작은 도형 고르기 도움: 화면에서 작은(짧은 변이 마우스 28px·손가락 44px 미만) 도형만, 반경 안에 '하나만' 있을 때 (옆 도형을 잘못 고르지 않게)
+function nearSmallBox(cx, cy, rad, minSide = 28){
+  const best = new Map();
+  for (const el of document.querySelectorAll('#pc [data-role=body]')) {
+    const id = el.dataset.id; if (!id) continue;
+    const r = el.getBoundingClientRect(); if (Math.min(r.width, r.height) >= minSide || !r.width) continue;
+    const dx = Math.max(r.left - cx, 0, cx - r.right), dy = Math.max(r.top - cy, 0, cy - r.bottom), d = Math.hypot(dx, dy);
+    if (d <= rad && (!best.has(id) || d < best.get(id))) best.set(id, d);
+  }
+  if (!best.size) return null;
+  const arr = [...best.entries()].sort((a, b) => a[1] - b[1]);
+  if (arr.length > 1 && arr[1][1] - arr[0][1] < 6) return null; // 둘이 비슷하게 가까우면 고르지 않음
+  // 실제로 다른 (큰) 도형 위를 누른 게 아닌지: 누른 자리에 다른 도형 몸체가 있으면 맡기지 않음
+  const under = document.elementsFromPoint(cx, cy).find(el => el.closest && el.closest('#pc [data-role=body]'));
+  return under ? null : arr[0][0];
+}
+// 옮기는 중: 원래 자리를 흐린 점선으로
+function ghostSvg(g, px){
+  let h = '';
+  for (const b of selBoxes()) {
+    const o = g.orig[b.id]; if (!o) continue;
+    const dx = o[0] - b.x, dz = o[1] - b.z; if (Math.abs(dx) < 1e-6 && Math.abs(dz) < 1e-6) continue;
+    const i = boxSheetIdx(b), ox = sheetOx(i) + dx, oy = sheetOy(i) + dz;
+    h += `<path d="M${worldPts(b).map(([x, z]) => r3(x + ox) + ',' + r3(z + oy)).join('L')}Z" fill="#2c5a8c" fill-opacity=".05" stroke="#2c5a8c" stroke-opacity=".55" stroke-width="${r3(px(1.2))}" stroke-dasharray="${r3(px(5))} ${r3(px(4))}" pointer-events="none"/>`;
+  }
+  return h;
+}
 </script>
 </body>
 </html>
