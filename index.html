@@ -4665,7 +4665,7 @@ cv.addEventListener('pointermove', e => {
     if (nf !== b.fl || b.h) { b.fl = nf; b.h = 0; drag.moved = true; buildBoxes(); liveHint(b); clearTimeout(statT); statT = setTimeout(refreshUI, 80); }
     return;
   }
-  const snapD = v => snapOn() ? Math.round(v / P.grid) * P.grid : Math.round(v * 4) / 4;
+  const snapD = v => snapOn() ? Math.round(v / (P.grid / 2)) * (P.grid / 2) : Math.round(v * 4) / 4; // 2D와 같게 반 칸씩
   let ax = drag.lockAx || moveAxis, dx = 0, dz = 0, dl = 0;
   if (vertMove3(ax)) { // 위아래: 화면을 향한 세로면에서 끌기 · 층 단위
     const q = dragVert3(e, b); if (!q) return;
@@ -6257,11 +6257,11 @@ pc.addEventListener('pointerdown', e => {
   if (sizeMode) { // 크기 바꾸기 중: 이 도형의 손잡이만 움직이고, 바깥을 누르면 모드를 끝냄
     if (!(role === 'handle' && el.dataset.h !== 'rot' && el.dataset.h !== 'mv')) { if (!((role === 'body' || role === 'label') && id === sizeMode)) sizeMode = null; gesture = { type: 'none' }; studyUI(); return; }
   }
-  if (role === 'rulerdel') { gesture = { type: 'none' }; const ri = Number(el.closest('[data-role=rulerdel]').dataset.ri); commit(() => { if (Array.isArray(P.guides)) P.guides.splice(ri, 1); }); return; }
-  if (role === 'halftog') { gesture = { type: 'none' }; toggleHalf(el.dataset.sheet); return; }
-  if (role === 'compass') { gesture = { type: 'none' }; if (!ro) openNorth(); return; }
-  if (role === 'elevgo') { sAuto = false; gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty, elevGo: el.dataset.dir }; return; } // 짧게 눌렀다 떼야 3D (끌면 화면 이동)
-  if (role === 'sheettitle') { gesture = { type: 'none' }; activateSheet(el.dataset.sheet, true); return; }
+  if (role === 'rulerdel') { const ri = Number(el.closest('[data-role=rulerdel]').dataset.ri); tapAct3(e, () => commit(() => { if (Array.isArray(P.guides)) P.guides.splice(ri, 1); })); return; }
+  if (role === 'halftog') { const sid = el.dataset.sheet; tapAct3(e, () => toggleHalf(sid)); return; }
+  if (role === 'compass') { tapAct3(e, () => { if (!ro) openNorth(); }); return; }
+  if (role === 'elevgo') { const d = el.dataset.dir; tapAct3(e, () => { elevDir = d; setUiMode('exact'); requestAnimationFrame(() => setView('elev')); }); return; } // 짧게 눌렀다 떼야 3D (끌면 화면 이동)
+  if (role === 'sheettitle') { const sid = el.dataset.sheet; tapAct3(e, () => activateSheet(sid, true)); return; }
   if (linkMode && !flowEdit) {
     const c = P.cards.find(x => x.id === selCard);
     linkMode = false;
@@ -6619,7 +6619,7 @@ function endStudyPointer(e){
   if (pointers.size) return;
   gesture = null; hideTag(); layFrozen = false;
   const cancelled = e.type === 'pointercancel';
-  if (g.elevGo && !cancelled && Math.hypot(e.clientX - g.x0, e.clientY - g.y0) < 6) { elevDir = g.elevGo; setUiMode('exact'); requestAnimationFrame(() => setView('elev')); return; }
+  if (g.tapAct && !cancelled && !g.panMoved && Math.hypot(e.clientX - g.x0, e.clientY - g.y0) < 8) { g.tapAct(); return; } // 누른 채 움직이지 않고 뗐을 때만 실행
   if (g.type === 'none') return;
   if (g.type === 'pvdrag' || g.type === 'pcdrag') { if (g.moved && !cancelled) pushHist(g.start); else if (cancelled && g.moved) P = JSON.parse(g.start); studyUI(); return; }
   if (g.type === 'fbdraw') { if (!cancelled) { const m = fbMarkFrom(g, false); if (m) { m.id = uid(); fbPush(); myFb.marks.push(m); fbChanged(); return; } } renderStudy(); return; }
@@ -7242,7 +7242,7 @@ $('#cmDel').onclick = async () => {
 function updateFade(el){ const max = el.scrollWidth - el.clientWidth; el.classList.toggle('fadeR', max > 2 && el.scrollLeft < max - 2); el.classList.toggle('fadeL', max > 2 && el.scrollLeft > 2); }
 function dragScroll(el){
   let st = null;
-  el.addEventListener('pointerdown', e => { if (e.pointerType === 'touch' || e.button > 0) return; st = { x: e.clientX, sl: el.scrollLeft, moved: false, id: e.pointerId }; });
+  el.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button > 0) return; st = { x: e.clientX, sl: el.scrollLeft, moved: false, id: e.pointerId }; });
   el.addEventListener('pointermove', e => {
     if (!st || e.pointerId !== st.id) return;
     const dx = e.clientX - st.x;
@@ -8519,12 +8519,18 @@ function belowCheck3(){
   addEventListener('scroll', () => { if (ed() && (scrollX || scrollY)) scrollTo(0, 0); }, { passive: true });
   const ev = document.getElementById('editView'); if (ev) ev.addEventListener('scroll', () => { if (ev.scrollTop || ev.scrollLeft) { ev.scrollTop = 0; ev.scrollLeft = 0; } }, { passive: true });
   document.addEventListener('gesturestart', e => { if (ed()) e.preventDefault(); });
+  let t0 = null; // 누른 자리: 펜·손가락이 살짝 떨리는 정도로는 막지 않아요 (그래야 펜으로 버튼이 눌려요)
+  document.addEventListener('touchstart', e => { const q = e.touches[0]; t0 = q ? { x: q.clientX, y: q.clientY } : null; }, { passive: true });
   document.addEventListener('touchmove', e => {
     if (!ed() || !e.cancelable) return;
-    const t = e.target; if (t && t.closest && t.closest('#pc, #cv')) return; // 도면·3D 화면은 자기 손가락 조작 그대로
-    if (e.touches.length > 1 || !canScroll(t)) e.preventDefault();
+    const t = e.target; if (t && t.closest && t.closest('#pc, #cv')) return; // 도면·3D 화면은 자기 조작 그대로
+    if (e.touches.length > 1) { e.preventDefault(); return; }
+    const q = e.touches[0]; if (t0 && q && Math.hypot(q.clientX - t0.x, q.clientY - t0.y) < 10) return;
+    if (!canScroll(t)) e.preventDefault();
   }, { passive: false });
 })();
+
+function tapAct3(e, fn){ gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty, tapAct: fn }; } // 누른 채 끌면 화면 이동, 그대로 떼면 fn
 
 // 3D 여러 개 선택 중 안내 막대: 몇 개 골랐는지 · 모두 풀기 · 끝내기
 function upd3Pill(){
