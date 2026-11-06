@@ -1353,6 +1353,113 @@ html.editing body.study .ctx button.on{background:var(--sb-sage) !important;bord
   html.editing body.study #topArea .bar{border-radius:12px;padding:4px}
   html.editing body.study .sbottom .sum{margin-left:6px}
 }
+/* ===== 7차: 3D '건축 모형 작업대' (3D 편집 화면에만, 2D 스터디는 그대로) ===== */
+html.editing body:not(.study){--sb-paper:#f8f5ef;--sb-desk:#ebe6dc;--sb-line:#e0d8ca;--sb-line2:#ebe5da;--sb-ink:#2f2a25;--sb-mute:#7a7065;--sb-sage:#56705d;--sb-sage-t:#e6ece5;--sb-brown:#7a5a43;--sb-sh:0 1px 2px rgba(60,45,30,.05),0 4px 14px rgba(60,45,30,.05)}
+/* 머리줄: 2D와 같은 노트 머리 */
+html.editing body:not(.study) #topArea .bar{background:var(--sb-paper);border:1px solid var(--sb-line);border-radius:12px;padding:4px 5px;box-shadow:var(--sb-sh);pointer-events:auto}
+html.editing body:not(.study) #topArea .bar .icon,html.editing body:not(.study) #topArea .bar #tUndo,html.editing body:not(.study) #topArea .bar #tRedo,html.editing body:not(.study) #topArea .bar .help{border-color:transparent !important;background:transparent !important;box-shadow:none !important;color:var(--sb-ink)}
+html.editing body:not(.study) #topArea .bar .icon:hover:not(:disabled),html.editing body:not(.study) #topArea .bar .help:hover{background:var(--sb-sage-t) !important}
+html.editing body:not(.study) #topArea .bar .name{border-color:transparent;background:transparent;box-shadow:none;font-size:16px;font-weight:700;color:var(--sb-ink)}
+html.editing body:not(.study) #topArea .bar .name:focus{background:#fff;border-color:var(--sb-line)}
+html.editing body:not(.study) #topArea .bar #backBtn{color:var(--sb-mute)}
+html.editing body:not(.study) #topArea .bar #backBtn::before{content:'‹ ';font-size:17px;line-height:1}
+html.editing body:not(.study) #uiModeSeg{background:var(--sb-desk);border-color:transparent !important;border-radius:9px;padding:2px}
+html.editing body:not(.study) #uiModeSeg button{border-radius:7px;background:transparent;color:var(--sb-mute)}
+html.editing body:not(.study) #uiModeSeg button.on{background:var(--sb-paper) !important;color:var(--sb-ink) !important;box-shadow:0 1px 2px rgba(60,45,30,.12);border-color:transparent !important}
+html.editing body:not(.study) .savebtn{background:#2f2a25 !important;border-color:#2f2a25 !important;color:#fbf8f2 !important;border-radius:9px !important;font-weight:700}
+html.editing body:not(.study) .savebtn:hover{background:#1f1b17 !important}
+html.editing body:not(.study) .savebtn.saved{background:transparent !important;color:#2f2a25 !important;border-color:#cfc5b6 !important}
+html.editing body:not(.study) #syncPill{background:transparent;border-color:transparent;padding:0 4px;font-size:12px}
+/* 수치 줄: 납작한 한 장 */
+html.editing body:not(.study) #stats{background:var(--sb-paper);border-color:var(--sb-line);box-shadow:none}
+/* 보기 + 카메라: 한 줄로 늘 보이게 (보기 설정·플랜은 오른쪽) */
+html.editing body:not(.study) .r2heads{flex-wrap:wrap;align-items:center;gap:6px}
+html.editing body:not(.study) .r2heads .views{display:flex;gap:0;background:var(--sb-paper);border:1px solid var(--sb-line);border-radius:10px;padding:2px;box-shadow:var(--sb-sh)}
+html.editing body:not(.study) .r2heads .views button{height:34px;padding:0 11px;border:0 !important;border-radius:8px;background:transparent;color:var(--sb-ink);font-size:13px;white-space:nowrap;box-shadow:none}
+html.editing body:not(.study) .r2heads .views button:hover:not(:disabled):not(.on){background:var(--sb-sage-t)}
+html.editing body:not(.study) .r2heads #views button.on{background:var(--sb-sage) !important;color:#fbfcf9 !important;font-weight:600}
+html.editing body:not(.study) .r2heads .cam3 button{color:var(--sb-brown)}
+html.editing body:not(.study) .r2heads .cam3 button + button{border-left:1px solid var(--sb-line2) !important;border-radius:0 8px 8px 0}
+html.editing body:not(.study) .r2heads .cam3 button:disabled{opacity:.38;cursor:default}
+html.editing body:not(.study) .r2heads .r2b{height:38px;border-radius:10px;background:var(--sb-paper);border-color:var(--sb-line)}
+/* 층: 지금 고른 층은 또렷하게, 숨긴 층은 흐리게 */
+html.editing body:not(.study) #floorBar{background:var(--sb-paper);border-color:var(--sb-line);box-shadow:var(--sb-sh)}
+html.editing body:not(.study) #floorBar .flrow:has(.nm.on){background:var(--sb-sage-t);border-radius:8px}
+html.editing body:not(.study) #floorBar .nm.on{background:var(--sb-sage) !important;color:#fff !important;font-weight:700}
+html.editing body:not(.study) #floorBar .flrow.off .nm{text-decoration:line-through;opacity:.55}
+/* 오른쪽(아래) 속성 창: 묶음 머리글 · 넉넉한 간격 */
+html.editing body:not(.study) #sheet{background:var(--sb-paper)}
+html.editing body:not(.study) #insp{gap:8px}
+html.editing body:not(.study) #insp .isec-h{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--sb-mute);border-top:1px solid var(--sb-line2);padding-top:10px;margin-top:4px}
+html.editing body:not(.study) #insp .ihd .sec{font-size:14px;color:var(--sb-ink)}
+html.editing body:not(.study) #insp .ihead{background:#fff8;border-color:var(--sb-line2);color:var(--sb-mute);font-size:11.5px}
+html.editing body:not(.study) #insp .labelIn{font-weight:700;font-size:15px}
+html.editing body:not(.study) #insp .mixnote{font-size:12px;color:var(--sb-mute);line-height:1.5}
+html.editing body:not(.study) #insp .mixnote .warn{color:#a5533f}
+html.editing body:not(.study) #insp .axisrow,html.editing body:not(.study) #insp .lvrow,html.editing body:not(.study) #insp .rotrow,html.editing body:not(.study) #insp .duprow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+html.editing body:not(.study) #insp .axisrow > .lbl,html.editing body:not(.study) #insp .lvrow > .lbl,html.editing body:not(.study) #insp .rotrow > .lbl:first-child{width:72px;flex:none;font-size:12px;color:var(--sb-mute)}
+html.editing body:not(.study) #insp #axisSeg button{height:36px;padding:0 12px}
+html.editing body:not(.study) #insp #axisSeg button[data-ax="x"].on{background:#b5473a !important;border-color:#b5473a !important;color:#fff !important}
+html.editing body:not(.study) #insp #axisSeg button[data-ax="z"].on{background:#3f7d4e !important;border-color:#3f7d4e !important;color:#fff !important}
+html.editing body:not(.study) #insp .lvmv{display:flex;gap:6px}
+html.editing body:not(.study) #insp .lvmv button{height:36px;padding:0 12px;border:1px solid var(--sb-line);border-radius:8px;background:#fff;font-size:13px}
+html.editing body:not(.study) #insp .lvmv button:disabled{opacity:.4}
+html.editing body:not(.study) #insp .rotb{display:flex;gap:6px}
+html.editing body:not(.study) #insp #rot3Deg{font-size:13px;color:var(--sb-ink)}
+html.editing body:not(.study) #insp .duprow .lbl{font-size:12px;color:var(--sb-mute)}
+/* 크기: 이름 왼쪽 · 숫자 칸 오른쪽, 버튼과 숫자 사이를 띄움 */
+html.editing body:not(.study) #insp #dimRow3 .st{display:flex;align-items:center;justify-content:flex-start;gap:8px;background:transparent !important;border:0 !important;padding:0 !important}
+html.editing body:not(.study) #insp #dimRow3 .st > .lbl{font-size:12.5px;color:var(--sb-mute);flex:none;width:72px}
+html.editing body:not(.study) #insp #dimRow3 .stepper{flex:1 1 auto;max-width:220px;border:0;background:transparent;gap:5px;overflow:visible}
+html.editing body:not(.study) #insp #dimRow3 .stepper button{width:38px;border:1px solid var(--sb-line);border-radius:8px;background:#fff;color:var(--sb-ink)}
+html.editing body:not(.study) #insp #dimRow3 .stepper button:hover{background:var(--sb-sage-t)}
+html.editing body:not(.study) #insp #dimRow3 .stepper input{border:1px solid var(--sb-line);border-radius:8px;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--sb-ink)}
+html.editing body:not(.study) #insp #dimRow3 .stepper input:focus{border-color:var(--sb-sage);outline:2px solid var(--sb-sage-t)}
+html.editing body:not(.study) #insp .sw > .lbl{display:none}
+html.editing body:not(.study) #insp .sw{gap:7px}
+html.editing body:not(.study) #insp .notebox summary{cursor:pointer;font-size:12.5px;color:var(--sb-mute);padding:6px 0;list-style-position:inside}
+html.editing body:not(.study) #insp .notebox[open] summary{margin-bottom:6px}
+html.editing body:not(.study) #insp .lockrow button{background:#fff;border-color:var(--sb-line)}
+/* 아무것도 안 골랐을 때: 조작 안내 카드 */
+html.editing body:not(.study) .guide3{border:1px solid var(--sb-line);border-radius:12px;background:#fffdf9;padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--sb-ink)}
+html.editing body:not(.study) .guide3[hidden]{display:none}
+html.editing body:not(.study) .guide3 .g3h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
+html.editing body:not(.study) .guide3 .g3h .tb{height:32px;padding:0 12px}
+html.editing body:not(.study) .guide3 dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0}
+html.editing body:not(.study) .guide3 dt{color:var(--sb-mute)}
+html.editing body:not(.study) .guide3 dd{margin:0;font-weight:600}
+html.editing body:not(.study) .guide3 .g3k,html.editing body:not(.study) .guide3 .g3t{margin:0;color:var(--sb-mute);line-height:1.6}
+html.editing body:not(.study) .guide3 .g3k b{display:inline-block;min-width:16px;padding:0 5px;border:1px solid var(--sb-line);border-bottom-width:2px;border-radius:5px;background:#fff;color:var(--sb-ink);font-family:var(--mono);font-size:11px;text-align:center}
+/* 옮기는 중 표시 */
+.mv3{position:fixed;z-index:40;pointer-events:none;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:9px;background:rgba(47,42,37,.92);color:#fbf8f2;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.18);white-space:nowrap;font-variant-numeric:tabular-nums}
+.mv3[hidden]{display:none}
+.mv3 .ax.dim{opacity:.4}
+.mv3 .ax.x::before,.mv3 .ax.z::before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0}
+.mv3 .ax.x::before{background:#e08a7c}.mv3 .ax.z::before{background:#8cc29a}
+.mv3 .lk{font-style:normal;font-weight:700;padding:1px 6px;border-radius:5px}
+.mv3 .lk.x{background:#b5473a}.mv3 .lk.z{background:#3f7d4e}
+body.moving3 #cv{cursor:grabbing}
+/* 태블릿 세로·휴대폰: 아래 창이 화면을 너무 덮지 않게 */
+@media (max-width:899px){
+  html.editing body:not(.study) #editView .sheet{max-height:52vh;overflow-y:auto;overscroll-behavior:contain}
+  html.editing body:not(.study) #insp{max-height:none;overflow:visible}
+  html.editing body:not(.study) .r2heads{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:calc(100vw - 20px);padding-bottom:2px}
+  html.editing body:not(.study) .r2heads::-webkit-scrollbar{display:none}
+  html.editing body:not(.study) .r2heads > *{flex:none}
+}
+@media (pointer:coarse){
+  html.editing body:not(.study) .r2heads .views button{height:40px}
+  html.editing body:not(.study) #insp #axisSeg button,html.editing body:not(.study) #insp .lvmv button{height:42px}
+}
+/* 오른쪽 클릭 보조 메뉴 */
+.ctx3{position:fixed;z-index:60;min-width:210px;padding:5px;background:#fbf8f2;border:1px solid #e0d8ca;border-radius:11px;box-shadow:0 10px 30px rgba(40,30,20,.16);display:flex;flex-direction:column}
+.ctx3[hidden]{display:none}
+.ctx3 button{display:flex;align-items:center;justify-content:space-between;gap:16px;height:34px;padding:0 10px;border:0;border-radius:7px;background:transparent;font-size:13.5px;color:#2f2a25;text-align:left}
+.ctx3 button:hover,.ctx3 button:focus-visible{background:#e6ece5}
+.ctx3 button.danger{color:#a5533f}
+.ctx3 kbd{font-family:var(--mono);font-size:11px;color:#8a7f72;background:none;border:0}
+.ctx3 hr{border:0;border-top:1px solid #ebe5da;margin:4px 2px}
+#keysModal .mact[hidden]{display:none}
 </style>
 <script type="importmap">
 {"imports":{
@@ -3046,7 +3153,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('#ece6d9');
+scene.background = new THREE.Color('#e6e3dd');
 scene.add(new THREE.HemisphereLight(0xffffff, 0xa9a69d, 1.6));
 const sun = new THREE.DirectionalLight(0xffffff, 2.4);
 sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
@@ -3074,7 +3181,7 @@ function solidMat(color, selected){
   const k = color + (selected ? '*' : '');
   if (!matCache.has(k)) {
     const m = new THREE.MeshStandardMaterial({ color, roughness: 0.88, metalness: 0, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
-    if (selected) { m.emissive = new THREE.Color('#2c5a8c'); m.emissiveIntensity = 0.28; }
+    if (selected) { m.emissive = new THREE.Color('#2c5a8c'); m.emissiveIntensity = 0.34; }
     matCache.set(k, m);
   }
   return matCache.get(k);
@@ -3296,6 +3403,7 @@ function boxMesh(b, totalRooms, rank = 0){
 }
 function buildHandles(){
   disposeGroup(handleG);
+  try { addMoveGizmo3(); } catch (e) {}
   const b = getBox(sel); if (!b || edRO() || selSet.size !== 1 || b.lock || b.sheet || (b.ang && sizeMode !== b.id)) return;
   const R = Math.max(P.siteW, P.siteD), r = Math.max(0.28, R / 90);
   const top = elevOf(b.lv) + boxH(b), cx = -P.siteW / 2 + b.x + b.w / 2, cz = -P.siteD / 2 + b.z + b.d / 2;
@@ -3725,7 +3833,7 @@ function renderFloorBar(){
 let r2Open = false, r2mOpen = false;
 function r2UI(){
   const v = document.querySelector('#views button.on');
-  $('#r2Lbl').textContent = `보기 ${v ? v.textContent : ''}`.trim();
+  $('#r2Lbl').textContent = document.getElementById('cam3') ? '보기 설정' : `보기 ${v ? v.textContent : ''}`.trim();
   $('#r2Btn').setAttribute('aria-expanded', r2Open ? 'true' : 'false');
   document.body.classList.toggle('r2open', r2Open);
   $('#r2mBtn').setAttribute('aria-expanded', r2mOpen ? 'true' : 'false');
@@ -3848,6 +3956,7 @@ function refreshUI(){
   else if (b) h = selSet.size === 1 ? '상자를 끌면 위치가 바뀌어요 · 두 번 누르거나 길게 누르면 수정 모드' : '파란 점을 끌면 크기·높이, 상자를 끌면 위치가 바뀌어요';
   else h = P.boxes.length ? '상자를 탭해서 선택하세요' : '‘추가’를 누르고 대지를 탭하세요';
   if (!drag || !drag.type) $('#hint').textContent = h;
+  try { ux3Refresh(b, sb, study, ro); } catch (e) {}
 }
 CAT_KEYS.forEach(k => { const b = document.createElement('button'); b.dataset.c = k; b.style.background = CATS[k].c; b.title = CATS[k].n; b.setAttribute('aria-label', CATS[k].n); b.onclick = () => commit(() => { for (const x of selBoxes()) if (!x.lock) x.cat = k; }); $('#sw').appendChild(b); });
 document.querySelectorAll('#modeSeg button').forEach(b => b.onclick = () => { mode = b.dataset.mode; if (mode !== 'select') multiPick = false; refreshUI(); });
@@ -4235,11 +4344,14 @@ const TOURS = {
     ['#floorBar', '층 레이어', '왼쪽 층 목록에서 눈 아이콘으로 층을 끄고 켜요. 층 이름을 누르면 그 층 상자가 전부 선택돼요. 지하층을 고르면 땅이 더 투명해져요.'],
     ['#views2', '보기 방식', '‘글자’로 상자 위에 이름·설명 또는 크기(가로×세로·높이)를 보여 주고, ‘경계선 보기’를 켜면 상자가 반투명해져 겹친 경계가 잘 보여요.'],
     ['#stats', '지하 보기', '지하층이 있으면 땅이 반투명해지고 파낸 자리와 지면선(GL, 벽돌색)이 보여요. 화면을 아래로 돌리면 땅 밑에서 올려다볼 수도 있어요. 지하 면적은 따로 보이고 용적률에서는 빠져요.'],
-    ['#r2Btn', '보기', '투시·아이소·평면·입면과 글자·경계선 보기를 접었다 펴요.'],
+    ['#views', '보기', '투시·아이소·평면·입면으로 바꿔요. 입면을 다시 누르면 남 → 동 → 북 → 서로 돌아요.'],
+    ['#cam3', '화면 되찾기', '전체 보기(Shift+Z)는 매스가 모두 들어오게, 선택 보기는 고른 도형을 가운데로, 시점 초기화(Z)는 이 보기의 처음 화면으로 돌려요.'],
+    ['#r2Btn', '보기 설정', '글자(이름·설명 / 크기)와 경계선 보기를 바꿔요.'],
+    [null, '마우스 조작', '기본 조작: 왼쪽 끌기 = 돌리기 · 오른쪽 끌기 = 화면 이동 · 휠 = 확대 · 도형은 ◎ 이동 손잡이로 옮겨요 (빨강 = 가로만, 초록 = 앞뒤만)\n전문가 조작 (SketchUp 방식): 휠 클릭 끌기 = 돌리기 · Shift + 휠 클릭 끌기 = 화면 이동 · 도형 왼쪽 끌기 = 옮기기 · 빈 곳 왼쪽 끌기 = 네모로 고르기\n둘 다: 오른쪽 짧게 누르기 = 보조 메뉴 · 메뉴 → ‘조작 방식’에서 바꿔요'],
     ['#r2mBtn', '메뉴', '레퍼런스·플랜·대지·댓글·내보내기가 여기 있어요.'],
     ['#sheet', '편집 창', '상자를 고르면 열려요. 이름·설명, 모양, 45° 회전이 있어요. 고른 도형을 두 번 누르거나 길게 누르면(또는 ‘수정 모드’를 켜고 누르면) 그 도형만 가까이 보이며 앞뒤·양옆·위아래 손잡이로 늘이고 줄여요. 바깥을 누르면 끝나요.'],
     [null, '여러 개 고르기', '도형을 누르면 그것 하나만 골라져요.\n하나를 고른 뒤 다른 도형을 두 번 누르거나 길게 누르면 같이 골라져요. 이미 고른 도형을 길게 누르면 빠져요.\nPC에서는 Shift를 누른 채 눌러도 돼요.'],
-    [null, '키보드 단축키 (스케치업과 같은 키도 돼요)', 'Space·V·M 선택 · R 사각형 추가 · C 원 추가 · O 투시로 돌리기 · Z 전체 맞춤\n고른 도형: P·S 수정 모드(밀기·끌기) · Q 45° 돌리기 · E·Delete 지우기 · G 그룹\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Y 다시 실행 · Ctrl(⌘)+C 복사 · Ctrl(⌘)+V 붙여넣기(다른 층 대지를 보고 있으면 그 층에) · Ctrl(⌘)+X 잘라내기 · Ctrl(⌘)+D 복제 · 방향키 이동 · Esc 수정 모드·선택 풀기']
+    [null, '키보드 단축키 (스케치업과 같은 키도 돼요)', 'Space·V·M 선택 · R 사각형 추가 · C 원 추가 · O 투시로 돌리기 · Z 시점 초기화 · Shift+Z 전체 보기\n고른 도형: P·S 수정 모드(밀기·끌기) · Q 45° 돌리기 · E·Delete 지우기 · G 그룹 · PageUp/PageDown 한 층 위·아래\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Y 다시 실행 · Ctrl(⌘)+C 복사 · Ctrl(⌘)+V 붙여넣기(다른 층 대지를 보고 있으면 그 층에) · Ctrl(⌘)+X 잘라내기 · Ctrl(⌘)+D 복제 · 방향키 이동 · Esc 수정 모드·선택 풀기']
   ]
 };
 let tourEl = null;
@@ -4456,9 +4568,15 @@ cv.addEventListener('pointerdown', e => {
   if (edRO() || !sel || multiPick) return;
   const b = getBox(sel); if (!b) return;
   const hk = handleAt(e);
-  if (hk) {
+  if (hk && hk.startsWith('mv')) {
+    const sbx = selBoxes(); if (sbx.some(x => x.lock)) return;
+    const y = elevOf(b.lv), p = planeAt(e, y); if (!p) return;
+    const orig = {}; for (const x of sbx) orig[x.id] = [x.x, x.z];
+    drag = { type: null, start: JSON.stringify(P), p0: p, y, orig, moved: false, pid: e.pointerId, lockAx: hk === 'mvx' ? 'x' : hk === 'mvz' ? 'z' : '' };
+  } else if (hk) {
     drag = { type: hk, start: JSON.stringify(P), moved: false, pid: e.pointerId };
   } else {
+    if (basicMouse3(e)) return; // 기본 조작: 마우스로 몸통을 끌면 화면이 돌고, 옮기기는 이동 손잡이로
     const hit = hitsAt(e).find(h => selSet.has(h.object.userData.id) && !getBox(h.object.userData.id).lock);
     if (!hit || selBoxes().some(x => x.lock)) return;
     const hb = getBox(hit.object.userData.id), y = elevOf(hb.lv);
@@ -4507,7 +4625,12 @@ cv.addEventListener('pointermove', e => {
   }
   const p = planeAt(e, drag.y); if (!p) return;
   const snapD = v => snapOn() ? Math.round(v / P.grid) * P.grid : Math.round(v * 4) / 4;
-  const dx = snapD(p.x - drag.p0.x), dz = snapD(p.z - drag.p0.z);
+  let dx = snapD(p.x - drag.p0.x), dz = snapD(p.z - drag.p0.z);
+  let ax = drag.lockAx || moveAxis;
+  if (!ax && e.shiftKey) { if (!drag.ax && (dx || dz)) drag.ax = Math.abs(dx) >= Math.abs(dz) ? 'x' : 'z'; ax = drag.ax || ''; } else if (!e.shiftKey) drag.ax = '';
+  if (ax === 'x') dz = 0; else if (ax === 'z') dx = 0;
+  if (ax !== drag.axNow) { drag.axNow = ax; axisGuide3(ax, b, drag.y); }
+  if (dx || dz || drag.moved) showMove3(e, dx, dz, ax);
   if (dx !== drag.dx || dz !== drag.dz) {
     drag.dx = dx; drag.dz = dz; drag.moved = dx !== 0 || dz !== 0;
     for (const x of selBoxes()) {
@@ -4522,13 +4645,13 @@ cv.addEventListener('pointermove', e => {
 });
 function endPointer(e){
   if (drag && e.pointerId === drag.pid) {
-    const d = drag; drag = null; controls.enabled = true;
+    const d = drag; drag = null; controls.enabled = true; hideMove3();
     if (!d.moved && !d.type) { P = JSON.parse(d.start); pruneSel(); }
     if (d.moved) { const b = getBox(sel); if (b && d.type) remember(b); hist.push(d.start); if (hist.length > HIST_MAX) hist.splice(0, hist.length - HIST_MAX); fut = []; afterChange(); down = null; return; }
     if (d.type) { down = null; return; }
   }
   clearTimeout(hold3);
-  if (e.type === 'pointerup' && down && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 8 && performance.now() - down.t < 600) onTap(e);
+  if (e.type === 'pointerup' && e.button !== 2 && down && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 8 && performance.now() - down.t < 600) onTap(e);
   down = null;
 }
 cv.addEventListener('pointerup', endPointer);
@@ -4610,6 +4733,7 @@ window.addEventListener('keydown', e => {
     if ((k === 'p' || k === 's') && one) { sizeMode === sel ? exitEdit3() : enterEdit3(sel); return; }
     if (k === 'q' && one) { act('rotR'); return; }
     if (k === 'e' && selSet.size) { act('del'); return; }
+    if (k === 'z' && e.shiftKey) { fitAll3(); return; } // 2D와 같게: Shift+Z = 전체 보기
     if (k === 'z') { if (edCam) exitEdit3(); setView(view); return; }
     if (k === 'o') { setView('persp'); return; }
     if (k === 'g' && selSet.size > 1) { act('group'); return; }
@@ -8056,27 +8180,238 @@ function openKeys3d(first){
   let m = $('#keysModal');
   if (!m) {
     m = document.createElement('div'); m.className = 'modal'; m.id = 'keysModal'; m.hidden = true;
-    m.innerHTML = `<div class="mbox" role="dialog" aria-labelledby="kmT"><h2 id="kmT">3D 조작 방식</h2>
+    m.innerHTML = `<div class="mbox" role="dialog" aria-labelledby="kmT"><h2 id="kmT">3D 조작 방식 선택</h2>
       <p class="sub" id="kmD"></p>
-      <button type="button" class="xopt kopt" data-k="mobile"><b>모바일과 같게</b><span class="lbl">왼쪽 끌기 = 돌리기 · 휠 = 확대·축소 · 오른쪽 끌기 = 화면 이동<br>여러 개 고르기: ‘여러 개 선택’ 버튼, 또는 빈 곳에서 Shift + 왼쪽 끌기</span></button>
-      <button type="button" class="xopt kopt" data-k="sketchup"><b>스케치업과 같게</b><span class="lbl">휠 클릭 끌기 = 돌리기 · Shift + 휠 클릭 끌기 = 화면 이동 · 휠 = 확대·축소<br>빈 곳에서 왼쪽 끌기 = 네모로 여러 개 고르기 (Shift를 누르면 더하기)</span></button>
-      <p class="sub">손가락 조작(휴대폰·아이패드)은 어느 쪽이든 그대로예요. 나중에 메뉴 → ‘조작 방식’에서 바꿀 수 있어요.</p>
-      <div class="mact"><button class="btn" id="kmCancel">나중에</button><button class="btn primary" id="kmOk">이걸로 할게요</button></div></div>`;
+      <button type="button" class="xopt kopt" data-k="mobile"><b>기본 조작</b><span class="lbl">일반적인 프로그램에 익숙한 분께 · 왼쪽 클릭 = 고르기 · 왼쪽 끌기 = 화면 돌리기 · 오른쪽 끌기 = 화면 이동 · 휠 = 확대·축소<br>도형은 옆에 생기는 이동 손잡이(◎)로 옮겨요 · 오른쪽 짧게 누르기 = 보조 메뉴 · 여러 개 고르기: ‘여러 개 선택’ 또는 빈 곳에서 Shift + 왼쪽 끌기</span></button>
+      <button type="button" class="xopt kopt" data-k="sketchup"><b>전문가 조작 (SketchUp 방식)</b><span class="lbl">SketchUp에 익숙한 분께 · 휠 클릭 끌기 = 화면 돌리기 · Shift + 휠 클릭 끌기 = 화면 이동 · 휠 = 확대·축소<br>왼쪽 클릭 = 고르기 · 도형 왼쪽 끌기 = 옮기기 · 빈 곳 왼쪽 끌기 = 네모로 여러 개 고르기 (Shift = 더하기) · 오른쪽 클릭 = 보조 메뉴</span></button>
+      <p class="sub">단축키는 두 방식 모두 같아요. 손가락 조작(휴대폰·태블릿)은 어느 쪽이든 그대로예요. 메뉴 → ‘조작 방식’에서 언제든 바꿀 수 있어요.</p>
+      <div class="mact" id="kmEdit"><button class="btn" id="kmCancel">취소</button><button class="btn primary" id="kmOk">선택</button></div></div>`;
     document.body.appendChild(m);
     m.querySelectorAll('.kopt').forEach(b => b.onclick = () => { m.dataset.pick = b.dataset.k; m.querySelectorAll('.kopt').forEach(x => x.classList.toggle('on', x === b)); });
     $('#kmCancel').onclick = () => { m.hidden = true; };
     $('#kmOk').onclick = () => {
       keys3d = m.dataset.pick === 'sketchup' ? 'sketchup' : 'mobile'; try { localStorage.setItem('mass-3d-keys', keys3d); } catch (e) {}
-      m.hidden = true; applyKeys(); refreshUI(); toast(keys3d === 'sketchup' ? '스케치업과 같은 조작으로 바꿨어요' : '모바일과 같은 조작으로 바꿨어요');
+      m.hidden = true; applyKeys(); refreshUI(); toast(keys3d === 'sketchup' ? '전문가 조작(SketchUp 방식)으로 바꿨어요' : '기본 조작으로 바꿨어요');
     };
   }
   m.dataset.pick = keysEff();
   m.querySelectorAll('.kopt').forEach(x => x.classList.toggle('on', x.dataset.k === m.dataset.pick));
-  $('#kmD').textContent = first ? '3D에서 마우스로 돌리고 옮기는 방식을 골라 주세요.' : '마우스로 3D를 다루는 방식을 바꿔요.';
-  $('#kmCancel').textContent = first ? '나중에' : '취소';
+  $('#kmD').textContent = first ? 'Mass Study의 3D 화면을 조작하는 방식을 선택하세요. 선택한 방식은 설정에서 언제든 변경할 수 있습니다.' : `지금은 ‘${keysEff() === 'sketchup' ? '전문가 조작 (SketchUp 방식)' : '기본 조작'}’이에요. 마우스로 3D를 다루는 방식을 바꿔요.`;
+  $('#kmT').textContent = first ? '3D 조작 방식 선택' : '3D 조작 방식';
+  $('#kmCancel').hidden = !!first;
   m.hidden = false;
 }
 $('#keysBtn').onclick = () => { document.body.classList.remove('menuOpen'); openKeys3d(false); };
+/* ---------------- 3D 작업대 정리 (7차) ----------------
+   새로 만든 것: 전체 보기 · 선택 보기 · 옮기는 방향 고정 · 옮기는 중 표시 · 조작 안내 · 속성 창 순서
+   기존 함수(setView, act, exitEdit3, openKeys3d, refreshUI …)는 고치지 않고 부르기만 해요 */
+let moveAxis = ''; // '' 자유 · 'x' 가로만 · 'z' 앞뒤만 (3D에서 끌어 옮길 때만)
+function frameBox3(bx, pad){
+  if (!controls || !bx || bx.isEmpty()) return false;
+  const c = bx.getCenter(new THREE.Vector3()), sz = bx.getSize(new THREE.Vector3());
+  const R = Math.max(1, Math.hypot(sz.x, sz.y, sz.z) / 2) * (pad || 1);
+  const [vw, vh] = vpSize(), ins = insets();
+  const uw = Math.max(0.4, (vw - ins.right) / vw), uh = Math.max(0.35, (vh - ins.top - ins.bottom) / vh), a = vw * uw / (vh * uh);
+  const dir = cam.position.clone().sub(controls.target);
+  if (dir.lengthSq() < 1e-8) dir.set(-0.72, 0.62, 1);
+  dir.normalize();
+  if (cam === persp) {
+    const half = rad(persp.fov) / 2;
+    cam.position.copy(c).add(dir.multiplyScalar(R / Math.sin(half) / Math.min(1, a) / uh * 1.02));
+  } else {
+    cam.position.copy(c).add(dir.multiplyScalar(Math.max(R * 6, 40)));
+    orthoH = R / Math.min(1, a) / uh * 1.06; cam.zoom = 1; updateOrtho();
+  }
+  cam.lookAt(c); controls.target.copy(c); controls.update(); applyOffset(); requestRender();
+  return true;
+}
+function meshBox3(ms){
+  const bx = new THREE.Box3();
+  for (const m of ms) if (m && m.visible !== false) bx.expandByObject(m);
+  return bx;
+}
+function fitAll3(){ // 전체 보기: 보이는 매스가 다 들어오게 (매스가 없으면 대지)
+  if (!P || uiMode === 'study') return;
+  let bx = meshBox3(boxMeshes.filter(m => { const x = getBox(m.userData.id); return x && !hiddenLv.has(x.lv); }));
+  if (bx.isEmpty()) bx = new THREE.Box3(new THREE.Vector3(-P.siteW / 2, 0, -P.siteD / 2), new THREE.Vector3(P.siteW / 2, Math.max(3, P.floorH || 3), P.siteD / 2));
+  frameBox3(bx, 1.05);
+  $('#hint').textContent = '전체 보기 · 매스가 모두 들어오게 맞췄어요';
+}
+function focusSel3(){ // 선택 보기: 고른 도형을 가운데로
+  if (!P || uiMode === 'study' || !selSet.size) return;
+  const bx = meshBox3(boxMeshes.filter(m => selSet.has(m.userData.id)));
+  if (frameBox3(bx, 1.35)) $('#hint').textContent = '선택 보기 · 고른 도형을 가운데로 맞췄어요';
+}
+function resetCam3(){ if (edCam) exitEdit3(); setView(view); $('#hint').textContent = '시점 초기화 · 이 보기의 처음 화면이에요'; }
+// 옮기는 중 표시 + 고정한 방향 선
+const axMat3 = { x: new THREE.LineBasicMaterial({ color: '#b5473a', depthTest: false, transparent: true, opacity: 0.9 }), z: new THREE.LineBasicMaterial({ color: '#3f7d4e', depthTest: false, transparent: true, opacity: 0.9 }) };
+let axLine3 = null;
+function axisGuide3(ax, b, y){
+  if (axLine3) { scene.remove(axLine3); try { axLine3.geometry.dispose(); } catch (e) {} axLine3 = null; }
+  if (ax && b) {
+    const cx = -P.siteW / 2 + b.x + b.w / 2, cz = -P.siteD / 2 + b.z + b.d / 2, L = Math.max(P.siteW, P.siteD) * 1.5, yy = (y || 0) + 0.03;
+    const pts = ax === 'x' ? [new THREE.Vector3(cx - L, yy, cz), new THREE.Vector3(cx + L, yy, cz)] : [new THREE.Vector3(cx, yy, cz - L), new THREE.Vector3(cx, yy, cz + L)];
+    axLine3 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat3[ax]); axLine3.renderOrder = 6; scene.add(axLine3);
+  }
+  requestRender();
+}
+const sgn3 = v => (v > 0 ? '+' : v < 0 ? '−' : '') + f2(Math.abs(v));
+function showMove3(e, dx, dz, ax){
+  let t = $('#mv3');
+  if (!t) { t = document.createElement('div'); t.id = 'mv3'; t.className = 'mv3'; t.hidden = true; document.body.appendChild(t); }
+  const n = selSet.size;
+  t.innerHTML = `<b>${n > 1 ? n + '개 옮기는 중' : '옮기는 중'}</b><span class="ax x${ax === 'z' ? ' dim' : ''}">가로 ${sgn3(dx)}m</span><span class="ax z${ax === 'x' ? ' dim' : ''}">앞뒤 ${sgn3(dz)}m</span>${ax ? `<i class="lk ${ax}">${ax === 'x' ? '가로만' : '앞뒤만'}</i>` : ''}`;
+  t.hidden = false;
+  const W = innerWidth, x = Math.min(W - 12 - (t.offsetWidth || 180), e.clientX + 16), y = Math.max(8, e.clientY - 44);
+  t.style.left = Math.max(8, x) + 'px'; t.style.top = y + 'px';
+  document.body.classList.add('moving3');
+}
+function hideMove3(){ const t = $('#mv3'); if (t) t.hidden = true; document.body.classList.remove('moving3'); if (axLine3) axisGuide3('', null); }
+// 화면 만들기: 보기 버튼 꺼내기 · 카메라 버튼 · 속성 창 순서 · 조작 안내
+(function ux3Init(){
+  const heads = document.querySelector('.r2heads'), views = $('#views');
+  if (heads && views) {
+    const cam = document.createElement('div'); cam.className = 'views cam3'; cam.id = 'cam3';
+    cam.innerHTML = '<button id="fit3Btn" title="매스가 모두 화면에 들어오게 (Shift+Z)">전체 보기</button><button id="focus3Btn" title="고른 도형을 화면 가운데로">선택 보기</button><button id="reset3Btn" title="이 보기의 처음 화면으로 (Z)">시점 초기화</button>';
+    heads.prepend(views, cam);
+    $('#fit3Btn').onclick = fitAll3; $('#focus3Btn').onclick = focusSel3; $('#reset3Btn').onclick = resetCam3;
+  }
+  const insp = $('#insp'); if (!insp) return;
+  const mk = (html, cls, id) => { const d = document.createElement('div'); if (cls) d.className = cls; if (id) d.id = id; d.innerHTML = html; return d; };
+  const H = (t, cls) => mk(t, 'isec-h' + (cls ? ' ' + cls : ''));
+  const rowOf = q => { const el = insp.querySelector(q); return el ? el.closest('#insp > *') : null; };
+  const head = $('#inspHead'), info = $('#iInfo'), label = rowOf('#iLabel'), note = rowOf('#iNote'), kind = rowOf('#iKind'), shapeEd = $('#shapeEditRow'), arr = insp.querySelector('.arr'), dims = $('#dimRow3'), sw = $('#sw'), lock = insp.querySelector('.lockrow');
+  const rotL = insp.querySelector('[data-act=rotL]'), rotR = insp.querySelector('[data-act=rotR]'), dup = insp.querySelector('[data-act=dup]'), oldActs = rotL ? rotL.parentElement : null;
+  const axisRow = mk('<span class="lbl">옮기는 방향</span><div class="seg light" id="axisSeg"><button data-ax="" class="on">자유</button><button data-ax="x" title="가로(너비) 방향으로만">가로만</button><button data-ax="z" title="앞뒤(깊이) 방향으로만">앞뒤만</button></div>', 'toolrow axisrow', 'axisRow');
+  const lvRow = mk('<span class="lbl">층 옮기기</span><div class="lvmv"><button data-mv="lvD" title="한 층 아래로 (PageDown)">한 층 ↓</button><button data-mv="lvU" title="한 층 위로 (PageUp)">한 층 ↑</button></div>', 'toolrow lvrow', 'lvRow');
+  const rotRow = mk('<span class="lbl">회전</span><div class="rotb"></div><span class="lbl mono" id="rot3Deg"></span>', 'toolrow rotrow single-only', 'rotRow');
+  const dupRow = mk('', 'toolrow duprow', 'dupRow');
+  const mixNote = mk('', 'mixnote multi-only', 'mixNote');
+  const noteBox = document.createElement('details'); noteBox.className = 'notebox single-only'; noteBox.id = 'noteBox'; noteBox.innerHTML = '<summary>설명 메모</summary>';
+  if (rotL && rotR) { const rb = rotRow.querySelector('.rotb'); rb.append(rotL, rotR); }
+  if (dup) { dupRow.append(dup); const s = document.createElement('span'); s.className = 'lbl'; s.textContent = '복제 (Ctrl+D)'; dupRow.append(s); }
+  if (note) noteBox.append(note);
+  if (oldActs && !oldActs.children.length) oldActs.classList.add('gone');
+  const rest = [...insp.children];
+  const order = [head, info, label, mixNote,
+    H('이동·편집'), shapeEd, axisRow, lvRow, arr,
+    H('크기', 'single-only'), dims, rotRow,
+    (()=>{ const h = H('공간 종류·표시'); h.id = 'swH'; return h; })(), sw, kind,
+    H('그 밖에'), lock, dupRow, noteBox].filter(Boolean);
+  for (const el of order) insp.appendChild(el);
+  for (const el of rest) if (!order.includes(el)) insp.appendChild(el); // 숨겨 둔 줄은 맨 끝에 그대로
+  // 공간 종류 머리글은 위에 따로 있으니 안쪽 글자는 상황 표시로 씀
+  axisRow.querySelectorAll('button').forEach(bt => bt.onclick = () => { moveAxis = bt.dataset.ax; ux3Axis(); });
+  lvRow.querySelectorAll('button').forEach(bt => bt.onclick = () => act(bt.dataset.mv));
+  // 아무것도 안 골랐을 때 보이는 조작 안내
+  const g = mk('', 'guide3', 'guide3'); g.hidden = true;
+  const tools = $('#editTools'); if (tools) tools.after(g);
+})();
+function ux3Axis(){ document.querySelectorAll('#axisSeg button').forEach(bt => bt.classList.toggle('on', bt.dataset.ax === moveAxis)); }
+function ux3Refresh(b, sb, study, ro){
+  if (study) return;
+  const f3 = $('#focus3Btn'); if (f3) f3.disabled = !selSet.size;
+  ux3Axis();
+  const lvR = $('#lvRow'); if (lvR) { const lk = sb.some(x => x.lock); lvR.querySelectorAll('button').forEach(bt => bt.disabled = lk); }
+  { const nb = $('#noteBox'); if (nb && b && sb.length === 1) { const has = !!(b.note && b.note.trim()); if (nb.dataset.for !== b.id) { nb.dataset.for = b.id; nb.open = has; } const sm = nb.querySelector('summary'); if (sm) sm.textContent = has ? '설명 메모 · 있음' : '설명 메모'; } }
+  if (b && sb.length === 1) { const d = $('#rot3Deg'); if (d) d.textContent = `${Math.round(((b.ang || 0) % 360 + 360) % 360)}°`; }
+  { const h = $('#swH'); if (h) h.hidden = !!(b && sb.length > 1 && $('#sw').hidden); }
+  const mx = $('#mixNote');
+  if (mx && b && sb.length > 1) {
+    const cats = new Set(sb.filter(x => x.kind !== 'outer').map(x => x.cat));
+    if (cats.size === 1) { const c = [...cats][0]; document.querySelectorAll('#sw button').forEach(x => x.classList.toggle('on', x.dataset.c === c)); }
+    mx.innerHTML = `같이 바꿀 수 있어요 · 공간 종류 · 잠금 · 그룹 · 복제 · 삭제 · 정렬${cats.size > 1 ? '<br><span class="warn">공간 종류가 서로 달라요 · 색을 누르면 모두 그 색으로 바뀌어요</span>' : ''}`;
+  }
+  { const kb = $('#keysBtn'); if (kb) kb.textContent = `조작 방식 · ${keysEff() === 'sketchup' ? '전문가' : '기본'}`; }
+  if (b && !ro && hasMouse() && !(drag && drag.type) && !sizeMode && !multiPick && mode === 'select' && !sb.some(x => x.lock))
+    $('#hint').textContent = keysEff() === 'sketchup' ? '도형을 끌거나 ◎ 손잡이로 옮겨요 · 빨강 = 가로만 · 초록 = 앞뒤만 · 오른쪽 클릭 = 보조 메뉴' : '◎ 이동 손잡이를 끌어 옮겨요 · 빨강 = 가로만 · 초록 = 앞뒤만 · 오른쪽 짧게 = 보조 메뉴';
+  const g = $('#guide3');
+  if (g) {
+    const show = !b && !ro && mode === 'select' && !isSketch();
+    g.hidden = !show;
+    if (show) {
+      const sk = keysEff() === 'sketchup', mouse = hasMouse(), rot = view === 'persp' || view === 'iso';
+      const lines = mouse
+        ? (sk ? [['휠 클릭 끌기', rot ? '돌리기' : '화면 옮기기'], ['Shift + 휠 클릭 끌기', '화면 옮기기'], ['휠', '확대·축소'], ['도형 왼쪽 끌기', '도형 옮기기'], ['빈 곳 왼쪽 끌기', '네모로 여러 개 고르기'], ['오른쪽 클릭', '보조 메뉴']]
+              : [['왼쪽 끌기', rot ? '돌리기' : '화면 옮기기'], ['오른쪽 끌기', '화면 옮기기'], ['휠', '확대·축소'], ['◎ 이동 손잡이 끌기', '도형 옮기기'], ['오른쪽 짧게 누르기', '보조 메뉴']])
+        : [['한 손가락 끌기', rot ? '돌리기' : '화면 옮기기'], ['두 손가락', '화면 옮기기·확대'], ['고른 도형 끌기', '도형 옮기기'], ['길게 누르기', '여러 개 고르기']];
+      const keys = mouse ? '<p class="g3k"><b>Z</b> 시점 초기화 · <b>Shift+Z</b> 전체 보기 · <b>Q</b> 돌리기 · <b>E</b> 삭제 · <b>Ctrl+D</b> 복제 · <b>PgUp/PgDn</b> 한 층 위·아래</p>' : '';
+      g.innerHTML = `<div class="g3h"><span>조작 방식 · <b>${sk ? '전문가 조작 (SketchUp 방식)' : '기본 조작'}</b></span><button id="g3Keys" class="tb">바꾸기</button></div>`
+        + `<dl>${lines.map(l => `<dt>${l[0]}</dt><dd>${l[1]}</dd>`).join('')}</dl>${keys}`
+        + `<p class="g3t">상자를 누르면 여기에 크기·높이·회전·공간 종류가 나와요</p>`;
+      $('#g3Keys').onclick = () => openKeys3d(false);
+    }
+  }
+}
+/* ---- 조작 설정 (8차): 이동 손잡이 · 오른쪽 클릭 보조 메뉴 ---- */
+const mvMat3 = { c: new THREE.MeshBasicMaterial({ color: '#2c5a8c', depthTest: false, transparent: true, opacity: 0.95 }), ring: new THREE.MeshBasicMaterial({ color: '#ffffff', depthTest: false, transparent: true, opacity: 0.95 }), x: new THREE.MeshBasicMaterial({ color: '#b5473a', depthTest: false }), z: new THREE.MeshBasicMaterial({ color: '#3f7d4e', depthTest: false }) };
+function addMoveGizmo3(){ // 고른 도형(들) 앞 왼쪽 아래 모서리 바깥에 이동 손잡이: 가운데 = 자유 · 빨강 = 가로만 · 초록 = 앞뒤만
+  if (!P || uiMode === 'study' || edRO() || !selSet.size || mode !== 'select' || multiPick || sizeMode) return;
+  const sb = selBoxes(); if (!sb.length || sb.some(x => x.lock || x.sheet)) return;
+  let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity, y = Infinity;
+  for (const b of sb) { const wp = worldPts(b); for (const q of wp) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); z0 = Math.min(z0, q[1]); z1 = Math.max(z1, q[1]); } y = Math.min(y, elevOf(b.lv)); }
+  if (!isFinite(x0) || !isFinite(y)) return;
+  const R = Math.max(P.siteW, P.siteD), r = Math.max(0.28, R / 90);
+  const g = new THREE.Group(); g.position.set(-P.siteW / 2 + x0 - r * 3, y + 0.05, -P.siteD / 2 + z1 + r * 3); g.renderOrder = 12;
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(r * 2, r * 2, r * 0.5, 28), mvMat3.c); disc.renderOrder = 12;
+  const dot = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.8, r * 0.8, r * 0.6, 20), mvMat3.ring); dot.position.y = r * 0.05; dot.renderOrder = 13;
+  const shaftX = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.28, r * 0.28, r * 1.6, 8), mvMat3.x); shaftX.rotation.z = Math.PI / 2; shaftX.position.x = r * 2.9; shaftX.renderOrder = 12;
+  const headX = new THREE.Mesh(new THREE.ConeGeometry(r * 0.75, r * 1.5, 16), mvMat3.x); headX.rotation.z = -Math.PI / 2; headX.position.x = r * 4.3; headX.renderOrder = 12;
+  const shaftZ = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.28, r * 0.28, r * 1.6, 8), mvMat3.z); shaftZ.rotation.x = Math.PI / 2; shaftZ.position.z = r * 2.9; shaftZ.renderOrder = 12;
+  const headZ = new THREE.Mesh(new THREE.ConeGeometry(r * 0.75, r * 1.5, 16), mvMat3.z); headZ.rotation.x = Math.PI / 2; headZ.position.z = r * 4.3; headZ.renderOrder = 12;
+  const hit = (k, rr, px, pz) => { const h = new THREE.Mesh(new THREE.SphereGeometry(rr, 8, 6), hitMat); h.position.set(px, 0, pz); h.userData.handle = k; return h; };
+  g.add(disc, dot, shaftX, headX, shaftZ, headZ, hit('mvx', r * 1.6, r * 4.2, 0), hit('mvz', r * 1.6, 0, r * 4.2), hit('mv', r * 2.4, 0, 0));
+  handleG.add(g);
+}
+const basicMouse3 = e => (e ? e.pointerType === 'mouse' : hasMouse()) && keysEff() !== 'sketchup';
+// 오른쪽 짧게 누르기(클릭) = 보조 메뉴 · 끌면 기존대로 화면 이동/회전
+let rc3 = null;
+cv.addEventListener('pointerdown', e => { rc3 = (e.pointerType === 'mouse' && e.button === 2) ? { x: e.clientX, y: e.clientY, t: performance.now() } : null; });
+cv.addEventListener('pointerup', e => {
+  if (!rc3 || e.button !== 2) return; const r = rc3; rc3 = null;
+  if (Math.hypot(e.clientX - r.x, e.clientY - r.y) > 6 || performance.now() - r.t > 700 || !P || uiMode === 'study') return;
+  if (!edRO()) { try { const h = pick(e), id = h && h.object && h.object.userData ? h.object.userData.id : null; if (id && getBox(id) && !selSet.has(id)) onTap(e); } catch (err) {} }
+  openCtx3(e.clientX, e.clientY);
+});
+function closeCtx3(){ const m = $('#ctx3'); if (m) m.hidden = true; }
+function openCtx3(x, y){
+  let m = $('#ctx3');
+  if (!m) {
+    m = document.createElement('div'); m.id = 'ctx3'; m.className = 'ctx3'; m.setAttribute('role', 'menu'); document.body.appendChild(m);
+    document.addEventListener('pointerdown', ev => { if (!m.hidden && !m.contains(ev.target)) closeCtx3(); }, true);
+    addEventListener('keydown', ev => { if (ev.key === 'Escape') closeCtx3(); });
+    addEventListener('resize', closeCtx3);
+  }
+  const ro = edRO(), sb = selBoxes(), one = sb.length === 1 ? sb[0] : null, lk = sb.some(x => x.lock), grouped = sb.some(x => x.group);
+  const it = [];
+  if (sb.length && !ro) {
+    it.push(['선택 보기', focusSel3]);
+    if (one && !lk) it.push(['도형 수정', () => enterEdit3(one.id), 'P']);
+    if (!lk) it.push(['복제', () => act('dup'), 'Ctrl+D']);
+    if (one && !lk) it.push(['오른쪽으로 45° 돌리기', () => act('rotR'), 'Q'], ['왼쪽으로 45° 돌리기', () => act('rotL')]);
+    if (!lk) it.push(['한 층 위로', () => act('lvU'), 'PgUp'], ['한 층 아래로', () => act('lvD'), 'PgDn']);
+    it.push('-', [sb.every(x => x.lock) ? '잠금 풀기' : '잠그기', () => act('lock')]);
+    if (sb.length > 1 && !(grouped && new Set(sb.map(x => x.group)).size === 1 && sb.every(x => x.group))) it.push(['그룹으로 묶기', () => act('group'), 'G']);
+    if (grouped) it.push(['그룹 풀기', () => act('ungroup')]);
+    if (!lk) it.push('-', ['삭제', () => act('del'), 'E', 'danger']);
+  } else {
+    it.push(['전체 보기', fitAll3, 'Shift+Z'], ['시점 초기화', resetCam3, 'Z']);
+    if (!ro && clip) it.push(['붙여넣기', () => pasteClip(), 'Ctrl+V']);
+    it.push('-', ['조작 방식 바꾸기', () => openKeys3d(false)]);
+  }
+  m.textContent = '';
+  for (const r of it) {
+    if (r === '-') { const s = document.createElement('hr'); m.appendChild(s); continue; }
+    const b = document.createElement('button'); b.setAttribute('role', 'menuitem'); if (r[3]) b.className = r[3];
+    b.innerHTML = `<span>${r[0]}</span>${r[2] ? `<kbd>${r[2]}</kbd>` : ''}`;
+    b.onclick = () => { closeCtx3(); r[1](); };
+    m.appendChild(b);
+  }
+  m.hidden = false;
+  const W = innerWidth, H = innerHeight, w = m.offsetWidth, h = m.offsetHeight;
+  m.style.left = Math.max(8, Math.min(x, W - w - 8)) + 'px'; m.style.top = Math.max(8, Math.min(y, H - h - 8)) + 'px';
+}
+
 // 3D 여러 개 선택 중 안내 막대: 몇 개 골랐는지 · 모두 풀기 · 끝내기
 function upd3Pill(){
   let el = $('#mpPill3');
