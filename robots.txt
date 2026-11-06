@@ -1,0 +1,5 @@
+# Mass Study
+# 공개 소개 페이지만 있어요. 내 작업·프로젝트는 로그인해야 서버에서 받아 오므로 주소로 색인되지 않아요.
+User-agent: *
+Allow: /
+Sitemap: https://gridbox-007.github.io/Mass-study/sitemap.xml

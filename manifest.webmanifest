@@ -1,0 +1,17 @@
+{
+  "name": "Mass Study · 온라인 건축 매스 스터디",
+  "short_name": "Mass Study",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ece6d9",
+  "theme_color": "#ece6d9",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
