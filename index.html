@@ -1398,8 +1398,9 @@ html.editing body:not(.study) #insp .mixnote{font-size:12px;color:var(--sb-mute)
 html.editing body:not(.study) #insp .mixnote .warn{color:#a5533f}
 html.editing body:not(.study) #insp .axisrow,html.editing body:not(.study) #insp .lvrow,html.editing body:not(.study) #insp .rotrow,html.editing body:not(.study) #insp .duprow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 html.editing body:not(.study) #insp .axisrow > .lbl,html.editing body:not(.study) #insp .lvrow > .lbl,html.editing body:not(.study) #insp .rotrow > .lbl:first-child{width:72px;flex:none;font-size:12px;color:var(--sb-mute)}
-html.editing body:not(.study) #insp #axisSeg button{height:36px;padding:0 12px}
+html.editing body:not(.study) #insp #axisSeg button{height:36px;padding:0 11px}
 html.editing body:not(.study) #insp #axisSeg button[data-ax="x"].on{background:#b5473a !important;border-color:#b5473a !important;color:#fff !important}
+html.editing body:not(.study) #insp #axisSeg button[data-ax="y"].on{background:#3567a8 !important;border-color:#3567a8 !important;color:#fff !important}
 html.editing body:not(.study) #insp #axisSeg button[data-ax="z"].on{background:#3f7d4e !important;border-color:#3f7d4e !important;color:#fff !important}
 html.editing body:not(.study) #insp .lvmv{display:flex;gap:6px}
 html.editing body:not(.study) #insp .lvmv button{height:36px;padding:0 12px;border:1px solid var(--sb-line);border-radius:8px;background:#fff;font-size:13px}
@@ -1435,17 +1436,27 @@ html.editing body:not(.study) .guide3 .g3k b{display:inline-block;min-width:16px
 .mv3[hidden]{display:none}
 .mv3 .ax.dim{opacity:.4}
 .mv3 .ax.x::before,.mv3 .ax.z::before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0}
-.mv3 .ax.x::before{background:#e08a7c}.mv3 .ax.z::before{background:#8cc29a}
+.mv3 .ax.x::before{background:#e08a7c}.mv3 .ax.z::before{background:#8cc29a}.mv3 .ax.y::before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;background:#8fb1e0}
+.mv3 .lk.y{background:#3567a8}
 .mv3 .lk{font-style:normal;font-weight:700;padding:1px 6px;border-radius:5px}
 .mv3 .lk.x{background:#b5473a}.mv3 .lk.z{background:#3f7d4e}
 body.moving3 #cv{cursor:grabbing}
 /* 태블릿 세로·휴대폰: 아래 창이 화면을 너무 덮지 않게 */
+html.editing body:not(.study) .guide3 .g3b{display:flex;gap:6px}
+html.editing body:not(.study) .guide3 .g3more{display:none}
 @media (max-width:899px){
-  html.editing body:not(.study) #editView .sheet{max-height:52vh;overflow-y:auto;overscroll-behavior:contain}
+  html.editing body:not(.study) #editView .sheet{max-height:44vh;max-height:44dvh;overflow-y:auto;overscroll-behavior:contain}
+  html.editing body:not(.study) .guide3{padding:8px 12px;gap:6px}
+  html.editing body:not(.study) .guide3 .g3more{display:inline-flex}
+  html.editing body:not(.study) .guide3:not(.open) dl,html.editing body:not(.study) .guide3:not(.open) .g3k,html.editing body:not(.study) .guide3:not(.open) .g3t{display:none}
+  html.editing body:not(.study) #sideNote{display:none}
   html.editing body:not(.study) #insp{max-height:none;overflow:visible}
   html.editing body:not(.study) .r2heads{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:calc(100vw - 20px);padding-bottom:2px}
   html.editing body:not(.study) .r2heads::-webkit-scrollbar{display:none}
   html.editing body:not(.study) .r2heads > *{flex:none}
+}
+@media (max-width:640px){
+  html.editing body:not(.study) #editView .sheet{max-height:38vh;max-height:38dvh}
 }
 @media (pointer:coarse){
   html.editing body:not(.study) .r2heads .views button{height:40px}
@@ -1460,6 +1471,26 @@ body.moving3 #cv{cursor:grabbing}
 .ctx3 kbd{font-family:var(--mono);font-size:11px;color:#8a7f72;background:none;border:0}
 .ctx3 hr{border:0;border-top:1px solid #ebe5da;margin:4px 2px}
 #keysModal .mact[hidden]{display:none}
+@media (max-width:380px){
+  html.editing body:not(.study) #insp #dimRow3 .st > .lbl,html.editing body:not(.study) #insp .axisrow > .lbl,html.editing body:not(.study) #insp .lvrow > .lbl,html.editing body:not(.study) #insp .rotrow > .lbl:first-child{width:54px}
+  html.editing body:not(.study) #insp #dimRow3 .stepper{gap:3px;min-width:0}
+  html.editing body:not(.study) #insp #dimRow3 .stepper button{width:32px}
+  html.editing body:not(.study) #insp #axisSeg button{padding:0 9px}
+}
+html.editing body:not(.study) #insp #floorRow{display:flex;align-items:center;gap:8px;background:var(--sb-sage-t);border-radius:10px;padding:8px 10px}
+html.editing body:not(.study) #insp #floorRow[hidden]{display:none}
+html.editing body:not(.study) #insp #floorRow .lbl{font-size:12.5px;color:var(--sb-ink);font-weight:600;flex:none}
+html.editing body:not(.study) #insp #floorRow .stepper{flex:1 1 auto;max-width:200px;gap:5px;border:0;background:transparent;overflow:visible}
+html.editing body:not(.study) #insp #floorRow .stepper button{width:38px;border:1px solid var(--sb-line);border-radius:8px;background:#fff}
+html.editing body:not(.study) #insp #floorRow .stepper input{border:1px solid var(--sb-line);border-radius:8px;font-size:16px;font-weight:600}
+/* 태블릿 가로(사파리 주소창까지 있는 웹 화면): 위쪽 세 줄을 조금 납작하게 해서 도면을 더 넓게 */
+@media (pointer:coarse) and (orientation:landscape) and (max-height:900px) and (min-width:900px){
+  html.editing #topArea .bar{padding-top:2px !important;padding-bottom:2px !important}
+  html.editing #topArea .bar button,html.editing #topArea .bar .name,html.editing #topArea .bar .savebtn,html.editing #uiModeSeg button{height:40px !important;min-height:40px !important}
+  html.editing body.study #stools .tgrp button{height:38px !important;min-height:38px !important}
+  html.editing body.study #stools{padding-top:2px;padding-bottom:2px}
+  html.editing body.study .sheetbar button{height:32px !important;min-height:32px !important}
+}
 </style>
 <script type="importmap">
 {"imports":{
@@ -2426,7 +2457,8 @@ function normBox0(b, grid){
     note: String(b.note || '').slice(0, 80),
     lock: false,
     env: b.env ? String(b.env).slice(0, 40) : '',
-    group: b.group ? String(b.group).slice(0, 40) : ''
+    group: b.group ? String(b.group).slice(0, 40) : '',
+    ...(() => { const y = Math.round((Number(b.y0) || 0) * 10) / 10; return y > 0 ? { y0: Math.min(300, y) } : {}; })()
   };
 }
 const SNAPKEYS = ['siteW', 'siteD', 'grid', 'floorH', 'floorHs', 'north', 'site', 'envShapes', 'doors', 'bcrLimit', 'farLimit', 'snap', 'boxes', 'notes', 'sheets', 'flows', 'cards', 'cats', 'guides'];
@@ -2534,6 +2566,7 @@ function elevOf(L, p = P){
   if (n >= 0) for (let i = 0; i < n; i++) e += floorHOf(i, p); else for (let i = n; i < 0; i++) e -= floorHOf(i, p);
   return e + (L - n > 1e-6 ? floorHOf(n, p) * (L - n) : 0);
 }
+function baseY(b, p = P){ return elevOf(b.lv, p) + (b.y0 > 0 ? b.y0 : 0); } // 밑면 높이 = 층 바닥 + 띄운 높이
 function boxH(b, p = P){ if (b.h > 0) return b.h; let h = 0; for (let i = 0; i < b.fl; i++) h += floorHOf(b.lv + i, p); return h; }
 const siteArea = p => p.site ? polyArea(p.site.pts) : p.siteW * p.siteD;
 // 같은 배치면 다시 계산하지 않음 (면적 샘플링이 무거워서)
@@ -2565,7 +2598,7 @@ function calcRaw(p){
   }
   const rooms = massing.reduce((s, b) => s + shapeArea(b) * b.fl, 0);
   let height = 0, top = 0, under = 0;
-  for (const b of pb) { height = Math.max(height, elevOf(b.lv, p) + boxH(b, p)); top = Math.max(top, Math.ceil(b.lv + b.fl - 1e-9)); under = Math.max(under, -Math.floor(b.lv)); }
+  for (const b of pb) { height = Math.max(height, baseY(b, p) + boxH(b, p)); top = Math.max(top, Math.ceil(b.lv + b.fl - 1e-9)); under = Math.max(under, -Math.floor(b.lv)); }
   return { site, foot, gfa, gfaB, gfaP, rooms, byOuter: !!outers.length, hasBoth: !!(outers.length && solids.length), bcr: site ? foot / site * 100 : 0, far: site ? gfa / site * 100 : 0, floors: top, under, height };
 }
 function gcd(a, b){ return b ? gcd(b, a % b) : a; }
@@ -3216,10 +3249,11 @@ function underView(){
   const ub = P.boxes.filter(b => !b.sheet && b.lv < 0), has = ub.length > 0, focus = has && selBoxes().some(b => !b.sheet && b.lv < 0);
   const op = !has ? 1 : focus ? 0.22 : 0.5;
   for (const m of [groundMesh, sitePlMesh]) if (m) { m.material.opacity = op; m.material.depthWrite = op === 1; m.renderOrder = op === 1 ? 0 : 5; m.material.needsUpdate = true; }
-  if (controls) controls.maxPolarAngle = has ? Math.PI * 0.64 : Math.PI / 2; // 지하가 있으면 땅 아래에서 올려다보기도 가능
+  if (controls) controls.maxPolarAngle = Math.PI * 0.64; // 땅 아래에서 올려다보기 (지하가 없으면 내려갔을 때만 땅이 반투명)
+  try { below3 = null; belowCheck3(); } catch (e) {}
   if (!has) return;
   let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity, y0 = 0;
-  for (const b of ub) { const a = aabb(b); x0 = Math.min(x0, a.x0); z0 = Math.min(z0, a.z0); x1 = Math.max(x1, a.x1); z1 = Math.max(z1, a.z1); y0 = Math.min(y0, elevOf(b.lv)); }
+  for (const b of ub) { const a = aabb(b); x0 = Math.min(x0, a.x0); z0 = Math.min(z0, a.z0); x1 = Math.max(x1, a.x1); z1 = Math.max(z1, a.z1); y0 = Math.min(y0, baseY(b)); }
   const pad = Math.max(0.4, P.grid * 0.2); x0 -= pad; z0 -= pad; x1 += pad; z1 += pad; y0 -= 0.3;
   const w = x1 - x0, d = z1 - z0, h = -y0, cx = -P.siteW / 2 + (x0 + x1) / 2, cz = -P.siteD / 2 + (z0 + z1) / 2;
   const geo = new THREE.BoxGeometry(w, h, d);
@@ -3332,7 +3366,7 @@ function boxMesh(b, totalRooms, rank = 0){
   // 스터디 보드에서 아래 레이어일수록 아주 조금 작고(옆) 바닥이 살짝 떠 있게: 겹친 면이 깨져 보이지 않음
   const rk = Math.min(rank, 12), ins = rk ? 0.002 : 0, lift = 0.002 + rk * 0.0005, drop = rk * 0.0005, Hs = Math.max(0.05, H - lift - drop); // 틈이 안 보이게 아주 조금만 (깜빡임은 깊이 정밀도로 막음)
   mesh.scale.set(Math.max(0.6, (b.w - 2 * ins) / b.w), Hs / H, Math.max(0.6, (b.d - 2 * ins) / b.d));
-  mesh.position.set(-P.siteW / 2 + b.x + b.w / 2, elevOf(b.lv) + lift + Hs / 2, -P.siteD / 2 + b.z + b.d / 2);
+  mesh.position.set(-P.siteW / 2 + b.x + b.w / 2, baseY(b) + lift + Hs / 2, -P.siteD / 2 + b.z + b.d / 2);
   mesh.rotation.y = -rad(b.ang || 0);
   mesh.castShadow = !outer && b.cat !== 'void' && b.cat !== 'outdoor' && b.cat !== 'service'; mesh.receiveShadow = !outer; mesh.userData.id = b.id; mesh.renderOrder = outer ? 2 : 0;
   const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), outer ? (isSel ? dashSel : b.lock ? dashLock : out ? dashOut : dashMat) : edgeMode ? (isSel ? edgeXSel : edgeX) : (isSel ? edgeSel : b.lock ? edgeLock : out ? edgeOut : edgeMat));
@@ -3406,8 +3440,8 @@ function buildHandles(){
   try { addMoveGizmo3(); } catch (e) {}
   const b = getBox(sel); if (!b || edRO() || selSet.size !== 1 || b.lock || b.sheet || (b.ang && sizeMode !== b.id)) return;
   const R = Math.max(P.siteW, P.siteD), r = Math.max(0.28, R / 90);
-  const top = elevOf(b.lv) + boxH(b), cx = -P.siteW / 2 + b.x + b.w / 2, cz = -P.siteD / 2 + b.z + b.d / 2;
-  const base = elevOf(b.lv), midY = base + boxH(b) / 2, ed = sizeMode === b.id;
+  const top = baseY(b) + boxH(b), cx = -P.siteW / 2 + b.x + b.w / 2, cz = -P.siteD / 2 + b.z + b.d / 2;
+  const base = baseY(b), midY = base + boxH(b) / 2, ed = sizeMode === b.id;
   const ca = Math.cos(rad(b.ang || 0)), sa = Math.sin(rad(b.ang || 0)), at = (lx, lz, y) => [cx + lx * ca - lz * sa, y, cz + lx * sa + lz * ca]; // 돌린 도형도 그 방향대로
   const spots = ed ? { w: at(b.w / 2 + r * 1.6, 0, midY), w0: at(-b.w / 2 - r * 1.6, 0, midY), d: at(0, b.d / 2 + r * 1.6, midY), d0: at(0, -b.d / 2 - r * 1.6, midY), h: [cx, top + r * 2.4, cz], b: [cx, base - r * 2.4, cz] } // 수정 모드: 여섯 방향
     : { w: [cx + b.w / 2, top, cz], d: [cx, top, cz + b.d / 2], h: [cx, top + r * 2.4, cz] };
@@ -3432,11 +3466,11 @@ function openings3D(){
     const L = [0]; for (let i = 0; i < wp.length; i++) { const a = wp[i], c = wp[(i + 1) % wp.length]; L.push(L[i] + Math.hypot(c[0] - a[0], c[1] - a[1])); }
     const R = { pts: wp, L, tot: L[L.length - 1] || 1 }, tt = doorT(dr, R), half = Math.min(dr.w, R.tot) / 2 / R.tot, pts = ringSlice(R, tt - half, tt + half);
     let cx = 0, cz = 0; for (const q of wp) { cx += q[0]; cz += q[1]; } cx /= wp.length; cz /= wp.length;
-    const base = elevOf(b.lv), H = boxH(b), glass = dr.kind === 'glass';
+    const base = baseY(b), H = boxH(b), glass = dr.kind === 'glass';
     // 높이 구간: 문은 바닥에서 2.1m(낮은 상자는 그 안에서), 유리벽은 전체, 유리(창)는 층마다 허리 높이 띠
     const bands = [];
     if (!glass) bands.push([0.02, Math.min(2.1, H * 0.85)]);
-    else if (dr.tag === 'win') { const n = b.h > 0 ? Math.max(1, Math.round(H / P.floorH)) : b.fl; for (let k = 0; k < n; k++) { const f0 = b.h > 0 ? H * k / n : elevOf(b.lv + k) - base, fh = b.h > 0 ? H / n : floorHOf(b.lv + k); bands.push([f0 + Math.min(0.9, fh * 0.3), f0 + Math.max(Math.min(fh - 0.35, 2.4), fh * 0.6)]); } }
+    else if (dr.tag === 'win') { const n = b.h > 0 ? Math.max(1, Math.round(H / P.floorH)) : b.fl; for (let k = 0; k < n; k++) { const f0 = b.h > 0 ? H * k / n : elevOf(b.lv + k) - elevOf(b.lv), fh = b.h > 0 ? H / n : floorHOf(b.lv + k); bands.push([f0 + Math.min(0.9, fh * 0.3), f0 + Math.max(Math.min(fh - 0.35, 2.4), fh * 0.6)]); } }
     else bands.push([0.05, H - 0.05]);
     const dc = DOOR_COLORS[dr.tag] || DOOR_COLORS[''], color = glass ? 0x8fc0e3 : parseInt(dc[0].slice(1), 16), m = glass ? mat('g', 0x8fc0e3, .42) : mat('d' + dr.tag, color, .78);
     for (let i = 0; i < pts.length - 1; i++) {
@@ -3511,8 +3545,9 @@ function makeControls(){
   if (controls) controls.dispose();
   controls = new OrbitControls(cam, cv);
   controls.enableDamping = true; controls.dampingFactor = 0.14; controls.rotateSpeed = 0.45; controls.zoomSpeed = 0.8; // 돌리는 감도 낮춤
-  controls.maxPolarAngle = Math.PI / 2;
+  controls.maxPolarAngle = Math.PI * 0.64; // 땅 아래까지 돌려 보기
   controls.screenSpacePanning = true;
+  controls.addEventListener('change', () => { try { belowCheck3(); } catch (e) {} });
   applyKeys();
   controls.addEventListener('change', requestRender);
 }
@@ -3913,7 +3948,8 @@ function refreshUI(){
     $('#gridBtn').hidden = anyLock;
     $('#gapLbl').textContent = uiMode === 'study' ? '간격(칸)' : '간격(m)';
     const fl = floorOfSel();
-    $('#floorRow').hidden = true; // 도형을 고른 채로 층고를 바꾸는 기능은 뺌 (층고는 대지 설정에서)
+    $('#floorRow').hidden = study || !fl || isHalf(fl.level); // 층 이름을 눌러 그 층을 통째로 고르면 층고를 −/+로 바꿔요
+    if (!$('#floorRow').hidden && document.activeElement !== $('#ifh')) $('#ifh').value = f2(floorHOf(Math.floor(fl.level)));
     if (sizeMode && (selSet.size !== 1 || sel !== sizeMode)) sizeMode = null;
     { const se = $('#shapeEditBtn'), on3 = !study && sizeMode && sizeMode === sel, b3 = sel ? getBox(sel) : null; se.classList.toggle('on', !!on3); se.textContent = on3 ? '도형 수정 끝내기' : '도형 수정'; se.disabled = !b3 || !!b3.lock || edRO(); }
     { const sb3 = $('#size3Btn'), on = !study && sizeMode && sizeMode === sel; sb3.classList.toggle('on', !!on); sb3.textContent = on ? '완료' : '크기 바꾸기';
@@ -3929,8 +3965,8 @@ function refreshUI(){
     $('#iInfo').textContent = study
       ? `${cellsStr(b.w)}칸 × ${cellsStr(b.d)}칸 · 비율 ${ratioStr(b.w, b.d, P.grid)} · ${b.fl}개 층 · ${levelName(b.lv)}부터${outside(b) ? ' · 대지 밖' : ''}`
       : `${f2(b.w)}×${f2(b.d)}m · 바닥 ${f1(fa)}㎡ × ${b.fl}개 층 = ${f1(fa * b.fl)}㎡ · 높이 ${f2(boxH(b))}m · ${levelName(b.lv)}부터${outside(b) ? ' · 대지 밖' : ''}`;
-    $('#lW').textContent = study ? '가로 (칸)' : '너비 (m)';
-    $('#lD').textContent = study ? '세로 (칸)' : '앞뒤 (m)';
+    $('#lW').textContent = study ? '가로 (칸)' : '폭 W (m)';
+    $('#lD').textContent = study ? '세로 (칸)' : '깊이 D (m)';
     if (document.activeElement !== $('#iw')) $('#iw').value = study ? cellsStr(b.w) : f2(b.w);
     if (document.activeElement !== $('#idp')) $('#idp').value = study ? cellsStr(b.d) : f2(b.d);
     if (document.activeElement !== $('#ifl')) $('#ifl').value = b.fl;
@@ -4347,7 +4383,7 @@ const TOURS = {
     ['#views', '보기', '투시·아이소·평면·입면으로 바꿔요. 입면을 다시 누르면 남 → 동 → 북 → 서로 돌아요.'],
     ['#cam3', '화면 되찾기', '전체 보기(Shift+Z)는 매스가 모두 들어오게, 선택 보기는 고른 도형을 가운데로, 시점 초기화(Z)는 이 보기의 처음 화면으로 돌려요.'],
     ['#r2Btn', '보기 설정', '글자(이름·설명 / 크기)와 경계선 보기를 바꿔요.'],
-    [null, '마우스 조작', '기본 조작: 왼쪽 끌기 = 돌리기 · 오른쪽 끌기 = 화면 이동 · 휠 = 확대 · 도형은 ◎ 이동 손잡이로 옮겨요 (빨강 = 가로만, 초록 = 앞뒤만)\n전문가 조작 (SketchUp 방식): 휠 클릭 끌기 = 돌리기 · Shift + 휠 클릭 끌기 = 화면 이동 · 도형 왼쪽 끌기 = 옮기기 · 빈 곳 왼쪽 끌기 = 네모로 고르기\n둘 다: 오른쪽 짧게 누르기 = 보조 메뉴 · 메뉴 → ‘조작 방식’에서 바꿔요'],
+    [null, '마우스 조작', '기본 조작: 왼쪽 끌기 = 돌리기 · 오른쪽 끌기 = 화면 이동 · 휠 = 확대 · 도형은 ◎ 이동 손잡이로 옮겨요 (빨강 = X축 폭, 초록 = Y축 깊이, 파랑 = Z축 위아래)\n전문가 조작 (SketchUp 방식): 휠 클릭 끌기 = 돌리기 · Shift + 휠 클릭 끌기 = 화면 이동 · 도형 왼쪽 끌기 = 옮기기 · 빈 곳 왼쪽 끌기 = 네모로 고르기\n‘자유’로 옮기면 위·아래에서 볼 땐 앞뒤·양옆, 옆에서 볼 땐 옆·위아래로 움직여요\n둘 다: 오른쪽 짧게 누르기 = 보조 메뉴 · 메뉴 → ‘조작 방식’에서 바꿔요'],
     ['#r2mBtn', '메뉴', '레퍼런스·플랜·대지·댓글·내보내기가 여기 있어요.'],
     ['#sheet', '편집 창', '상자를 고르면 열려요. 이름·설명, 모양, 45° 회전이 있어요. 고른 도형을 두 번 누르거나 길게 누르면(또는 ‘수정 모드’를 켜고 누르면) 그 도형만 가까이 보이며 앞뒤·양옆·위아래 손잡이로 늘이고 줄여요. 바깥을 누르면 끝나요.'],
     [null, '여러 개 고르기', '도형을 누르면 그것 하나만 골라져요.\n하나를 고른 뒤 다른 도형을 두 번 누르거나 길게 누르면 같이 골라져요. 이미 고른 도형을 길게 누르면 빠져요.\nPC에서는 Shift를 누른 채 눌러도 돼요.'],
@@ -4570,19 +4606,20 @@ cv.addEventListener('pointerdown', e => {
   const hk = handleAt(e);
   if (hk && hk.startsWith('mv')) {
     const sbx = selBoxes(); if (sbx.some(x => x.lock)) return;
-    const y = elevOf(b.lv), p = planeAt(e, y); if (!p) return;
-    const orig = {}; for (const x of sbx) orig[x.id] = [x.x, x.z];
-    drag = { type: null, start: JSON.stringify(P), p0: p, y, orig, moved: false, pid: e.pointerId, lockAx: hk === 'mvx' ? 'x' : hk === 'mvz' ? 'z' : '' };
+    const lockAx = hk === 'mvx' ? 'x' : hk === 'mvz' ? 'z' : hk === 'mvy' ? 'y' : '';
+    const y = baseY(b), p = planeAt(e, y); if (!p && !vertMove3(lockAx)) return;
+    const orig = {}; for (const x of sbx) orig[x.id] = [x.x, x.z, x.lv];
+    drag = { type: null, start: JSON.stringify(P), p0: p, y, orig, moved: false, pid: e.pointerId, lockAx, e0: { clientX: e.clientX, clientY: e.clientY } };
   } else if (hk) {
     drag = { type: hk, start: JSON.stringify(P), moved: false, pid: e.pointerId };
   } else {
     if (basicMouse3(e)) return; // 기본 조작: 마우스로 몸통을 끌면 화면이 돌고, 옮기기는 이동 손잡이로
     const hit = hitsAt(e).find(h => selSet.has(h.object.userData.id) && !getBox(h.object.userData.id).lock);
     if (!hit || selBoxes().some(x => x.lock)) return;
-    const hb = getBox(hit.object.userData.id), y = elevOf(hb.lv);
-    const p = planeAt(e, y); if (!p) return;
-    const orig = {}; for (const x of selBoxes()) orig[x.id] = [x.x, x.z];
-    drag = { type: null, start: JSON.stringify(P), p0: p, y, orig, moved: false, pid: e.pointerId };
+    const hb = getBox(hit.object.userData.id), y = baseY(hb);
+    const p = planeAt(e, y); if (!p && !vertMove3('')) return;
+    const orig = {}; for (const x of selBoxes()) orig[x.id] = [x.x, x.z, x.lv];
+    drag = { type: null, start: JSON.stringify(P), p0: p, y, orig, moved: false, pid: e.pointerId, e0: { clientX: e.clientX, clientY: e.clientY } };
   }
   controls.enabled = false;
   try { cv.setPointerCapture(e.pointerId); } catch (err) {}
@@ -4594,7 +4631,7 @@ cv.addEventListener('pointermove', e => {
   const b = getBox(sel); if (!b) return;
   const fh = P.floorH;
   if (sizeMode === b.id && ['w', 'w0', 'd', 'd0'].includes(drag.type)) { // 수정 모드: 앞뒤·양옆 (반대쪽 면은 그대로)
-    const p = planeAt(e, elevOf(b.lv) + boxH(b) / 2); if (!p) return;
+    const p = planeAt(e, baseY(b) + boxH(b) / 2); if (!p) return;
     const P0 = [p.x + P.siteW / 2, p.z + P.siteD / 2], A = rad(b.ang || 0), cs = Math.cos(A), sn2 = Math.sin(A);
     const isW = drag.type[0] === 'w', sg = drag.type.length === 2 ? -1 : 1, ax = isW ? [cs * sg, sn2 * sg] : [-sn2 * sg, cs * sg], ext = isW ? b.w : b.d;
     const c0 = [b.x + b.w / 2, b.z + b.d / 2], F = [c0[0] - ax[0] * ext / 2, c0[1] - ax[1] * ext / 2]; // 반대쪽 면 가운데는 그대로
@@ -4605,41 +4642,55 @@ cv.addEventListener('pointermove', e => {
   }
   if (sizeMode === b.id && (drag.type === 'h' || drag.type === 'b')) { // 수정 모드: 위는 0.1m씩, 아래는 층 높이에 맞춰
     const p = vertPlaneAt(e, b); if (!p) return;
-    const base = elevOf(b.lv), top = base + boxH(b);
+    const base = baseY(b), top = base + boxH(b);
     if (drag.type === 'h') { const nh = Math.max(0.3, Math.round((p.y - base) * 10) / 10); if (Math.abs(nh - boxH(b)) > 1e-6) { setBoxHeight(b, nh); drag.moved = true; buildBoxes(); liveHint(b); clearTimeout(statT); statT = setTimeout(refreshUI, 80); } }
-    else { let L = b.lv, bd = Infinity; for (let l = -10; l <= 99; l++) { const y = elevOf(l); if (y > top - 0.3) break; const dd = Math.abs(y - p.y); if (dd < bd) { bd = dd; L = l; } }
-      if (L !== b.lv) { b.lv = L; setBoxHeight(b, top - elevOf(L)); drag.moved = true; buildBoxes(); liveHint(b); clearTimeout(statT); statT = setTimeout(refreshUI, 80); } }
+    else { // 밑면: 0.1m씩 · 층 선 가까이(0.15m)면 층 선에 붙어요 · 밑면이 들어간 층에 속하고 남는 만큼은 띄운 높이(y0)
+      let ny = Math.min(top - 0.3, Math.round(p.y * 10) / 10);
+      const lvs = []; for (let l = -10; l <= 99; l++) lvs.push(l); for (const s of P.sheets) if (s.type === 'plan' && isHalf(s.level)) lvs.push(s.level);
+      for (const l of lvs) if (Math.abs(elevOf(l) - ny) < 0.15 && elevOf(l) < top - 0.3) { ny = elevOf(l); break; }
+      let L = -10; for (const l of lvs) if (elevOf(l) <= ny + 1e-6 && l > L) L = l;
+      const y0 = Math.round((ny - elevOf(L)) * 10) / 10;
+      if (L !== b.lv || Math.abs(y0 - (b.y0 || 0)) > 1e-6) { b.lv = L; if (y0 > 0) b.y0 = y0; else delete b.y0; setBoxHeight(b, top - ny); drag.moved = true; buildBoxes(); liveHint(b); clearTimeout(statT); statT = setTimeout(refreshUI, 80); } }
     return;
   }
   if (drag.type === 'w' || drag.type === 'd') {
-    const p = planeAt(e, elevOf(b.lv) + boxH(b)); if (!p) return;
+    const p = planeAt(e, baseY(b) + boxH(b)); if (!p) return;
     const nv = drag.type === 'w' ? Math.max(minV(), snapV(p.x + P.siteW / 2 - b.x)) : Math.max(minV(), snapV(p.z + P.siteD / 2 - b.z));
     if (nv !== b[drag.type]) { b[drag.type] = nv; drag.moved = true; buildBoxes(); liveHint(b); clearTimeout(statT); statT = setTimeout(refreshUI, 80); }
     return;
   }
   if (drag.type === 'h') {
     const p = vertPlaneAt(e, b); if (!p) return;
-    const nf = Math.min(99, Math.max(1, Math.round((p.y - elevOf(b.lv)) / floorHOf(b.lv))));
+    const nf = Math.min(99, Math.max(1, Math.round((p.y - baseY(b)) / floorHOf(b.lv))));
     if (nf !== b.fl || b.h) { b.fl = nf; b.h = 0; drag.moved = true; buildBoxes(); liveHint(b); clearTimeout(statT); statT = setTimeout(refreshUI, 80); }
     return;
   }
-  const p = planeAt(e, drag.y); if (!p) return;
   const snapD = v => snapOn() ? Math.round(v / P.grid) * P.grid : Math.round(v * 4) / 4;
-  let dx = snapD(p.x - drag.p0.x), dz = snapD(p.z - drag.p0.z);
-  let ax = drag.lockAx || moveAxis;
-  if (!ax && e.shiftKey) { if (!drag.ax && (dx || dz)) drag.ax = Math.abs(dx) >= Math.abs(dz) ? 'x' : 'z'; ax = drag.ax || ''; } else if (!e.shiftKey) drag.ax = '';
-  if (ax === 'x') dz = 0; else if (ax === 'z') dx = 0;
+  let ax = drag.lockAx || moveAxis, dx = 0, dz = 0, dl = 0;
+  if (vertMove3(ax)) { // 위아래: 화면을 향한 세로면에서 끌기 · 층 단위
+    const q = dragVert3(e, b); if (!q) return;
+    dl = Math.round(q[1] / Math.max(0.3, P.floorH));
+    if (ax !== 'y') { dx = snapD(q[0]); dz = snapD(q[2]); }
+  } else {
+    const p = planeAt(e, drag.y); if (!p || !drag.p0) return;
+    dx = snapD(p.x - drag.p0.x); dz = snapD(p.z - drag.p0.z);
+    if (!ax && e.shiftKey) { if (!drag.ax && (dx || dz)) drag.ax = Math.abs(dx) >= Math.abs(dz) ? 'x' : 'z'; ax = drag.ax || ''; } else if (!e.shiftKey) drag.ax = '';
+    if (ax === 'x') dz = 0; else if (ax === 'z') dx = 0;
+  }
   if (ax !== drag.axNow) { drag.axNow = ax; axisGuide3(ax, b, drag.y); }
-  if (dx || dz || drag.moved) showMove3(e, dx, dz, ax);
-  if (dx !== drag.dx || dz !== drag.dz) {
-    drag.dx = dx; drag.dz = dz; drag.moved = dx !== 0 || dz !== 0;
+  if (dx || dz || dl || drag.moved) showMove3(e, dx, dz, ax, dl);
+  if (dx !== drag.dx || dz !== drag.dz || dl !== drag.dl) {
+    const lvCh = dl !== (drag.dl || 0);
+    drag.dx = dx; drag.dz = dz; drag.dl = dl; drag.moved = dx !== 0 || dz !== 0 || dl !== 0;
     for (const x of selBoxes()) {
       const o = drag.orig[x.id]; if (!o) continue;
       x.x = r2(o[0] + dx); x.z = r2(o[1] + dz);
+      if (o.length > 2) x.lv = Math.max(-10, Math.min(99, o[2] + dl));
       const m = boxMeshes.find(q => q.userData.id === x.id);
       if (m) { m.position.x = -P.siteW / 2 + x.x + x.w / 2; m.position.z = -P.siteD / 2 + x.z + x.d / 2; }
     }
-    buildHandles(); requestRender();
+    if (lvCh) buildBoxes(); else buildHandles();
+    requestRender();
     clearTimeout(statT); statT = setTimeout(refreshUI, 80);
   }
 });
@@ -4791,7 +4842,7 @@ const sitePoly = () => P.site && P.site.pts && P.site.pts.length > 2 ? P.site.pt
 function elevLayout(){
   if (!P || isSketch() || !P.sheets.length) return [];
   const M = P.grid, sp = sitePoly(); let top = P.floorH, bot = 0;
-  for (const b of P.boxes) if (b.kind === 'solid') { const y0 = elevOf(b.lv); top = Math.max(top, y0 + boxH(b)); bot = Math.min(bot, y0); }
+  for (const b of P.boxes) if (b.kind === 'solid') { const y0 = baseY(b); top = Math.max(top, y0 + boxH(b)); bot = Math.min(bot, y0); }
   let x = Infinity, rowY = 0;
   P.sheets.forEach((s, i) => { if (!sheetVis(i)) return; x = Math.min(x, sheetOx(i)); rowY = Math.max(rowY, sheetOy(i) + P.siteD); });
   if (!isFinite(x)) x = 0;
@@ -4820,7 +4871,7 @@ function elevSvg(px){
     const items = solids.map(b => { const pts = worldPts(b); let cx = 0, cz = 0; for (const q of pts) { cx += q[0]; cz += q[1]; } cx /= pts.length; cz /= pts.length; return { b, pts, dep: cx * e.f[0] + cz * e.f[1] }; }).sort((a, c) => a.dep - c.dep);
     const drawn = [], labs = [];
     for (const { b, pts } of items) {
-      const y0 = elevOf(b.lv), y1 = y0 + boxH(b), n = pts.length; if (n < 3) continue;
+      const y0 = baseY(b), y1 = y0 + boxH(b), n = pts.length; if (n < 3) continue;
       let A = 0; for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n]; A += p[0] * q[1] - q[0] * p[1]; }
       const fc = []; // 면마다 바깥쪽 방향과 보이는 정도
       for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n], dx = q[0] - p[0], dz = q[1] - p[1], Ln = Math.hypot(dx, dz) || 1; const nx = (A > 0 ? dz : -dz) / Ln, nz = (A > 0 ? -dx : dx) / Ln; fc.push({ p, q, nx, nz, c: nx * e.f[0] + nz * e.f[1], len: Ln }); }
@@ -4840,7 +4891,7 @@ function elevSvg(px){
       });
       if (!faces) continue;
       // 여러 층 상자는 층 사이에 옅은 선
-      if (!(b.h > 0)) for (let k = 1; k < b.fl; k++) { const yy = Y(elevOf(b.lv + k)); lines += `<line x1="${r3(umin)}" y1="${r3(yy)}" x2="${r3(umax)}" y2="${r3(yy)}" stroke="${st}" stroke-opacity=".3" stroke-width="${r3(px(0.7))}"/>`; }
+      if (!(b.h > 0)) for (let k = 1; k < b.fl; k++) { const yy = Y(elevOf(b.lv + k) + (b.y0 > 0 ? b.y0 : 0)); lines += `<line x1="${r3(umin)}" y1="${r3(yy)}" x2="${r3(umax)}" y2="${r3(yy)}" stroke="${st}" stroke-opacity=".3" stroke-width="${r3(px(0.7))}"/>`; }
       h += openSp ? `<g fill-opacity="${b.cat === 'void' ? '.15' : '.45'}" stroke-dasharray="${r3(px(5))} ${r3(px(3))}">${faces + lines}</g>` : glassSp ? `<g fill-opacity=".7">${faces + lines}</g>` : faces + lines;
       drawn.push({ x0: umin, x1: umax, z0: Y(y1), z1: Y(y0) });
       const lb = b.label || ''; if (lb) { const fs = px(11), tw = textW(lb, fs, 600); if (tw < umax - umin - px(6) && (y1 - y0) > px(14)) { const cx = (umin + umax) / 2, cy = Y((y0 + y1) / 2); labs.push({ k: drawn.length - 1, r: { x0: cx - tw / 2 - px(2), x1: cx + tw / 2 + px(2), z0: cy - fs * 0.7, z1: cy + fs * 0.5 }, t: `<text x="${r3(cx)}" y="${r3(cy + px(4))}" text-anchor="middle" font-size="${r3(fs)}" font-weight="600" fill="#27241f" fill-opacity=".8">${esc(lb)}</text>` }); } }
@@ -4849,8 +4900,8 @@ function elevSvg(px){
     const shown = [];
     for (const L of labs) { const r = L.r, hit = o => r.x0 < o.x1 && r.x1 > o.x0 && r.z0 < o.z1 && r.z1 > o.z0; if (drawn.slice(L.k + 1).some(hit) || shown.some(hit)) continue; shown.push(r); h += L.t; }
     h += `<line x1="${r3(rx0)}" y1="${r3(e.gy)}" x2="${r3(rx1)}" y2="${r3(e.gy)}" stroke="#8a6f5a" stroke-width="${r3(px(1.8))}"/>`;
-    const room = (rx1 - rx0) * sv.k, tfs = Math.min(17 * 1.15, room / 6), sub = `${e.nm}쪽에서 본 모습 · 눌러서 3D로`, showSub = textW(`${e.nm}측 입면`, tfs, 700) + 8 + textW(sub, 11.5 * 1.15, 500) < room;
-    h += `</g><text x="${r3(rx0)}" y="${r3(ry0 + e.M * 0.9 - px(10))}" font-size="${r3(px(tfs))}" font-weight="700" fill="${uiModeElevHi === e.dir ? '#2c5a8c' : '#27241f'}" data-role="elevtitle" data-dir="${e.dir}" style="cursor:pointer">${e.nm}측 입면${showSub ? `<tspan font-size="${r3(px(11.5 * 1.15))}" font-weight="500" fill="#8a8478" dx="${r3(px(8))}">${sub}</tspan>` : ''}</text>`;
+    const room = (rx1 - rx0) * sv.k, tfs = Math.min(17 * 1.15, room / 6), sub = `${e.nm}쪽에서 본 모습`, go3 = '3D로 보기 ›', showSub = textW(`${e.nm}측 입면`, tfs, 700) + 8 + textW(sub, 11.5 * 1.15, 500) + 14 + textW(go3, 11.5 * 1.15, 700) < room;
+    h += `</g><text x="${r3(rx0)}" y="${r3(ry0 + e.M * 0.9 - px(10))}" font-size="${r3(px(tfs))}" font-weight="700" fill="${uiModeElevHi === e.dir ? '#2c5a8c' : '#27241f'}" data-role="elevtitle" data-dir="${e.dir}">${e.nm}측 입면${showSub ? `<tspan font-size="${r3(px(11.5 * 1.15))}" font-weight="500" fill="#8a8478" dx="${r3(px(8))}">${sub}</tspan><tspan font-size="${r3(px(11.5 * 1.15))}" font-weight="700" fill="#56705d" dx="${r3(px(14))}" data-role="elevgo" data-dir="${e.dir}" style="cursor:pointer">${go3}</tspan>` : `<tspan font-size="${r3(px(11.5 * 1.15))}" font-weight="700" fill="#56705d" dx="${r3(px(10))}" data-role="elevgo" data-dir="${e.dir}" style="cursor:pointer">3D ›</tspan>`}</text>`;
   }
   return h;
 }
@@ -5742,7 +5793,7 @@ function renderStudyNow(){
   // 위층까지 올라가는 도형(높이가 층고를 넘음): 위층 평면에 '고정'으로 표시 — 빗금 + 점선, 눌러도 안 잡힘
   if (!sketch) for (const b of P.boxes) {
     if (b.kind !== 'solid' || b.sheet) continue;
-    const top = elevOf(b.lv) + boxH(b);
+    const top = baseY(b) + boxH(b);
     P.sheets.forEach((s, ti) => {
       if (s.type !== 'plan' || s.level <= b.lv + 1e-6 || !sheetVis(ti) || elevOf(s.level) >= top - 0.05) return;
       if (isHalf(s.level) && top <= elevOf(Math.floor(b.lv) + 1) + 0.05) return; // 제 층 높이 안의 보통 도형은 반 층 대지에 안 띄움
@@ -6209,7 +6260,7 @@ pc.addEventListener('pointerdown', e => {
   if (role === 'rulerdel') { gesture = { type: 'none' }; const ri = Number(el.closest('[data-role=rulerdel]').dataset.ri); commit(() => { if (Array.isArray(P.guides)) P.guides.splice(ri, 1); }); return; }
   if (role === 'halftog') { gesture = { type: 'none' }; toggleHalf(el.dataset.sheet); return; }
   if (role === 'compass') { gesture = { type: 'none' }; if (!ro) openNorth(); return; }
-  if (role === 'elevtitle') { gesture = { type: 'none' }; elevDir = el.dataset.dir; setUiMode('exact'); requestAnimationFrame(() => setView('elev')); return; }
+  if (role === 'elevgo') { sAuto = false; gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty, elevGo: el.dataset.dir }; return; } // 짧게 눌렀다 떼야 3D (끌면 화면 이동)
   if (role === 'sheettitle') { gesture = { type: 'none' }; activateSheet(el.dataset.sheet, true); return; }
   if (linkMode && !flowEdit) {
     const c = P.cards.find(x => x.id === selCard);
@@ -6568,6 +6619,7 @@ function endStudyPointer(e){
   if (pointers.size) return;
   gesture = null; hideTag(); layFrozen = false;
   const cancelled = e.type === 'pointercancel';
+  if (g.elevGo && !cancelled && Math.hypot(e.clientX - g.x0, e.clientY - g.y0) < 6) { elevDir = g.elevGo; setUiMode('exact'); requestAnimationFrame(() => setView('elev')); return; }
   if (g.type === 'none') return;
   if (g.type === 'pvdrag' || g.type === 'pcdrag') { if (g.moved && !cancelled) pushHist(g.start); else if (cancelled && g.moved) P = JSON.parse(g.start); studyUI(); return; }
   if (g.type === 'fbdraw') { if (!cancelled) { const m = fbMarkFrom(g, false); if (m) { m.id = uid(); fbPush(); myFb.marks.push(m); fbChanged(); return; } } renderStudy(); return; }
@@ -8244,23 +8296,45 @@ function focusSel3(){ // 선택 보기: 고른 도형을 가운데로
 }
 function resetCam3(){ if (edCam) exitEdit3(); setView(view); $('#hint').textContent = '시점 초기화 · 이 보기의 처음 화면이에요'; }
 // 옮기는 중 표시 + 고정한 방향 선
-const axMat3 = { x: new THREE.LineBasicMaterial({ color: '#b5473a', depthTest: false, transparent: true, opacity: 0.9 }), z: new THREE.LineBasicMaterial({ color: '#3f7d4e', depthTest: false, transparent: true, opacity: 0.9 }) };
+const axMat3 = { x: new THREE.LineBasicMaterial({ color: '#b5473a', depthTest: false, transparent: true, opacity: 0.9 }), z: new THREE.LineBasicMaterial({ color: '#3f7d4e', depthTest: false, transparent: true, opacity: 0.9 }), y: new THREE.LineBasicMaterial({ color: '#3567a8', depthTest: false, transparent: true, opacity: 0.9 }) };
 let axLine3 = null;
 function axisGuide3(ax, b, y){
   if (axLine3) { scene.remove(axLine3); try { axLine3.geometry.dispose(); } catch (e) {} axLine3 = null; }
   if (ax && b) {
     const cx = -P.siteW / 2 + b.x + b.w / 2, cz = -P.siteD / 2 + b.z + b.d / 2, L = Math.max(P.siteW, P.siteD) * 1.5, yy = (y || 0) + 0.03;
-    const pts = ax === 'x' ? [new THREE.Vector3(cx - L, yy, cz), new THREE.Vector3(cx + L, yy, cz)] : [new THREE.Vector3(cx, yy, cz - L), new THREE.Vector3(cx, yy, cz + L)];
+    const pts = ax === 'x' ? [new THREE.Vector3(cx - L, yy, cz), new THREE.Vector3(cx + L, yy, cz)] : ax === 'y' ? [new THREE.Vector3(cx, yy - L, cz), new THREE.Vector3(cx, yy + L, cz)] : [new THREE.Vector3(cx, yy, cz - L), new THREE.Vector3(cx, yy, cz + L)];
     axLine3 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), axMat3[ax]); axLine3.renderOrder = 6; scene.add(axLine3);
   }
   requestRender();
 }
+const AXN3 = { x: 'X축(폭)', z: 'Y축(깊이)', y: 'Z축(위아래)' };
 const sgn3 = v => (v > 0 ? '+' : v < 0 ? '−' : '') + f2(Math.abs(v));
-function showMove3(e, dx, dz, ax){
+// 위아래로 옮기기: Z축 고정이거나, '자유'일 때 옆에서 보고 있으면 (위·아래에서 보면 바닥면을 따라 앞뒤·양옆)
+function sideView3(){
+  if (view === 'elev') return true; if (view === 'plan') return false;
+  if (drag && drag.side !== undefined) return drag.side; // 끄는 동안에는 처음 정한 대로
+  const d = new THREE.Vector3(); cam.getWorldDirection(d);
+  const s = Math.abs(d.y) < 0.42; // 수평에서 25°보다 낮게 보면 '옆에서 본다'
+  if (drag) drag.side = s; return s;
+}
+const vertMove3 = ax => ax === 'y' || (!ax && sideView3());
+function rayHit3(e, pl){ ray.setFromCamera(ndc(e), cam); const q = new THREE.Vector3(); return ray.ray.intersectPlane(pl, q) ? q : null; }
+function dragVert3(e, b){ // 화면을 향한 세로면 위에서 얼마나 끌었는지 [옆x, 위아래, 옆z]
+  if (!drag.vpl) {
+    const n = new THREE.Vector3(); cam.getWorldDirection(n); n.y = 0; if (n.lengthSq() < 1e-4) n.set(0, 0, -1); n.normalize();
+    const o = drag.orig[b.id] || [b.x, b.z];
+    drag.vpl = new THREE.Plane().setFromNormalAndCoplanarPoint(n, new THREE.Vector3(-P.siteW / 2 + o[0] + b.w / 2, drag.y + boxH(b) / 2, -P.siteD / 2 + o[1] + b.d / 2));
+    drag.vq0 = rayHit3(drag.e0 || e, drag.vpl);
+  }
+  const q = rayHit3(e, drag.vpl); if (!q || !drag.vq0) return null;
+  return [q.x - drag.vq0.x, q.y - drag.vq0.y, q.z - drag.vq0.z];
+}
+function showMove3(e, dx, dz, ax, dl){
   let t = $('#mv3');
   if (!t) { t = document.createElement('div'); t.id = 'mv3'; t.className = 'mv3'; t.hidden = true; document.body.appendChild(t); }
   const n = selSet.size;
-  t.innerHTML = `<b>${n > 1 ? n + '개 옮기는 중' : '옮기는 중'}</b><span class="ax x${ax === 'z' ? ' dim' : ''}">가로 ${sgn3(dx)}m</span><span class="ax z${ax === 'x' ? ' dim' : ''}">앞뒤 ${sgn3(dz)}m</span>${ax ? `<i class="lk ${ax}">${ax === 'x' ? '가로만' : '앞뒤만'}</i>` : ''}`;
+  const showZ = ax === 'y' || dl || vertMove3(ax);
+  t.innerHTML = `<b>${n > 1 ? n + '개 옮기는 중' : '옮기는 중'}</b>${ax === 'y' ? '' : `<span class="ax x${ax === 'z' ? ' dim' : ''}">X ${sgn3(dx)}m</span><span class="ax z${ax === 'x' ? ' dim' : ''}">Y ${sgn3(dz)}m</span>`}${showZ ? `<span class="ax y">Z ${dl > 0 ? '+' : dl < 0 ? '−' : ''}${Math.abs(dl || 0)}층</span>` : ''}${ax ? `<i class="lk ${ax}">${AXN3[ax]}만</i>` : ''}`;
   t.hidden = false;
   const W = innerWidth, x = Math.min(W - 12 - (t.offsetWidth || 180), e.clientX + 16), y = Math.max(8, e.clientY - 44);
   t.style.left = Math.max(8, x) + 'px'; t.style.top = y + 'px';
@@ -8282,7 +8356,7 @@ function hideMove3(){ const t = $('#mv3'); if (t) t.hidden = true; document.body
   const rowOf = q => { const el = insp.querySelector(q); return el ? el.closest('#insp > *') : null; };
   const head = $('#inspHead'), info = $('#iInfo'), label = rowOf('#iLabel'), note = rowOf('#iNote'), kind = rowOf('#iKind'), shapeEd = $('#shapeEditRow'), arr = insp.querySelector('.arr'), dims = $('#dimRow3'), sw = $('#sw'), lock = insp.querySelector('.lockrow');
   const rotL = insp.querySelector('[data-act=rotL]'), rotR = insp.querySelector('[data-act=rotR]'), dup = insp.querySelector('[data-act=dup]'), oldActs = rotL ? rotL.parentElement : null;
-  const axisRow = mk('<span class="lbl">옮기는 방향</span><div class="seg light" id="axisSeg"><button data-ax="" class="on">자유</button><button data-ax="x" title="가로(너비) 방향으로만">가로만</button><button data-ax="z" title="앞뒤(깊이) 방향으로만">앞뒤만</button></div>', 'toolrow axisrow', 'axisRow');
+  const axisRow = mk('<span class="lbl">옮기는 방향</span><div class="seg light" id="axisSeg"><button data-ax="" class="on" title="위·아래에서 보면 앞뒤·양옆으로, 옆에서 보면 옆·위아래로">자유</button><button data-ax="x" title="X축 · 폭(W) 방향으로만">X축</button><button data-ax="z" title="Y축 · 깊이(D) 방향으로만">Y축</button><button data-ax="y" title="Z축 · 위아래로만 (한 층씩)">Z축</button></div>', 'toolrow axisrow', 'axisRow');
   const lvRow = mk('<span class="lbl">층 옮기기</span><div class="lvmv"><button data-mv="lvD" title="한 층 아래로 (PageDown)">한 층 ↓</button><button data-mv="lvU" title="한 층 위로 (PageUp)">한 층 ↑</button></div>', 'toolrow lvrow', 'lvRow');
   const rotRow = mk('<span class="lbl">회전</span><div class="rotb"></div><span class="lbl mono" id="rot3Deg"></span>', 'toolrow rotrow single-only', 'rotRow');
   const dupRow = mk('', 'toolrow duprow', 'dupRow');
@@ -8293,7 +8367,9 @@ function hideMove3(){ const t = $('#mv3'); if (t) t.hidden = true; document.body
   if (note) noteBox.append(note);
   if (oldActs && !oldActs.children.length) oldActs.classList.add('gone');
   const rest = [...insp.children];
-  const order = [head, info, label, mixNote,
+  const flRow = $('#floorRow'); if (flRow) { const l = flRow.querySelector('.lbl'); if (l) l.textContent = '이 층 층고 (m)'; }
+  { const hl = dims && dims.querySelectorAll('.st > .lbl')[2]; if (hl) hl.textContent = '높이 H (m)'; }
+  const order = [head, info, label, mixNote, flRow,
     H('이동·편집'), shapeEd, axisRow, lvRow, arr,
     H('크기', 'single-only'), dims, rotRow,
     (()=>{ const h = H('공간 종류·표시'); h.id = 'swH'; return h; })(), sw, kind,
@@ -8307,13 +8383,17 @@ function hideMove3(){ const t = $('#mv3'); if (t) t.hidden = true; document.body
   const g = mk('', 'guide3', 'guide3'); g.hidden = true;
   const tools = $('#editTools'); if (tools) tools.after(g);
 })();
+let g3Open = false; // 좁은 화면에서 조작법 펼치기
 function ux3Axis(){ document.querySelectorAll('#axisSeg button').forEach(bt => bt.classList.toggle('on', bt.dataset.ax === moveAxis)); }
+let selKey3 = null;
 function ux3Refresh(b, sb, study, ro){
   if (study) return;
+  { const k = [...selSet].sort().join(','); if (k !== selKey3) { if (selKey3 !== null && k && moveAxis) moveAxis = ''; selKey3 = k; } } // 다른 도형을 고르면 옮기는 방향은 다시 '자유'
   const f3 = $('#focus3Btn'); if (f3) f3.disabled = !selSet.size;
   ux3Axis();
   const lvR = $('#lvRow'); if (lvR) { const lk = sb.some(x => x.lock); lvR.querySelectorAll('button').forEach(bt => bt.disabled = lk); }
   { const nb = $('#noteBox'); if (nb && b && sb.length === 1) { const has = !!(b.note && b.note.trim()); if (nb.dataset.for !== b.id) { nb.dataset.for = b.id; nb.open = has; } const sm = nb.querySelector('summary'); if (sm) sm.textContent = has ? '설명 메모 · 있음' : '설명 메모'; } }
+  if (b && sb.length === 1 && b.y0 > 0) { const ii = $('#iInfo'); if (ii && !/띄움/.test(ii.textContent)) ii.textContent += ` · 층 바닥에서 ${f2(b.y0)}m 띄움`; }
   if (b && sb.length === 1) { const d = $('#rot3Deg'); if (d) d.textContent = `${Math.round(((b.ang || 0) % 360 + 360) % 360)}°`; }
   { const h = $('#swH'); if (h) h.hidden = !!(b && sb.length > 1 && $('#sw').hidden); }
   const mx = $('#mixNote');
@@ -8324,7 +8404,7 @@ function ux3Refresh(b, sb, study, ro){
   }
   { const kb = $('#keysBtn'); if (kb) kb.textContent = `조작 방식 · ${keysEff() === 'sketchup' ? '전문가' : '기본'}`; }
   if (b && !ro && hasMouse() && !(drag && drag.type) && !sizeMode && !multiPick && mode === 'select' && !sb.some(x => x.lock))
-    $('#hint').textContent = keysEff() === 'sketchup' ? '도형을 끌거나 ◎ 손잡이로 옮겨요 · 빨강 = 가로만 · 초록 = 앞뒤만 · 오른쪽 클릭 = 보조 메뉴' : '◎ 이동 손잡이를 끌어 옮겨요 · 빨강 = 가로만 · 초록 = 앞뒤만 · 오른쪽 짧게 = 보조 메뉴';
+    $('#hint').textContent = keysEff() === 'sketchup' ? '도형을 끌거나 ◎ 손잡이로 옮겨요 · 빨강 X · 초록 Y · 파랑 Z(위아래) · 오른쪽 클릭 = 보조 메뉴' : '◎ 이동 손잡이를 끌어 옮겨요 · 빨강 X(폭) · 초록 Y(깊이) · 파랑 Z(위아래) · 오른쪽 짧게 = 보조 메뉴';
   const g = $('#guide3');
   if (g) {
     const show = !b && !ro && mode === 'select' && !isSketch();
@@ -8336,20 +8416,22 @@ function ux3Refresh(b, sb, study, ro){
               : [['왼쪽 끌기', rot ? '돌리기' : '화면 옮기기'], ['오른쪽 끌기', '화면 옮기기'], ['휠', '확대·축소'], ['◎ 이동 손잡이 끌기', '도형 옮기기'], ['오른쪽 짧게 누르기', '보조 메뉴']])
         : [['한 손가락 끌기', rot ? '돌리기' : '화면 옮기기'], ['두 손가락', '화면 옮기기·확대'], ['고른 도형 끌기', '도형 옮기기'], ['길게 누르기', '여러 개 고르기']];
       const keys = mouse ? '<p class="g3k"><b>Z</b> 시점 초기화 · <b>Shift+Z</b> 전체 보기 · <b>Q</b> 돌리기 · <b>E</b> 삭제 · <b>Ctrl+D</b> 복제 · <b>PgUp/PgDn</b> 한 층 위·아래</p>' : '';
-      g.innerHTML = `<div class="g3h"><span>조작 방식 · <b>${sk ? '전문가 조작 (SketchUp 방식)' : '기본 조작'}</b></span><button id="g3Keys" class="tb">바꾸기</button></div>`
+      g.classList.toggle('open', g3Open);
+      g.innerHTML = `<div class="g3h"><span>조작 방식 · <b>${sk ? '전문가 조작 (SketchUp 방식)' : '기본 조작'}</b></span><span class="g3b"><button id="g3More" class="tb g3more" aria-expanded="${g3Open}">${g3Open ? '접기' : '조작법'}</button><button id="g3Keys" class="tb">바꾸기</button></span></div>`
         + `<dl>${lines.map(l => `<dt>${l[0]}</dt><dd>${l[1]}</dd>`).join('')}</dl>${keys}`
         + `<p class="g3t">상자를 누르면 여기에 크기·높이·회전·공간 종류가 나와요</p>`;
       $('#g3Keys').onclick = () => openKeys3d(false);
+      $('#g3More').onclick = () => { g3Open = !g3Open; refreshUI(); };
     }
   }
 }
 /* ---- 조작 설정 (8차): 이동 손잡이 · 오른쪽 클릭 보조 메뉴 ---- */
-const mvMat3 = { c: new THREE.MeshBasicMaterial({ color: '#2c5a8c', depthTest: false, transparent: true, opacity: 0.95 }), ring: new THREE.MeshBasicMaterial({ color: '#ffffff', depthTest: false, transparent: true, opacity: 0.95 }), x: new THREE.MeshBasicMaterial({ color: '#b5473a', depthTest: false }), z: new THREE.MeshBasicMaterial({ color: '#3f7d4e', depthTest: false }) };
+const mvMat3 = { c: new THREE.MeshBasicMaterial({ color: '#2c5a8c', depthTest: false, transparent: true, opacity: 0.95 }), ring: new THREE.MeshBasicMaterial({ color: '#ffffff', depthTest: false, transparent: true, opacity: 0.95 }), x: new THREE.MeshBasicMaterial({ color: '#b5473a', depthTest: false }), z: new THREE.MeshBasicMaterial({ color: '#3f7d4e', depthTest: false }), y: new THREE.MeshBasicMaterial({ color: '#3567a8', depthTest: false }) };
 function addMoveGizmo3(){ // 고른 도형(들) 앞 왼쪽 아래 모서리 바깥에 이동 손잡이: 가운데 = 자유 · 빨강 = 가로만 · 초록 = 앞뒤만
   if (!P || uiMode === 'study' || edRO() || !selSet.size || mode !== 'select' || multiPick || sizeMode) return;
   const sb = selBoxes(); if (!sb.length || sb.some(x => x.lock || x.sheet)) return;
   let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity, y = Infinity;
-  for (const b of sb) { const wp = worldPts(b); for (const q of wp) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); z0 = Math.min(z0, q[1]); z1 = Math.max(z1, q[1]); } y = Math.min(y, elevOf(b.lv)); }
+  for (const b of sb) { const wp = worldPts(b); for (const q of wp) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); z0 = Math.min(z0, q[1]); z1 = Math.max(z1, q[1]); } y = Math.min(y, baseY(b)); }
   if (!isFinite(x0) || !isFinite(y)) return;
   const R = Math.max(P.siteW, P.siteD), r = Math.max(0.28, R / 90);
   const g = new THREE.Group(); g.position.set(-P.siteW / 2 + x0 - r * 3, y + 0.05, -P.siteD / 2 + z1 + r * 3); g.renderOrder = 12;
@@ -8359,8 +8441,10 @@ function addMoveGizmo3(){ // 고른 도형(들) 앞 왼쪽 아래 모서리 바�
   const headX = new THREE.Mesh(new THREE.ConeGeometry(r * 0.75, r * 1.5, 16), mvMat3.x); headX.rotation.z = -Math.PI / 2; headX.position.x = r * 4.3; headX.renderOrder = 12;
   const shaftZ = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.28, r * 0.28, r * 1.6, 8), mvMat3.z); shaftZ.rotation.x = Math.PI / 2; shaftZ.position.z = r * 2.9; shaftZ.renderOrder = 12;
   const headZ = new THREE.Mesh(new THREE.ConeGeometry(r * 0.75, r * 1.5, 16), mvMat3.z); headZ.rotation.x = Math.PI / 2; headZ.position.z = r * 4.3; headZ.renderOrder = 12;
-  const hit = (k, rr, px, pz) => { const h = new THREE.Mesh(new THREE.SphereGeometry(rr, 8, 6), hitMat); h.position.set(px, 0, pz); h.userData.handle = k; return h; };
-  g.add(disc, dot, shaftX, headX, shaftZ, headZ, hit('mvx', r * 1.6, r * 4.2, 0), hit('mvz', r * 1.6, 0, r * 4.2), hit('mv', r * 2.4, 0, 0));
+  const shaftY = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.28, r * 0.28, r * 1.8, 8), mvMat3.y); shaftY.position.y = r * 1.3; shaftY.renderOrder = 12;
+  const headY = new THREE.Mesh(new THREE.ConeGeometry(r * 0.75, r * 1.5, 16), mvMat3.y); headY.position.y = r * 2.9; headY.renderOrder = 12;
+  const hit = (k, rr, px, pz, py) => { const h = new THREE.Mesh(new THREE.SphereGeometry(rr, 8, 6), hitMat); h.position.set(px, py || 0, pz); h.userData.handle = k; return h; };
+  g.add(disc, dot, shaftX, headX, shaftZ, headZ, shaftY, headY, hit('mvx', r * 1.6, r * 4.2, 0), hit('mvz', r * 1.6, 0, r * 4.2), hit('mvy', r * 1.2, 0, 0, r * 3.1), hit('mv', r * 2.0, 0, 0));
   handleG.add(g);
 }
 const basicMouse3 = e => (e ? e.pointerType === 'mouse' : hasMouse()) && keysEff() !== 'sketchup';
@@ -8411,6 +8495,36 @@ function openCtx3(x, y){
   const W = innerWidth, H = innerHeight, w = m.offsetWidth, h = m.offsetHeight;
   m.style.left = Math.max(8, Math.min(x, W - w - 8)) + 'px'; m.style.top = Math.max(8, Math.min(y, H - h - 8)) + 'px';
 }
+
+/* 땅 아래로 내려가 보기: 지하가 없어도 화면을 땅 밑까지 돌릴 수 있게 · 땅 밑에 있으면 땅을 반투명하게 */
+let below3 = null;
+function belowCheck3(){
+  if (!P || !cam) return;
+  const b = cam.position.y < 0.05; if (b === below3) return; below3 = b;
+  const has = P.boxes.some(x => !x.sheet && x.lv < 0); if (has) return; // 지하가 있으면 원래 반투명 처리 그대로
+  for (const m of [groundMesh, sitePlMesh]) if (m) { m.material.opacity = b ? 0.35 : 1; m.material.depthWrite = !b; m.renderOrder = b ? 5 : 0; m.material.needsUpdate = true; }
+  requestRender();
+}
+
+/* 화면 고정: 편집 중에는 페이지 전체가 밀리거나(아이패드 사파리) 두 손가락으로 페이지가 확대되지 않게 */
+(function lockPage3(){
+  const ed = () => document.documentElement.classList.contains('editing');
+  const canScroll = el => {
+    for (let n = el; n && n !== document.body && n !== document.documentElement; n = n.parentElement) {
+      const cs = getComputedStyle(n);
+      if ((/(auto|scroll)/.test(cs.overflowY) && n.scrollHeight > n.clientHeight + 1) || (/(auto|scroll)/.test(cs.overflowX) && n.scrollWidth > n.clientWidth + 1)) return true;
+    }
+    return false;
+  };
+  addEventListener('scroll', () => { if (ed() && (scrollX || scrollY)) scrollTo(0, 0); }, { passive: true });
+  const ev = document.getElementById('editView'); if (ev) ev.addEventListener('scroll', () => { if (ev.scrollTop || ev.scrollLeft) { ev.scrollTop = 0; ev.scrollLeft = 0; } }, { passive: true });
+  document.addEventListener('gesturestart', e => { if (ed()) e.preventDefault(); });
+  document.addEventListener('touchmove', e => {
+    if (!ed() || !e.cancelable) return;
+    const t = e.target; if (t && t.closest && t.closest('#pc, #cv')) return; // 도면·3D 화면은 자기 손가락 조작 그대로
+    if (e.touches.length > 1 || !canScroll(t)) e.preventDefault();
+  }, { passive: false });
+})();
 
 // 3D 여러 개 선택 중 안내 막대: 몇 개 골랐는지 · 모두 풀기 · 끝내기
 function upd3Pill(){
