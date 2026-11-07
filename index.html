@@ -4876,19 +4876,21 @@ function elevSvg(px){
       const fc = []; // 면마다 바깥쪽 방향과 보이는 정도
       for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n], dx = q[0] - p[0], dz = q[1] - p[1], Ln = Math.hypot(dx, dz) || 1; const nx = (A > 0 ? dz : -dz) / Ln, nz = (A > 0 ? -dx : dx) / Ln; fc.push({ p, q, nx, nz, c: nx * e.f[0] + nz * e.f[1], len: Ln }); }
       const openSp = b.cat === 'outdoor' || b.cat === 'void', glassSp = b.cat === 'service', col = colorOf(b), st = b.cat === 'outdoor' ? '#4f7a3c' : b.cat === 'void' ? '#6b7886' : glassSp ? '#4e7896' : '#2b2823';
-      let faces = '', lines = '', umin = Infinity, umax = -Infinity;
+      let faces = '', lines = '', umin = Infinity, umax = -Infinity, segT = '', segF = '';
       fc.forEach((F, i) => {
         if (F.c <= 0.02 || F.len < 1e-6) return;
         const u1 = U(...F.p), u2 = U(...F.q); umin = Math.min(umin, u1, u2); umax = Math.max(umax, u1, u2);
         const d = `M${r3(u1)},${r3(Y(y1))}L${r3(u2)},${r3(Y(y1))}L${r3(u2)},${r3(Y(y0))}L${r3(u1)},${r3(Y(y0))}Z`;
         faces += `<path d="${d}" fill="${col}" stroke="${col}" stroke-width="${r3(px(0.5))}"/>`;
         const sh = (1 - F.c) * 0.3; if (sh > 0.01) faces += `<path d="${d}" fill="#1e1b16" fill-opacity="${r3(sh)}"/>`; // 비스듬한 면은 조금 어둡게
-        lines += `<line x1="${r3(u1)}" y1="${r3(Y(y1))}" x2="${r3(u2)}" y2="${r3(Y(y1))}" stroke="${st}" stroke-width="${r3(px(1.3))}"/><line x1="${r3(u1)}" y1="${r3(Y(y0))}" x2="${r3(u2)}" y2="${r3(Y(y0))}" stroke="${st}" stroke-width="${r3(px(1.3))}"/>`;
+        segT += `M${r3(u1)},${r3(Y(y1))}L${r3(u2)},${r3(Y(y1))}M${r3(u1)},${r3(Y(y0))}L${r3(u2)},${r3(Y(y0))}`;
         const P2 = fc[(i - 1 + n) % n], pv = P2.c > 0.02 && P2.len > 1e-6; // 이 면의 시작 꼭짓점: 옆 면도 보이면 꺾인 정도만큼 가는 선, 안 보이면 윤곽선
-        if (!pv) lines += `<line x1="${r3(u1)}" y1="${r3(Y(y1))}" x2="${r3(u1)}" y2="${r3(Y(y0))}" stroke="${st}" stroke-width="${r3(px(1.3))}"/>`;
-        else if (P2.nx * F.nx + P2.nz * F.nz < 0.88) lines += `<line x1="${r3(u1)}" y1="${r3(Y(y1))}" x2="${r3(u1)}" y2="${r3(Y(y0))}" stroke="${st}" stroke-opacity=".55" stroke-width="${r3(px(0.6))}"/>`;
-        const N2 = fc[(i + 1) % n]; if (!(N2.c > 0.02 && N2.len > 1e-6)) lines += `<line x1="${r3(u2)}" y1="${r3(Y(y1))}" x2="${r3(u2)}" y2="${r3(Y(y0))}" stroke="${st}" stroke-width="${r3(px(1.3))}"/>`;
+        if (!pv) segT += `M${r3(u1)},${r3(Y(y1))}L${r3(u1)},${r3(Y(y0))}`;
+        else if (P2.nx * F.nx + P2.nz * F.nz < 0.88) segF += `M${r3(u1)},${r3(Y(y1))}L${r3(u1)},${r3(Y(y0))}`;
+        const N2 = fc[(i + 1) % n]; if (!(N2.c > 0.02 && N2.len > 1e-6)) segT += `M${r3(u2)},${r3(Y(y1))}L${r3(u2)},${r3(Y(y0))}`;
       });
+      if (segT) lines += `<path d="${segT}" fill="none" stroke="${st}" stroke-width="${r3(px(1.3))}"/>`;
+      if (segF) lines += `<path d="${segF}" fill="none" stroke="${st}" stroke-opacity=".55" stroke-width="${r3(px(0.6))}"/>`;
       if (!faces) continue;
       // 여러 층 상자는 층 사이에 옅은 선
       if (!(b.h > 0)) for (let k = 1; k < b.fl; k++) { const yy = Y(elevOf(b.lv + k) + (b.y0 > 0 ? b.y0 : 0)); lines += `<line x1="${r3(umin)}" y1="${r3(yy)}" x2="${r3(umax)}" y2="${r3(yy)}" stroke="${st}" stroke-opacity=".3" stroke-width="${r3(px(0.7))}"/>`; }
@@ -5891,12 +5893,13 @@ function renderStudyNow(){
           over += `<circle cx="${r3(x)}" cy="${r3(z)}" r="${r3(px(15))}" fill="transparent" data-role="pv" data-i="${i}" style="cursor:grab"/><circle cx="${r3(x)}" cy="${r3(z)}" r="${r3(px(on ? 7.5 : 6))}" fill="${on ? '#2c5a8c' : '#fff'}" stroke="#2c5a8c" stroke-width="${r3(px(2))}" pointer-events="none"/>`; });
       } else {
       // 화면에서 작은 도형: 변 가운데 손잡이는 빼고, 모서리 손잡이 잡는 범위도 줄여서 가운데를 끌면 도형이 옮겨지게
-      const scr = Math.min(b.w, b.d) * sv.k, small = scr < 64 && !sizeMode, hitU = small ? Math.min(hit, px(Math.max(12, scr * 0.36))) : hit;
+      // 도형 안 = 옮기기, 파란 점 = 크기 조절: 잡는 범위는 도형 바깥쪽으로 (안쪽으로는 5px만) · 작은 도형은 점도 바깥으로 살짝 빼요
+      const scr = Math.min(b.w, b.d) * sv.k, small = scr < 64 && !sizeMode, [cx0, cz0] = at(.5, .5), hitU = px(30);
       for (const [key, u, v] of [['nw', 0, 0], ['n', .5, 0], ['ne', 1, 0], ['e', 1, .5], ['se', 1, 1], ['s', .5, 1], ['sw', 0, 1], ['w', 0, .5]]) {
         if (seamSide.has(key)) continue; // 이음선이 있는 면은 이음선으로 조절
-        if (small && key.length === 1) continue;
-        const [x, z] = at(u, v);
-        over += `<rect x="${r3(x - hitU / 2)}" y="${r3(z - hitU / 2)}" width="${r3(hitU)}" height="${r3(hitU)}" fill="transparent" data-role="handle" data-h="${key}"/>`;
+        const [x0, z0] = at(u, v), L = Math.hypot(x0 - cx0, z0 - cz0) || 1, ux = (x0 - cx0) / L, uz = (z0 - cz0) / L;
+        const dotOff = small ? px(9) : 0, x = x0 + ux * dotOff, z = z0 + uz * dotOff, hOff = Math.max(0, hitU / 2 - px(5) - dotOff), hx = x + ux * hOff, hz = z + uz * hOff;
+        over += `<rect x="${r3(hx - hitU / 2)}" y="${r3(hz - hitU / 2)}" width="${r3(hitU)}" height="${r3(hitU)}" fill="transparent" data-role="handle" data-h="${key}"/>`;
         over += `<rect x="${r3(x - hs / 2)}" y="${r3(z - hs / 2)}" width="${r3(hs)}" height="${r3(hs)}" rx="${r3(px(2))}" fill="${sizeMode ? '#2c5a8c' : '#fff'}" stroke="${sizeMode ? '#fff' : '#2c5a8c'}" stroke-width="${r3(px(2))}" pointer-events="none"/>`;
       }
       }
@@ -6246,9 +6249,10 @@ pc.addEventListener('pointerdown', e => {
   cancelAnimationFrame(animT);
   if (popKind) { popKind = null; $('#pop').hidden = true; }
   LAY = computeLayout(); layFrozen = true;
-  const w = toWorld(e), el = e.target.closest ? e.target.closest('[data-role]') : null;
+  const w = toWorld(e); let el = e.target.closest ? e.target.closest('[data-role]') : null;
   let role = el ? el.dataset.role : null, id = el ? el.dataset.id : null; const ro = edRO();
-  if (!id && (!role || role === 'sheet') && tool === 'select' && !e.shiftKey && pointers.size === 1 && !polyDraft) { const nb = nearSmallBox(e.clientX, e.clientY, e.pointerType === 'mouse' ? 8 : 14, e.pointerType === 'mouse' ? 28 : 44); if (nb) { id = nb; role = 'body'; } }
+  if (role === 'seam') { const ch = document.elementsFromPoint(e.clientX, e.clientY).find(x => x.dataset && x.dataset.role === 'handle' && (x.dataset.h || '').length === 2); if (ch) { el = ch; role = 'handle'; id = ch.dataset.id; } } // 모서리 손잡이가 이음선보다 먼저
+  if (!id && (!role || role === 'sheet') && tool === 'select' && !e.shiftKey && pointers.size === 1 && !polyDraft) { const nb = null; /* 근처 도형 대신 골라 주기는 뺌 (옆 도형이 잘못 골라져서) */ if (nb) { id = nb; role = 'body'; } }
   if (e.button === 2 && id && (getBox(id) || getNote(id)) && (role === 'body' || role === 'note' || role === 'label')) { // 오른쪽 클릭 = 두 번 누르기 (이름·설명 쓰기)
     gesture = { type: 'none' }; if (!selSet.has(id)) setSel([id]);
     if (ro) setTimeout(() => showShapeInfo(id), 0); else setTimeout(() => openLabelEd(id), 0); studyUI(); return;
@@ -6720,7 +6724,12 @@ function endStudyPointer(e){
     else { if (cancelled && g.moved) { P = JSON.parse(g.start); pruneSel(); } renderStudy(); }
     hideTag(); return;
   }
-  if (g.type === 'resize' || g.type === 'rotate') { if (g.moved && !cancelled) { const b = getBox(sel); if (b) remember(b); pushHist(g.start); } else { if (cancelled && g.moved) { P = JSON.parse(g.start); pruneSel(); } renderStudy(); } return; }
+  if (g.type === 'resize' || g.type === 'rotate') { if (g.moved && !cancelled) { const b = getBox(sel); if (b) remember(b); pushHist(g.start); } else {
+      if (!cancelled && !g.moved && g.type === 'resize') { // 손잡이(변)를 끌지 않고 그냥 눌렀는데 그 밑에 다른 도형이 있으면 그 도형을 고름
+        const o = document.elementsFromPoint(e.clientX, e.clientY).map(x => x.closest && x.closest('#pc [data-role=body]')).find(x => x && x.dataset.id && x.dataset.id !== sel), ob = o && getBox(o.dataset.id);
+        if (ob) { setSel(groupOf(ob).map(x => x.id), ob.id); studyUI(); return; }
+      }
+      if (cancelled && g.moved) { P = JSON.parse(g.start); pruneSel(); } renderStudy(); } return; }
   if (g.type === 'move') {
     if (g.moved && !cancelled && (g.dx || g.dz || g.envChanged)) {
       rehome(); splitEnvs(P); envShapeCheck(); pushHist(g.start); return;
@@ -7257,8 +7266,9 @@ function dragScroll(el){
   };
   el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
   el.addEventListener('scroll', () => updateFade(el), { passive: true });
-  new ResizeObserver(() => updateFade(el)).observe(el);
-  new MutationObserver(() => updateFade(el)).observe(el, { childList: true, subtree: true, characterData: true });
+  const later = () => { clearTimeout(el._fadeT); el._fadeT = setTimeout(() => updateFade(el), 160); };
+  new ResizeObserver(later).observe(el);
+  new MutationObserver(later).observe(el, { childList: true, subtree: true, characterData: true });
 }
 ['#sbottom', '#stools', '#sheetBar', '#stats', '#teamFilter', '#ctx'].forEach(q => { const el = $(q); if (el) { el.style.overflowX = 'auto'; dragScroll(el); } });
 
@@ -7476,7 +7486,6 @@ function renderCtx(){
           const dv = btn('꼭짓점 삭제', delPolyVertex); dv.disabled = polySelV == null || b.pts.length <= 3; dv.title = '꼭짓점을 먼저 눌러 고르세요'; }
         sep();
       }
-      if (!b.lock) { const db = btn('도형 수정', () => { sizeMode = b.id; rotMode = false; popKind = null; studyUI(); }, 'sizeb'); db.title = '이 도형만 손잡이로 늘이고 줄여요 · 높이는 0.1m씩 · 바깥을 누르면 끝나요'; db.insertAdjacentHTML('afterbegin', '<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" style="margin-right:4px;vertical-align:-3px"><rect x="3.5" y="3.5" width="13" height="13" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.5 2"/><path d="M10.5 9.5l6-6M12.5 3.5h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'); }
       if (b.kind === 'solid') catBtn();
       ibtn(IC.rot, rotMode ? `돌리는 중 (${b.ang}°)` : '돌리기', () => { rotMode = !rotMode; popKind = null; studyUI(); }, rotMode ? 'on' : '');
       if (b.kind === 'solid') ibtn(IC.env, b.env ? '점선 테두리 끄기' : '점선 테두리 두르기', envToggle, b.env ? 'on' : '');
@@ -7552,7 +7561,7 @@ window.addEventListener('keydown', e => {
   // 단축키 (스케치업과 같은 키도): Space·V·M 선택, R 사각형, C·O 원형, A 반원(호), L 다각형(선), P·S 크기 바꾸기(밀기·끌기/배율), Q 돌리기, T 자(줄자), Shift+T 텍스트, E 지우기, D 점선 꺾기, W 동선, H 누르고 끌면 화면 이동, Z 이 대지 맞춤, Shift+Z 전체 보기, G 그룹
   const k = e.key.toLowerCase(), one = sel && selSet.size === 1 && getBox(sel) && !getBox(sel).lock;
   if (!flowEdit && !fbEdit) {
-    if ((k === 'p' || k === 's') && one) { sizeMode = sizeMode === sel ? null : sel; rotMode = false; studyUI(); return; }
+    if ((k === 'p' || k === 's') && one) return; // 2D에는 도형 수정 모드가 없어요 (손잡이로 바로)
     if (k === 'q' && one) { rotMode = !rotMode; sizeMode = null; studyUI(); return; }
     if (k === 'e' && (selSet.size || selCard)) { e.preventDefault(); if (selCard) removeCard(selCard); else act('del'); return; }
     if (k === 'z') { e.shiftKey ? fitAll() : fitSheet(activeIdx(), true); return; }
@@ -8516,7 +8525,11 @@ function belowCheck3(){
     }
     return false;
   };
-  addEventListener('scroll', () => { if (ed() && (scrollX || scrollY)) scrollTo(0, 0); }, { passive: true });
+  let touching = 0; // 손가락이 닿아 있는 동안에는 되돌리지 않고, 뗀 뒤에 한 번만 (화면이 번쩍이지 않게)
+  addEventListener('touchstart', e => { touching = e.touches.length; }, { passive: true, capture: true });
+  addEventListener('touchend', e => { touching = e.touches.length; if (!touching && ed() && (scrollX || scrollY)) scrollTo(0, 0); }, { passive: true, capture: true });
+  addEventListener('touchcancel', e => { touching = e.touches.length; }, { passive: true, capture: true });
+  addEventListener('scroll', () => { if (ed() && !touching && (scrollX || scrollY)) scrollTo(0, 0); }, { passive: true });
   const ev = document.getElementById('editView'); if (ev) ev.addEventListener('scroll', () => { if (ev.scrollTop || ev.scrollLeft) { ev.scrollTop = 0; ev.scrollLeft = 0; } }, { passive: true });
   document.addEventListener('gesturestart', e => { if (ed()) e.preventDefault(); });
   let t0 = null; // 누른 자리: 펜·손가락이 살짝 떨리는 정도로는 막지 않아요 (그래야 펜으로 버튼이 눌려요)
@@ -8634,8 +8647,9 @@ function overlapSvg(px, gs){
 // ---- 스터디: 겹친 도형 차례로 고르기 (이미 고른 도형을 다시 누르면 바로 아래 도형)
 function cycleStudy(id, cx, cy){
   const t0 = lastTap.t;
-  const stack = [...new Set(document.elementsFromPoint(cx, cy).map(el => el.closest && el.closest('#pc [data-role=body]')).filter(Boolean).map(el => el.dataset.id).filter(Boolean))];
-  if (stack.length < 2) return;
+  const b0 = getBox(id), deep = el => { const r = el.getBoundingClientRect(); return Math.min(cx - r.left, r.right - cx, cy - r.top, r.bottom - cy) >= 8; }; // 경계선 근처는 겹친 걸로 안 봄
+  const stack = [...new Set(document.elementsFromPoint(cx, cy).map(el => el.closest && el.closest('#pc [data-role=body]')).filter(el => el && deep(el)).map(el => el.dataset.id).filter(x => { const bb = getBox(x); return x && bb && (!b0 || bb.kind === b0.kind); }))]; // 같은 종류(실선끼리·점선끼리)만
+  if (stack.length < 2 || !stack.includes(id)) return;
   setTimeout(() => { // 두 번 누르기(이름 쓰기)가 아니었을 때만
     if (lastTap.t !== t0 || lastTap.id !== id || sel !== id || gesture) return;
     const nx = stack[(stack.indexOf(id) + 1) % stack.length], nb = getBox(nx); if (!nb) return;
@@ -8649,8 +8663,9 @@ function nearSmallBox(cx, cy, rad, minSide = 28){
   const best = new Map();
   for (const el of document.querySelectorAll('#pc [data-role=body]')) {
     const id = el.dataset.id; if (!id) continue;
-    const r = el.getBoundingClientRect(); if (Math.min(r.width, r.height) >= minSide || !r.width) continue;
+    const r = el.getBoundingClientRect(); if (!r.width) continue;
     const dx = Math.max(r.left - cx, 0, cx - r.right), dy = Math.max(r.top - cy, 0, cy - r.bottom), d = Math.hypot(dx, dy);
+    if (Math.min(r.width, r.height) >= minSide) { if (d <= rad * 2) return null; continue; } // 가까이에 다른(큰) 도형이 있으면 돕지 않음
     if (d <= rad && (!best.has(id) || d < best.get(id))) best.set(id, d);
   }
   if (!best.size) return null;
