@@ -1491,6 +1491,34 @@ html.editing body:not(.study) #insp #floorRow .stepper input{border:1px solid va
   html.editing body.study #stools{padding-top:2px;padding-bottom:2px}
   html.editing body.study .sheetbar button{height:32px !important;min-height:32px !important}
 }
+/* ===== 3D 메뉴·보기 설정: 아래로 밀지 않고 팝업으로 (스터디 메뉴처럼) ===== */
+html.editing body:not(.study).r2open .r2in,html.editing body:not(.study).r2mopen .r2in{position:fixed;top:calc(var(--top3, 140px) + 6px);right:max(10px, env(safe-area-inset-right));left:auto;width:auto;max-width:min(340px, calc(100vw - 20px));z-index:30;display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:8px;background:var(--sb-paper, #f8f5ef);border:1px solid var(--sb-line, #e0d8ca);border-radius:12px;box-shadow:0 12px 32px rgba(40,30,20,.18)}
+html.editing body:not(.study).r2mopen .r2in .tools2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+html.editing body:not(.study) .r2in .tools2 button{height:40px;justify-content:center;white-space:nowrap}
+html.editing body:not(.study) .r2in .tools2 button[hidden]{display:none}
+html.editing body:not(.study).r2open .r2in #views2{display:flex;flex-direction:column;gap:6px}
+html.editing body:not(.study) .r2in #views2 button{height:40px}
+/* ===== 되돌리기 알림: 작고 덜 눈에 띄게, 화면 가운데 말고 위쪽 오른편에 ===== */
+html.editing .toast{font-size:12.5px;padding:3px 3px 3px 11px;border-radius:999px;background:rgba(47,42,37,.82);box-shadow:none;gap:6px}
+html.editing .toast button{height:26px;padding:0 9px;font-size:12px;border-color:rgba(255,255,255,.35);border-radius:999px}
+@media (max-width:899px){
+  html.editing body.exact .toast{top:calc(var(--top3, 140px) + 6px);bottom:auto;left:auto;right:max(10px, env(safe-area-inset-right));transform:none}
+}
+/* ===== 휴대폰 3D: 덜 끼게 ===== */
+@media (max-width:640px){
+  html.editing body:not(.study) #editTools #undoBtn,html.editing body:not(.study) #editTools #redoBtn,html.editing body:not(.study) #editTools #pngBtn{display:none !important} /* 위쪽 머리줄에 되돌리기가 있고, PNG는 메뉴 → 내보내기 */
+  html.editing body:not(.study) #editTools .tb,html.editing body:not(.study) #modeSeg button{height:38px !important;min-height:38px !important}
+  html.editing body:not(.study) #stats .chip{padding:2px 8px}
+  html.editing body:not(.study) #stats .chip .k{font-size:10px}
+  html.editing body:not(.study) #stats .chip .v{font-size:12.5px}
+  html.editing body:not(.study) .r2heads .views button{height:34px !important;padding:0 10px;font-size:12.5px}
+  html.editing body:not(.study) .r2heads .r2b{height:36px}
+  html.editing body:not(.study) #floorBar.folded button{height:32px}
+  html.editing body:not(.study) #hint{font-size:11.5px;padding:4px 10px;opacity:.82;max-width:calc(100vw - 40px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html.editing body:not(.study) .guide3{padding:6px 10px}
+  html.editing body:not(.study) .guide3 .g3h .tb{height:30px}
+  html.editing body:not(.study) #editView .sheet{padding-top:8px}
+}
 </style>
 <script type="importmap">
 {"imports":{
@@ -2256,7 +2284,7 @@ function toast(msg, action){
   if (action) { a.hidden = false; a.textContent = action.label; a.onclick = () => { $('#toast').hidden = true; action.fn(); }; }
   else { a.hidden = true; a.onclick = null; }
   $('#toast').hidden = false;
-  clearTimeout(toastT); toastT = setTimeout(() => $('#toast').hidden = true, action ? 7000 : 2800);
+  clearTimeout(toastT); toastT = setTimeout(() => $('#toast').hidden = true, action ? 4000 : 2800);
 }
 function promptBox(title, value, ok = '확인'){
   return new Promise(res => {
@@ -8397,6 +8425,7 @@ function ux3Axis(){ document.querySelectorAll('#axisSeg button').forEach(bt => b
 let selKey3 = null;
 function ux3Refresh(b, sb, study, ro){
   if (study) return;
+  top3Var();
   { const k = [...selSet].sort().join(','); if (k !== selKey3) { if (selKey3 !== null && k && moveAxis) moveAxis = ''; selKey3 = k; } } // 다른 도형을 고르면 옮기는 방향은 다시 '자유'
   const f3 = $('#focus3Btn'); if (f3) f3.disabled = !selSet.size;
   ux3Axis();
@@ -8544,6 +8573,16 @@ function belowCheck3(){
 })();
 
 function tapAct3(e, fn){ gesture = { type: 'pan', x0: e.clientX, y0: e.clientY, tx0: sv.tx, ty0: sv.ty, tapAct: fn }; } // 누른 채 끌면 화면 이동, 그대로 떼면 fn
+
+/* 3D 메뉴·보기 설정 팝업 위치(보기 줄 바로 아래) · 바깥을 누르면 닫힘 · 메뉴 항목을 고르면 닫힘 */
+function top3Var(){ const h = document.querySelector('.r2heads'); if (!h) return; const r = h.getBoundingClientRect(); if (r.height) document.documentElement.style.setProperty('--top3', Math.round(r.bottom) + 'px'); }
+addEventListener('resize', top3Var);
+document.addEventListener('pointerdown', e => {
+  if (!(r2Open || r2mOpen) || uiMode === 'study') return;
+  const t = e.target; if (t && t.closest && t.closest('.r2in, #r2Btn, #r2mBtn, #menuBtn, .modal')) return;
+  r2Open = false; r2mOpen = false; r2UI();
+}, true);
+{ const t2 = document.querySelector('.r2in .tools2'); if (t2) t2.addEventListener('click', e => { if (uiMode !== 'study' && e.target.closest('button')) { r2mOpen = false; r2UI(); } }); }
 
 // 3D 여러 개 선택 중 안내 막대: 몇 개 골랐는지 · 모두 풀기 · 끝내기
 function upd3Pill(){
