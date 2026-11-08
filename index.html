@@ -64,7 +64,7 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
   const isPriv = p => p.startsWith('data/users/');
   const clone = v => v == null ? v : JSON.parse(JSON.stringify(v));
   const $ = s => document.querySelector(s);
-  let sb = null, ME = '', NAME = '';
+  let sb = null, ME = '', NAME = '', ADMIN = false;
   const lsGet = k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
   const lsSet = (k, v) => { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} };
 
@@ -272,7 +272,9 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
     else { nb.replaceWith(box); box.append(b, nb); }
     b.onclick = async () => {
       const ui = window.MS_UI; if (!ui) return;
-      const k = await ui.pickBox(NAME, '닉네임과 비밀번호로 어느 기기에서든 들어올 수 있어요.', [{ id: 'pw', label: '비밀번호 바꾸기' }, { id: 'out', label: '로그아웃' }], null);
+      const opts = [{ id: 'pw', label: '비밀번호 바꾸기' }, { id: 'out', label: '로그아웃' }]; if (ADMIN) opts.unshift({ id: 'admin', label: '관리자 현황' });
+      const k = await ui.pickBox(NAME, '닉네임과 비밀번호로 어느 기기에서든 들어올 수 있어요.', opts, null);
+      if (k === 'admin') { adminView(); return; }
       if (k === 'out') { if (await ui.confirmBox('로그아웃', '이 기기에서 로그아웃해요. 작업은 서버에 그대로 있어요.', '로그아웃', false)) window.MS_API.logout(); }
       else if (k === 'pw') {
         const p1 = await ui.promptBox('새 비밀번호 (8자 이상)', '', '다음'); if (!p1) return;
@@ -282,6 +284,47 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
         ui.toast(r.error ? '바꾸지 못했어요: ' + r.error.message : '비밀번호를 바꿨어요');
       }
     };
+  }
+
+  /* ---------- 관리자 현황 (보기 전용 · 관리자 목록에 있는 계정만 · 작업물 내용은 안 보임) ---------- */
+  async function adminView(){
+    const ui = window.MS_UI;
+    let d; try { d = await rpc('ms_admin_overview'); } catch (e) { ui && ui.toast(/denied|42501/.test((e && (e.code || e.message)) || '') ? '관리자만 볼 수 있어요' : '현황을 불러오지 못했어요'); return; }
+    let m = $('#adminModal');
+    if (!m) {
+      m = document.createElement('div'); m.className = 'modal'; m.id = 'adminModal'; m.hidden = true;
+      m.innerHTML = '<div class="mbox" role="dialog" aria-labelledby="amT" style="max-width:min(760px,calc(100vw - 24px));width:100%;max-height:calc(100dvh - 40px);overflow:auto"><h2 id="amT">관리자 현황</h2><p class="sub" id="amSum"></p><div id="amBody"></div><div class="mact"><button class="btn" id="amRe">새로 고침</button><button class="btn primary" id="amX">닫기</button></div></div>';
+      document.body.appendChild(m);
+      const st = document.createElement('style');
+      st.textContent = '#adminModal h3{font-size:14px;margin:16px 0 6px}#adminModal .amt{width:100%;border-collapse:collapse;font-size:13px}#adminModal .amt th{text-align:left;font-weight:600;color:#7a7065;font-size:11.5px;padding:6px 8px;border-bottom:1px solid #e0d8ca;white-space:nowrap}#adminModal .amt td{padding:7px 8px;border-bottom:1px solid #efe9de;vertical-align:top}#adminModal .amt td.n{font-variant-numeric:tabular-nums;white-space:nowrap}#adminModal .new{color:#a5533f;font-weight:700}#adminModal .me{color:#56705d;font-size:11px;margin-left:4px}#adminModal .tw{overflow-x:auto}';
+      document.head.appendChild(st);
+      $('#amX').onclick = () => { m.hidden = true; };
+      $('#amRe').onclick = () => { m.hidden = true; adminView(); };
+    }
+    const fmt = t => t ? new Date(t).toLocaleString('ko-KR', { year: '2-digit', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+    const now = d && d.now ? new Date(d.now).getTime() : Date.now(), recent = t => t && now - new Date(t).getTime() < 24 * 3600e3;
+    const users = (d && d.users) || [], prjs = (d && d.projects) || [];
+    $('#amSum').textContent = `가입 ${users.length}명 · 24시간 안에 로그인 ${users.filter(u => recent(u.last)).length}명 · 프로젝트 ${prjs.length}개` + (d && d.noNick ? ` · 닉네임을 정하지 않은 로그인 계정 ${d.noNick}개` : '');
+    const body = $('#amBody'); body.textContent = '';
+    const table = (title, heads, rows) => {
+      const h = document.createElement('h3'); h.textContent = title; body.appendChild(h);
+      const w = document.createElement('div'); w.className = 'tw'; const t = document.createElement('table'); t.className = 'amt';
+      const tr = document.createElement('tr'); for (const x of heads) { const th = document.createElement('th'); th.textContent = x; tr.appendChild(th); } t.appendChild(tr);
+      for (const r of rows) { const row = document.createElement('tr'); for (const c of r) { const td = document.createElement('td'); if (c && c.num) td.className = 'n'; if (c && c.node) td.appendChild(c.node); else td.textContent = c && typeof c === 'object' ? c.text : String(c ?? ''); row.appendChild(td); } t.appendChild(row); }
+      if (!rows.length) { const row = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = heads.length; td.textContent = '아직 없어요'; row.appendChild(td); t.appendChild(row); }
+      w.appendChild(t); body.appendChild(w);
+    };
+    table('사람 (마지막 로그인 순)', ['닉네임', '마지막 로그인', '가입', '작업물', '프로젝트'], users.map(u => {
+      const n = document.createElement('span'); n.textContent = u.nick || '';
+      if (u.me) { const s = document.createElement('span'); s.className = 'me'; s.textContent = '나'; n.appendChild(s); }
+      const l = document.createElement('span'); l.textContent = fmt(u.last); if (recent(u.last)) l.className = 'new';
+      return [{ node: n }, { node: l, num: true }, { text: fmt(u.joined), num: true }, { text: u.works ?? 0, num: true }, { text: u.projects ?? 0, num: true }];
+    }));
+    table('프로젝트', ['이름', '만든 사람', '참여자', '만든 날'], prjs.map(p => [p.name || '(이름 없음)', p.owner || '', (p.members || []).join(', '), { text: fmt(p.created), num: true }]));
+    const note = document.createElement('p'); note.className = 'sub'; note.style.marginTop = '12px';
+    note.textContent = '모르는 닉네임이 있으면 Supabase → Authentication → Users에서 그 계정을 지우거나, 프로젝트 초대 코드를 새로 바꿔 주세요. 작업물 내용은 여기서 보이지 않아요.';
+    body.appendChild(note);
+    m.hidden = false;
   }
 
   /* ---------- 시작 ---------- */
@@ -332,6 +375,7 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
       if (bootAuth && s.user && s.user.id !== bootAuth) { if (outShown) return; outShown = true; window.MS_UI && window.MS_UI.toast('이 브라우저에서 다른 계정으로 바뀌었어요. 다시 불러올게요'); setTimeout(() => location.reload(), 1200); }
     });
     window.dispatchEvent(new CustomEvent('ms-auth', { detail: { signedIn: true, nick: NAME } }));
+    try { ADMIN = !!(await rpc('ms_is_admin')); } catch (e) { ADMIN = false; } // 관리자 현황을 설치하지 않았으면 그냥 없음
     startLive(); meButton();
     return { db, user, assets, downloads };
   }
