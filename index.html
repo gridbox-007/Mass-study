@@ -38,7 +38,8 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
 <meta name="apple-mobile-web-app-title" content="Mass Study">
 <meta name="theme-color" content="#ece6d9">
 <link rel="apple-touch-icon" href="icon.png">
-<link rel="icon" type="image/png" href="icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
 <link rel="manifest" href="manifest.webmanifest">
 <script>
 /* 매스 스터디 · Supabase 연결 (깃허브 배포용) v2
@@ -95,6 +96,7 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
 
   /* ---------- 지켜보기(실시간) ---------- */
   const docW = new Map(), collW = new Map(), ver = new Map(), timers = new Map();
+  const collCache = new Map(), myWrites = new Map(); // 받아 둔 목록 · 내가 방금 저장한 곳 (같은 걸 또 내려받지 않게)
   const bump = k => ver.set(k, (ver.get(k) || 0) + 1);
   const meta = { fromCache: false, hasPendingWrites: false };
   const docSnap = (p, d) => ({ id: idOf(p), exists: d != null, data: () => clone(d), metadata: meta });
@@ -102,12 +104,14 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
   function refresh(kind, k, delay = 120){
     const map = kind === 'doc' ? docW : collW, tk = kind + ':' + k;
     if (!map.has(k) || !map.get(k).size || timers.has(tk)) return;
+    if (document.visibilityState === 'hidden' && [...map.get(k)].every(w => w.ok)) return; // 안 보는 동안은 쉬고, 다시 볼 때 한꺼번에 (refreshAll)
     timers.set(tk, setTimeout(async () => {
       timers.delete(tk);
       const v0 = ver.get(tk) || 0;
       try {
         const val = kind === 'doc' ? await fetchDoc(k) : await fetchColl(k);
         if ((ver.get(tk) || 0) !== v0) { refresh(kind, k, 60); return; } // 그 사이 내가 또 저장했으면 버리고 다시
+        if (kind === 'coll') collCache.set(k, val);
         const snap = kind === 'doc' ? docSnap(k, val) : collSnap(val);
         for (const w of [...(map.get(k) || [])]) { w.ok = true; try { w.cb(snap); } catch (e) { console.error(e); } }
       } catch (e) {
@@ -116,7 +120,14 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
       }
     }, delay));
   }
-  function touch(p){ refresh('doc', p); refresh('coll', parentOf(p)); if (p.startsWith('prj/')) { refresh('coll', 'pub'); refresh('coll', 'fb'); } }
+  function emitColl(c){ const arr = collCache.get(c); if (!arr) return; const snap = collSnap(arr); for (const w of [...(collW.get(c) || [])]) { w.ok = true; try { w.cb(snap); } catch (e) { console.error(e); } } }
+  function localColl(p, d){ // 내 작업 목록: 저장할 때마다 목록 전체를 다시 내려받지 않고, 받아 둔 목록에서 그 하나만 바꿈
+    const c = parentOf(p); if (!isPriv(p) || !collCache.has(c)) return false;
+    const id = idOf(p), arr = collCache.get(c).filter(x => x.id !== id);
+    if (d != null) arr.push({ id, data: clone(d) });
+    collCache.set(c, arr); bump('coll:' + c); emitColl(c); return true;
+  }
+  function touch(p){ if (Date.now() - (myWrites.get(p) || 0) < 8000) return; refresh('doc', p, 400); refresh('coll', parentOf(p), 400); if (p.startsWith('prj/')) { refresh('coll', 'pub', 400); refresh('coll', 'fb', 400); } }
   function watch(map, kind, k, cb, err){
     if (!map.has(k)) map.set(k, new Set());
     const w = { cb, err }; map.get(k).add(w); refresh(kind, k, 0);
@@ -137,7 +148,7 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
       }).subscribe();
     } catch (e) {}
     setInterval(() => { if (document.visibilityState === 'visible') pollMine(); }, 15000);
-    setInterval(() => { if (document.visibilityState === 'visible') refreshAll(false); }, 60000); // 실시간이 끊겨도 1분 안에 따라잡음
+    setInterval(() => { if (document.visibilityState === 'visible') refreshAll(false); }, 120000); // 실시간이 끊겨도 2분 안에 따라잡음 (자주 전부 내려받지 않게)
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { refreshAll(false); pollMine(); } });
   }
 
@@ -147,18 +158,22 @@ SUPABASE_ANON_KEY = sb_publishable_85EfMrujHNQMC7UzL2hYHg_-0RcKkFR
       get: async () => docSnap(p, await fetchDoc(p)),
       set: async d => {
         bump('doc:' + p); bump('coll:' + parentOf(p));
+        myWrites.set(p, Date.now());
         await rpc('ms_put', { p_path: p, p_data: d });
+        myWrites.set(p, Date.now());
         bump('doc:' + p); bump('coll:' + parentOf(p));
         for (const w of [...(docW.get(p) || [])]) { try { w.cb(docSnap(p, d)); } catch (e) {} }
-        refresh('coll', parentOf(p), 0); if (isPriv(p)) stamp = null;
+        if (!localColl(p, d)) refresh('coll', parentOf(p), 0); if (isPriv(p)) stamp = null;
         if (p.startsWith('prj/')) refresh('doc', p, 0); // 서버가 붙이는 참여자·초대코드를 다시 받아 옴
       },
       delete: async () => {
         bump('doc:' + p); bump('coll:' + parentOf(p));
+        myWrites.set(p, Date.now());
         await rpc('ms_del', { p_path: p });
+        myWrites.set(p, Date.now());
         bump('doc:' + p); bump('coll:' + parentOf(p));
         for (const w of [...(docW.get(p) || [])]) { try { w.cb(docSnap(p, null)); } catch (e) {} }
-        refresh('coll', parentOf(p), 0);
+        if (!localColl(p, null)) refresh('coll', parentOf(p), 0);
       },
       onSnapshot: (cb, err) => watch(docW, 'doc', p, cb, err)
     }),
@@ -1563,6 +1578,41 @@ html.editing .toast button{height:26px;padding:0 9px;font-size:12px;border-color
   html.editing body:not(.study) .guide3 .g3h .tb{height:30px}
   html.editing body:not(.study) #editView .sheet{padding-top:8px}
 }
+/* 8차: 수치 줄 모서리 둥글게 (한 장 안에 둥근 칸) */
+.stats{gap:3px !important;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--panel);align-self:flex-start}
+.stats .chip,.stats .chip:first-child,.stats .chip:last-child{border:0 !important;border-radius:9px !important;background:transparent;padding:4px 11px}
+.stats .chip + .chip{position:relative}
+.stats .chip + .chip::before{content:'';position:absolute;left:-2px;top:22%;bottom:22%;width:1px;background:var(--line);opacity:.8}
+.stats .chip.over{background:#fbeae5 !important;box-shadow:inset 0 0 0 1px rgba(217,72,15,.45)}
+.stats .chip.over::before,.stats .chip.over + .chip::before{opacity:0}
+html.editing body:not(.study) #stats{border:1px solid var(--sb-line);border-radius:12px;background:var(--sb-paper)}
+html.editing body:not(.study) #stats .chip::before{background:var(--sb-line)}
+/* 스터디 덧그림 (네모·올가미 고르기, 늘이기 표시) */
+#x4ov{position:absolute;pointer-events:none;overflow:visible;z-index:2}
+/* 10차: 3D 메뉴도 스터디처럼 — 메뉴 버튼 바로 아래 오른쪽에 한 줄로 */
+html.editing body:not(.study).r2mopen .r2in{top:var(--mtop, 64px) !important;right:max(10px, env(safe-area-inset-right)) !important;left:auto !important;width:auto !important;min-width:128px;max-width:min(240px, calc(100vw - 20px)) !important;padding:8px !important;gap:6px !important;background:var(--panel) !important;border:1px solid var(--line) !important;border-radius:10px !important;box-shadow:0 10px 30px rgba(0,0,0,.14) !important;max-height:calc(100vh - var(--mtop, 64px) - 12px);overflow-y:auto}
+html.editing body:not(.study).r2mopen .r2in .tools2{display:flex !important;flex-direction:column;align-items:stretch;gap:6px}
+html.editing body:not(.study).r2mopen .r2in .tools2 button{height:42px;width:100%;justify-content:center;white-space:nowrap}
+/* 플랜 정렬 버튼 */
+.plansort{display:flex;gap:0;align-self:flex-start;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin:2px 0 8px}
+.plansort button{border:0;background:transparent;font:inherit;font-size:13px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+.plansort button + button{border-left:1px solid var(--line)}
+.plansort button.on{background:var(--ink);color:#fff}
+/* 11차: 3D 네모 고르기 — 왼→오른쪽(다 들어간 것만)은 실선, 오른→왼쪽(걸친 것까지)은 점선 */
+.mq3.win{border-style:solid}
+/* 안내 줄이기 (전문가 조작 · 기본 조작은 10분 뒤) */
+body.quiet #hint{display:none !important}
+/* 12차 디자인 다듬기 — 프로젝트 머리: 뒤로 버튼을 제목 줄에 맞추고, 설명과 보기 버튼을 한 줄에 */
+.crumb{align-items:flex-start}
+.crumb #crumbBack{margin-top:1px}
+.crumb .pen,.crumb .trash,.crumb #pjLeave{align-self:center}
+#tabDesc{word-break:keep-all;overflow-wrap:anywhere}
+.descrow{display:flex;align-items:flex-start;gap:16px}
+.descrow #tabDesc{flex:1 1 auto;min-width:0;margin-top:0}
+.descrow .tfwrap.inl{flex:0 1 auto;margin:0 0 0 auto}
+.descrow:has(.tfilter:not([hidden])){flex-wrap:wrap}
+.descrow:has(.tfilter:not([hidden])) .tfwrap.inl{flex-basis:100%}
+@media (max-width:600px){.descrow{flex-direction:column;align-items:stretch;gap:6px}.descrow .tfwrap.inl{margin:0}}
 </style>
 <script type="importmap">
 {"imports":{
@@ -1848,6 +1898,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
       <div class="tgrp aux" role="group" aria-label="보조 도구" data-gl="보조">
         <button data-tool="text" class="ticon" aria-label="텍스트" title="눌러서 글자 넣기"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4.5 5h11M10 5v11M7.6 16h4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>텍스트</button>
         <button id="flowBtn" title="주·부·서비스 동선, 출입문, 유리를 그려요">동선 그리기</button>
+        <button data-tool="stretch" title="늘이기 (S): 도형의 변이나 동선 끝을 잡고 끌어서 늘이고 줄여요">늘이기</button>
         <button data-tool="ruler" title="보조선 자 (CAD X라인처럼): 끌어서 방향을 정하면 양쪽 끝까지 이어진 선이 생겨요 · 도형을 옮기거나 그릴 때 선에 붙어요 · Shift는 45° 단위 (8개까지)">보조선 자</button>
       </div>
     </div>
@@ -2282,7 +2333,7 @@ const CATS = {
   vertical:  { n: '수직 동선', ex: '계단·엘리베이터·경사로', c: '#8f7fd3', t: '#27241f' },
   public:    { n: '공용 공간', ex: '홀·라운지·로비', c: '#e3b673', t: '#27241f' },
   corridor:  { n: '동선', ex: '복도·통로', c: '#e7e0cf', t: '#27241f' },
-  outdoor:   { n: '외부 공간', ex: '중정·선큰·테라스', c: '#cfe0bd', t: '#27241f' },
+  outdoor:   { n: '외부·발판', ex: '테라스·브릿지·발판·중정', c: '#cfe0bd', t: '#27241f' },
   service:   { n: '글라스', ex: '유리 매스·커튼월·온실', c: '#cfe3f0', t: '#2d4a60', glass: true }, // 예전 '서비스 공간' 자리 (같은 키라 저장된 도형은 그대로 글라스가 돼요)
   parking:   { n: '주차장', ex: '지상 주차 · 용적률에서 빠짐', c: '#9ea5ae', t: '#27241f' },
   void:      { n: '보이드', ex: '아트리움·오픈 투 빌로우', c: '#eef1f4', t: '#3b4a5a', hatch: true },
@@ -2295,9 +2346,9 @@ const CAT_WORDS = [
   ['vertical', ['계단', '엘리베이터', '승강기', 'ev', '경사로', '램프', '슬로프']],
   ['corridor', ['복도', '통로', '회랑', '브릿지', '브리지']],
   ['void', ['보이드', 'void', '아트리움', '오픈', '개방']],
-  ['outdoor', ['중정', '선큰', '테라스', '마당', '정원', '데크', '발코니', '옥상']],
+  ['outdoor', ['중정', '선큰', '테라스', '마당', '정원', '데크', '발코니', '옥상', '발판', '캣워크']],
   ['structure', ['벽', '기둥', '코어', '구조', '샤프트']],
-  ['public', ['홀', '라운지', '로비', '갤러리', '카페', '식당', '강당', '전시', '도서', '공용']],
+  ['public', ['현관', '홀', '라운지', '로비', '갤러리', '카페', '식당', '강당', '전시', '도서', '공용']],
   ['room', ['방', '실', '작업', '침실', '서재', '사무', '교실', '스튜디오', '주방', '욕', '회의', '공방']]
 ];
 function guessCat(label){ const t = String(label || '').toLowerCase(); if (!t) return null; for (const [k, ws] of CAT_WORDS) if (ws.some(w => t.includes(w))) return k; return null; }
@@ -2568,6 +2619,7 @@ function normalize(d){
     updatedAt: Number(d.updatedAt) || 0,
     publishedAt: Number(d.publishedAt) || 0,
     pubSig: d.pubSig ? String(d.pubSig) : '',
+    pubSig2: d.pubSig2 ? String(d.pubSig2) : '',
     origin: d.origin && typeof d.origin === 'object' ? { owner: String(d.origin.owner || ''), pid: String(d.origin.pid || ''), name: String(d.origin.name || '').slice(0, 40) } : null
   };
   for (const b of (Array.isArray(d.boxes) ? d.boxes : []).slice(0, 400)) o.boxes.push(normBox(b, o.grid));
@@ -2869,7 +2921,7 @@ function exampleItems(){
 function draftHay(p){ return hay([p.name, (projOf(p.project) || {}).name, ...p.boxes.map(b => b.label), ...p.sheets.map(s => s.name), p.origin && p.origin.name]); }
 function draftCard(p, inTeam){
   const s = calc(p), team = !!p.publishedAt;
-  const unsaved = team && p.pubSig !== sigOf(p);
+  const unsaved = team && isUnsaved(p);
   const badge = team ? (unsaved ? '공유 후 바뀜' : '공유됨') : '나만 봄';
   const acts = [['열기', () => go('d-' + p.id), 'main']];
   if (!readOnly) { acts.push(['복제', () => dupDraft(p)]); acts.push(['삭제', () => deleteDraft(p)]); }
@@ -3066,7 +3118,7 @@ function renderHome(){
       actions: acts, open: () => go((mine ? 'd-' : 'v-') + t.pid) }));
   }
   if (!items.length) { const d = document.createElement('div'); d.className = 'empty'; d.textContent = q ? `‘${q}’에 맞는 작업물이 없어요.` : '아직 공유된 작업물이 없어요.'; tl.appendChild(d); }
-  const myHere = drafts.filter(d => inPj(d, P0.id) && (!d.publishedAt || d.pubSig !== sigOf(d))).filter(p => matches(draftHay(p)));
+  const myHere = drafts.filter(d => inPj(d, P0.id) && isUnsaved(d)).filter(p => matches(draftHay(p)));
   if (myHere.length && member) { sec('이 프로젝트의 내 작업 (아직 공유 안 됨 · 나만 봄)'); for (const p of myHere) tl.appendChild(draftCard(p, true)); }
 }
 let searchT = null;
@@ -3229,7 +3281,7 @@ async function publish(){
     const posts = { ...(idx.posts || {}) };
     posts[curPid] = { name: P.name, publishedAt: now, siteW: P.siteW, siteD: P.siteD, cats: P.cats, boxes: P.boxes.filter(b => !b.sheet).slice(0, 80).map(b => ({ kind: b.kind, shape: b.shape, rot: b.rot, ang: b.ang, cat: b.cat, x: b.x, z: b.z, w: b.w, d: b.d, lv: b.lv, fl: b.fl, ...(b.shape === 'poly' ? { pts: b.pts, cps: b.cps } : {}) })), grid: P.grid, site: P.site, kind: P.kind, project: P.project, projects: P.projects, origin: P.origin, gfa: r2(s.gfa), far: r2(s.far), plans: plans.length, labels: [...new Set([...P.boxes.map(b => b.label), ...P.sheets.map(x => x.name)].filter(Boolean))].slice(0, 40) };
     await store.save(pubIndexPath(me), { ...idx, posts });
-    commitMeta(() => { P.publishedAt = now; P.pubSig = sigOf(P); });
+    commitMeta(() => { P.publishedAt = now; P.pubSig = sigOf(P); P.pubSig2 = canonSig(P); });
     setTimeout(() => syncRefUse(true), 800);
     for (const pid of P.projects) { try { const d = await store.getDoc('prj/' + pid); if (d) { const { id, ...b2 } = d; await store.save('prj/' + pid, { ...b2, updatedAt: now }); } } catch (e) {} }
     const names = P.projects.map(id => (projOf(id) || {}).name).filter(Boolean);
@@ -3434,7 +3486,7 @@ function boxMesh(b, totalRooms, rank = 0){
   const H = boxH(b), isSel = selSet.has(b.id), out = outside(b), outer = b.kind === 'outer';
   const geo = shapeGeo(b, H);
   const dimOther = sizeMode && b.id !== sizeMode && !outer;
-  const mesh = new THREE.Mesh(geo, dimOther ? xrayMat(colorOf(b), false) : outer ? (isSel ? outerFillSel : outerFill) : b.cat === 'void' ? (isSel ? outerFillSel : voidMat) : b.cat === 'outdoor' && !isSel ? outdoorMat : b.cat === 'service' && !isSel && !edgeMode ? glassMat : edgeMode ? xrayMat(colorOf(b), isSel) : solidMat(colorOf(b), isSel));
+  const mesh = new THREE.Mesh(geo, dimOther ? xrayMat(colorOf(b), false) : outer ? (isSel ? outerFillSel : outerFill) : b.cat === 'void' ? (isSel ? outerFillSel : voidMat) : b.cat === 'outdoor' ? (isSel ? outerFillSel : outdoorMat) : b.cat === 'service' && !isSel && !edgeMode ? glassMat : edgeMode ? xrayMat(colorOf(b), isSel) : solidMat(colorOf(b), isSel));
   // 스터디 보드에서 아래 레이어일수록 아주 조금 작고(옆) 바닥이 살짝 떠 있게: 겹친 면이 깨져 보이지 않음
   const rk = Math.min(rank, 12), ins = rk ? 0.002 : 0, lift = 0.002 + rk * 0.0005, drop = rk * 0.0005, Hs = Math.max(0.05, H - lift - drop); // 틈이 안 보이게 아주 조금만 (깜빡임은 깊이 정밀도로 막음)
   mesh.scale.set(Math.max(0.6, (b.w - 2 * ins) / b.w), Hs / H, Math.max(0.6, (b.d - 2 * ins) / b.d));
@@ -3456,10 +3508,11 @@ function boxMesh(b, totalRooms, rank = 0){
   }
   if (outer || openSp) edges.computeLineDistances();
   mesh.add(edges);
-  if (b.cat === 'outdoor' && !isSel && !outer && !dimOther) { // 테라스: 바닥판(두께 최대 0.3m) + 높이 1.1m 난간, 위쪽 덩어리는 비워 둠
-    edges.visible = false;
+  if (b.cat === 'outdoor' && !outer && !dimOther) { // 고른 때도 발판 모양 그대로 (덩어리는 파란 점선 테두리만)
+    if (isSel) { edges.material = dashSel; edges.computeLineDistances(); } // 테라스: 바닥판(두께 최대 0.3m) + 높이 1.1m 난간, 위쪽 덩어리는 비워 둠
+    edges.visible = isSel;
     const t = Math.min(0.3, Math.max(0.08, H * 0.3)), rh = Math.min(1.1, Math.max(t + 0.2, H - 0.05));
-    const slab = new THREE.Mesh(shapeGeo(b, t), solidMat(colorOf(b), false));
+    const slab = new THREE.Mesh(shapeGeo(b, t), solidMat(colorOf(b), isSel));
     slab.position.y = -H / 2 + t / 2; slab.castShadow = true; slab.receiveShadow = true; slab.userData.id = b.id;
     slab.add(new THREE.LineSegments(new THREE.EdgesGeometry(slab.geometry, 25), terraceEdge));
     mesh.add(slab);
@@ -3616,7 +3669,7 @@ function applyKeys(){
 function makeControls(){
   if (controls) controls.dispose();
   controls = new OrbitControls(cam, cv);
-  controls.enableDamping = true; controls.dampingFactor = 0.14; controls.rotateSpeed = 0.45; controls.zoomSpeed = 0.8; // 돌리는 감도 낮춤
+  controls.enableDamping = true; controls.dampingFactor = 0.14; controls.rotateSpeed = 0.45; controls.zoomSpeed = 1.45; // 돌리는 감도 낮춤 · 휠 확대는 빠르게
   controls.maxPolarAngle = Math.PI * 0.64; // 땅 아래까지 돌려 보기
   controls.screenSpacePanning = true;
   controls.addEventListener('change', () => { try { belowCheck3(); } catch (e) {} });
@@ -3821,15 +3874,17 @@ function afterChange(site){
   if (site) buildSite();
   buildBoxes(); refreshUI(); scheduleSave();
 }
+let saveFirstAt = 0;
 function scheduleSave(){
   if (edRO()) return;
   changeSeq++; dirty = true; setSync('저장 중…');
-  clearTimeout(saveTimer); saveTimer = setTimeout(flush, 450);
+  const now = Date.now(); if (!saveFirstAt) saveFirstAt = now;
+  clearTimeout(saveTimer); saveTimer = setTimeout(flush, Math.max(0, Math.min(900, saveFirstAt + 4000 - now)));
 }
 async function flush(retry){
   if (!dirty || !curPid || !P || edKind !== 'draft') return;
   if (writing) { await new Promise(r => setTimeout(r, 300)); return flush(retry); }
-  clearTimeout(saveTimer);
+  clearTimeout(saveTimer); saveFirstAt = 0;
   writing = true;
   const seq = changeSeq, id = curPid, payload = clone(P);
   try { await store.save(draftPath(id), payload); }
@@ -3986,7 +4041,7 @@ function refreshUI(){
   $('#editTools').hidden = ro;
   $('#nameInput').readOnly = ro; $('#setBtn').hidden = ro;
   $('#saveBtn').hidden = ro || localMode || edKind !== 'draft';
-  const unsaved = !P.publishedAt || P.pubSig !== sigOf(P);
+  const unsaved = isUnsaved(P);
   $('#saveBtn').textContent = innerWidth <= 340 ? '저장' : '프로젝트에 저장'; $('#saveBtn').title = '프로젝트에 저장';
   $('#saveBtn').classList.toggle('dirty', !!P.publishedAt && unsaved);
   $('#saveBtn').classList.toggle('saved', !unsaved);
@@ -4444,7 +4499,7 @@ const TOURS = {
     ['#sheetBar', '대지(층)', '+ 대지로 위층·지하층을 더해요. 층 탭을 두 번 누르면 이름·글자 크기와 함께 ‘1층으로 지정’(그 아래 층은 지하가 돼요)과 ‘n.5층 추가’가 있어요. n.5층은 대지 오른쪽 위 아이콘으로 접었다 펴요.'],
     ['#sbottom', '아래 상태줄', '배율·격자, 보기 방식, 레퍼런스, 그리고 건폐율·용적률·연면적이 한도와 함께 보여요.'],
     ['#saveBtn', '프로젝트에 저장', '눌러야 조원에게 보여요. 저장 전에는 나만 봐요.'],
-    [null, '키보드 단축키 (스케치업과 같은 키도 돼요)', 'Space(톡)·V·M 선택 · R 사각형 · C·O 원형 · A 반원 · L·P 다각형 · D 점선 꺾기 · W 동선 · T 보조선 자 · Shift+T 텍스트\n고른 도형: P·S 크기 바꾸기 · Q 돌리기 · E·Delete 지우기 · G 그룹 · Enter 이름·설명\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Y 또는 Ctrl+Shift+Z 다시 실행 · Ctrl(⌘)+C 복사 · Ctrl(⌘)+V 붙여넣기(다른 층 대지를 보고 있으면 그 층에) · Ctrl(⌘)+X 잘라내기 · Ctrl(⌘)+D 복제\nZ 이 대지에 맞추기 · Shift+Z 전체 보기 · H 또는 Space 누른 채 끌기 화면 이동 · Esc 선택 풀기\n방향키 한 칸 이동 · PageUp/PageDown 한 층 올리고 내리기'],
+    [null, '키보드 단축키 (스케치업과 같은 키도 돼요)', 'Space(톡)·V·M 선택 · R 사각형 · C·O 원형 · A 반원 · L·P 다각형 · D 점선 꺾기 · W 동선 · T 보조선 자 · Shift+T 텍스트 · S 늘이기(변·동선 끝 끌기)\n고른 도형: Q 돌리기 · E·Delete 지우기 · G 그룹 · Enter 이름·설명\nCtrl(⌘)+Z 되돌리기 · Ctrl(⌘)+Y 또는 Ctrl+Shift+Z 다시 실행 · Ctrl(⌘)+C 복사 · Ctrl(⌘)+V 붙여넣기(다른 층 대지를 보고 있으면 그 층에) · Ctrl(⌘)+X 잘라내기 · Ctrl(⌘)+D 복제\nZ 이 대지에 맞추기 · Shift+Z 전체 보기 · H 또는 Space 누른 채 끌기 화면 이동 · Esc 선택 풀기\n방향키 한 칸 이동 · PageUp/PageDown 한 층 올리고 내리기'],
     ['#menuBtn', '메뉴', '대지 크기·경계선과 높낮이, 플랜 저장, 댓글, 내보내기(PNG)가 여기 있어요.']
   ],
   exact: [
@@ -4640,7 +4695,7 @@ function liveHint(b){
 [cv, $('#pc')].forEach(el => el.addEventListener('mousedown', e => { if (e.button === 1) e.preventDefault(); }));
 cv.addEventListener('pointerdown', e => {
   if (!P) return;
-  if (controls) { const t = e.pointerType === 'touch' || e.pointerType === 'pen'; controls.rotateSpeed = t ? 0.85 : 0.45; controls.panSpeed = t ? 1.45 : 1; controls.zoomSpeed = t ? 1.25 : 0.8; } // 손가락은 더 빠르게, 마우스는 그대로
+  if (controls) { const t = e.pointerType === 'touch' || e.pointerType === 'pen'; controls.rotateSpeed = t ? 0.85 : 0.45; controls.panSpeed = t ? 1.45 : 1; controls.zoomSpeed = t ? 1.25 : 1.45; } // 손가락은 더 빠르게, 마우스는 그대로
   if (!e.isPrimary) {
     if (drag) { P = JSON.parse(drag.start); drag = null; controls.enabled = true; buildBoxes(); refreshUI(); }
     down = null; return;
@@ -4974,7 +5029,7 @@ function elevSvg(px){
     const shown = [];
     for (const L of labs) { const r = L.r, hit = o => r.x0 < o.x1 && r.x1 > o.x0 && r.z0 < o.z1 && r.z1 > o.z0; if (drawn.slice(L.k + 1).some(hit) || shown.some(hit)) continue; shown.push(r); h += L.t; }
     h += `<line x1="${r3(rx0)}" y1="${r3(e.gy)}" x2="${r3(rx1)}" y2="${r3(e.gy)}" stroke="#8a6f5a" stroke-width="${r3(px(1.8))}"/>`;
-    const room = (rx1 - rx0) * sv.k, tfs = Math.min(17 * 1.15, room / 6), sub = `${e.nm}쪽에서 본 모습`, go3 = '3D로 보기 ›', showSub = textW(`${e.nm}측 입면`, tfs, 700) + 8 + textW(sub, 11.5 * 1.15, 500) + 14 + textW(go3, 11.5 * 1.15, 700) < room;
+    const room = (rx1 - rx0) * sv.k, tfs = Math.min(17, room / 6), sub = `${e.nm}쪽에서 본 모습`, go3 = '3D로 보기 ›', showSub = textW(`${e.nm}측 입면`, tfs, 700) + 8 + textW(sub, 11.5 * 1.15, 500) + 14 + textW(go3, 11.5 * 1.15, 700) < room;
     h += `</g><text x="${r3(rx0)}" y="${r3(ry0 + e.M * 0.9 - px(10))}" font-size="${r3(px(tfs))}" font-weight="700" fill="${uiModeElevHi === e.dir ? '#2c5a8c' : '#27241f'}" data-role="elevtitle" data-dir="${e.dir}">${e.nm}측 입면${showSub ? `<tspan font-size="${r3(px(11.5 * 1.15))}" font-weight="500" fill="#8a8478" dx="${r3(px(8))}">${sub}</tspan><tspan font-size="${r3(px(11.5 * 1.15))}" font-weight="700" fill="#56705d" dx="${r3(px(14))}" data-role="elevgo" data-dir="${e.dir}" style="cursor:pointer">${go3}</tspan>` : `<tspan font-size="${r3(px(11.5 * 1.15))}" font-weight="700" fill="#56705d" dx="${r3(px(10))}" data-role="elevgo" data-dir="${e.dir}" style="cursor:pointer">3D ›</tspan>`}</text>`;
   }
   return h;
@@ -5209,7 +5264,9 @@ function labelSvg(b, px, ox, pl){
     lab = wrapText(label, fs, availW, Math.max(1, Math.min(2, Math.floor(availH / (fs * 1.25)))), roleMode ? 700 : 600);
     if (lab.cut) hidden = true;
   } else if (label) hidden = true;
-  const usedH = lab ? lab.lines.length * fs * 1.2 : 0;
+  const arTxt = lab && !roleMode && b.kind === 'solid' ? areaStr(shapeArea(b)) + '㎡' + (b.fl > 1 ? ` ×${b.fl}` : '') : '', afs = lab ? Math.max(8.5, Math.min(12 * T, fs * 0.8)) : 0;
+  const arOn = !!arTxt && fs >= 11 && availH - (lab ? lab.lines.length * fs * 1.2 : 0) - (tag ? 18 : 0) >= afs * 1.3 + fs * 0.5 && textW(arTxt, afs, 400) <= availW; // 작게 보일 때는 면적 줄을 빼서 글씨가 겹치지 않게
+  const usedH = (lab ? lab.lines.length * fs * 1.2 : 0) + (arOn ? afs * 1.3 : 0);
   if (!tooSmall && note) {
     nfs = Math.max(9, Math.min(11.5 * T, fs ? fs * 0.82 : 11.5 * T));
     const lines = Math.floor((availH - usedH - (lab ? 3 : 0)) / (nfs * 1.25));
@@ -5220,6 +5277,7 @@ function labelSvg(b, px, ox, pl){
   let y = cz - px(totalH / 2);
   if (pl && pl.out && (lab || nt)) h += `<rect x="${r3(cx - px(pl.aw / 2))}" y="${r3(cz - px(totalH / 2 + 3))}" width="${r3(px(pl.aw))}" height="${r3(px(totalH + 6))}" rx="${r3(px(6))}" fill="#fbf8f1" fill-opacity=".92" stroke="${tc}" stroke-opacity=".35" stroke-width="${r3(px(1))}" pointer-events="none"/>`; // 바깥에 놓인 글씨는 바탕을 깔아 읽기 쉽게
   if (lab) for (const ln of lab.lines) { y += px(fs * 1.2); h += `<text x="${r3(cx)}" y="${r3(y - px(fs * 0.3))}" font-size="${r3(px(fs))}" font-weight="${roleMode ? 700 : 600}" fill="${tc}" text-anchor="middle" pointer-events="none">${esc(ln)}</text>`; }
+  if (arOn) { y += px(afs * 1.3); h += `<text x="${r3(cx)}" y="${r3(y - px(afs * 0.32))}" font-size="${r3(px(afs))}" font-family="IBM Plex Mono, monospace" fill="${tc}" opacity=".62" text-anchor="middle" pointer-events="none">${esc(arTxt)}</text>`; }
   if (nt) { if (lab) y += px(3); for (const ln of nt.lines) { y += px(nfs * 1.25); h += `<text x="${r3(cx)}" y="${r3(y - px(nfs * 0.35))}" font-size="${r3(px(nfs))}" fill="${tc}" opacity=".78" text-anchor="middle" pointer-events="none">${esc(ln)}</text>`; } }
   // 다 못 보여 주면: 오른쪽 위에 '설명 있음' 표시 (두 번 톡 하면 전체를 볼 수 있어요)
   if (hidden && (label || note)) {
@@ -5778,13 +5836,13 @@ function renderStudy(){
 }
 function renderStudyNow(){
   updPolyBar();
-  { const mp = $('#mpPill'); if (mp && !mp.hidden && multiPick) { const n = selSet.size, sp = mp.querySelector('span'); if (sp) sp.textContent = `여러 개 고르는 중${n ? ` · ${n}개` : ''} · 도형을 눌러 더하고 빼요`; } }
+  { const mp = $('#mpPill'); if (mp && !mp.hidden && multiPick) { const n = selSet.size, sp = mp.querySelector('span'); if (sp) sp.textContent = quietTips() ? `여러 개 선택${n ? ` · ${n}개` : ''}` : `여러 개 고르는 중${n ? ` · ${n}개` : ''} · 도형을 눌러 더하고 빼요`; } }
   if (!P || uiMode !== 'study') return;
   LAY = layFrozen && LAY ? LAY : computeLayout();
   let T = 1.15;
   const k = sv.k, px = v => v / k, g = P.grid, ro = edRO(), W = P.siteW, D = P.siteD, M = g;
   let defs = `<pattern id="hatch" patternUnits="userSpaceOnUse" width="${r3(px(9))}" height="${r3(px(9))}" patternTransform="rotate(45)"><rect width="${r3(px(9))}" height="${r3(px(9))}" fill="${CATS.void.c}"/><line x1="0" y1="0" x2="0" y2="${r3(px(9))}" stroke="#a9b8c8" stroke-width="${r3(px(1.4))}"/></pattern>`;
-  defs += `<pattern id="opendots" patternUnits="userSpaceOnUse" width="${r3(px(12))}" height="${r3(px(12))}"><path d="M${r3(px(3))},${r3(px(5))}l${r3(px(1.2))},-${r3(px(2.2))}l${r3(px(1.2))},${r3(px(2.2))}M${r3(px(9))},${r3(px(11))}l${r3(px(1.2))},-${r3(px(2.2))}l${r3(px(1.2))},${r3(px(2.2))}" fill="none" stroke="#5f8a4a" stroke-opacity=".55" stroke-width="${r3(px(0.9))}" stroke-linecap="round" stroke-linejoin="round"/></pattern>`;
+  defs += `<pattern id="opendots" patternUnits="userSpaceOnUse" width="${r3(px(48))}" height="${r3(px(16))}"><path d="M0,${r3(px(0.5))}H${r3(px(48))}M0,${r3(px(8.5))}H${r3(px(48))}M${r3(px(6))},${r3(px(0.5))}V${r3(px(8.5))}M${r3(px(30))},${r3(px(10.5))}V${r3(px(16.5))}" fill="none" stroke="#5f8a4a" stroke-opacity=".32" stroke-width="${r3(px(0.8))}"/></pattern>`; // 외부·발판: 데크 판재 무늬
   defs += `<pattern id="pierce" patternUnits="userSpaceOnUse" width="${r3(px(7))}" height="${r3(px(7))}" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="${r3(px(7))}" stroke="#4a453d" stroke-opacity=".5" stroke-width="${r3(px(1.1))}"/></pattern>`;
   FB_COLORS.forEach((c, i) => { defs += `<marker id="fbar-${i}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="3.6" markerHeight="3.6" orient="auto"><path d="M0,0L10,5L0,10z" fill="${c}"/></marker>`; });
   for (const [t, f] of Object.entries(FLOWS)) defs += `<marker id="ar-${t}" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="${f.c}"/></marker>`;
@@ -5836,6 +5894,7 @@ function renderStudyNow(){
       const z = px(28), x0 = ox + W - z, y0 = -M - z - px(6), op = halfOpen.has(hs.id), u = v => r3(v * z / 24);
       paper += `<g data-role="halftog" data-sheet="${hs.id}" transform="translate(${r3(x0)} ${r3(y0)})" style="cursor:pointer"><title>${esc(levelName(hs.level))} ${op ? '접기' : '펼치기'}</title><rect width="${r3(z)}" height="${r3(z)}" rx="${u(6)}" fill="${op ? '#5e3a22' : '#fbf8f1'}" stroke="#5e3a22" stroke-width="${u(1.4)}"/><rect x="${u(5)}" y="${u(op ? 12 : 5)}" width="${u(14)}" height="${u(7)}" rx="${u(1.5)}" fill="none" stroke="${op ? '#fbf8f1' : '#5e3a22'}" stroke-width="${u(1.5)}" stroke-dasharray="${u(2.4)} ${u(1.6)}"/><path d="${op ? `M${u(8)} ${u(8)}L${u(12)} ${u(4.5)}L${u(16)} ${u(8)}` : `M${u(8)} ${u(15.5)}L${u(12)} ${u(19)}L${u(16)} ${u(15.5)}`}" fill="none" stroke="${op ? '#fbf8f1' : '#5e3a22'}" stroke-width="${u(1.8)}" stroke-linecap="round" stroke-linejoin="round"/></g>`;
     }
+    if (s.type === 'plan') paper += sheetInfoSvg(s, i, ox, W, D, M, g, k, px, T, hs);
     paper = paper.slice(0, p0) + wrapS(i, paper.slice(p0));
   });
   // 다른 층에서 비쳐 보이는 도형의 글씨: 그 대지의 도형·다른 글씨와 안 겹치는 빈자리에 작게
@@ -5877,7 +5936,7 @@ function renderStudyNow(){
         + ghostText(ti, b, `↑ ${levelName(b.lv)}${b.label ? ' ' + b.label : ''} · 고정`, '#4a453d'));
     });
   }
-  const order = [...P.boxes].sort((a, b) => (a.kind === 'outer') - (b.kind === 'outer')), lplace = labelPlacement(order);
+  const order = [...P.boxes].sort((a, b) => (a.kind === 'outer') - (b.kind === 'outer') || shapeArea(b) - shapeArea(a)), lplace = labelPlacement(order); // 겹치면 작은 도형이 앞에
   for (const b of order) {
     const bi = boxSheetIdx(b); if (!sheetVis(bi)) continue;
     const s0 = shapes.length, b0 = bound.length, l0 = labelsH.length;
@@ -6324,6 +6383,7 @@ pc.addEventListener('pointerdown', e => {
   const w = toWorld(e); let el = e.target.closest ? e.target.closest('[data-role]') : null;
   let role = el ? el.dataset.role : null, id = el ? el.dataset.id : null; const ro = edRO();
   if (role === 'seam') { const ch = document.elementsFromPoint(e.clientX, e.clientY).find(x => x.dataset && x.dataset.role === 'handle' && (x.dataset.h || '').length === 2); if (ch) { el = ch; role = 'handle'; id = ch.dataset.id; } } // 모서리 손잡이가 이음선보다 먼저
+  if (x4Down(e, w, role, id, ro)) return; // 전문가 조작(네모·올가미 고르기) · 늘이기
   if (!id && (!role || role === 'sheet') && tool === 'select' && !e.shiftKey && pointers.size === 1 && !polyDraft) { const nb = null; /* 근처 도형 대신 골라 주기는 뺌 (옆 도형이 잘못 골라져서) */ if (nb) { id = nb; role = 'body'; } }
   if (e.button === 2 && id && (getBox(id) || getNote(id)) && (role === 'body' || role === 'note' || role === 'label')) { // 오른쪽 클릭 = 두 번 누르기 (이름·설명 쓰기)
     gesture = { type: 'none' }; if (!selSet.has(id)) setSel([id]);
@@ -6507,6 +6567,7 @@ function onPcMove(e){
   if (!pointers.has(e.pointerId)) return;
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   const g = gesture; if (!g) return;
+  if (g.x4) { x4Move(e, g); return; }
   if (g.type === 'pvdrag' || g.type === 'pcdrag') {
     const b = getBox(sel); if (!b || b.shape !== 'poly') return;
     const w = toWorld(e), { W, C } = polyWorld(b);
@@ -6546,9 +6607,7 @@ function onPcMove(e){
     g.dx = dx; g.dz = dz; c.x = r2(g.o[0] + dx); c.z = r2(g.o[1] + dz); renderStudy(); return;
   }
   if (g.type === 'ruler') {
-    let b = [w.x, w.z]; // 방향은 손 위치 그대로 (격자에 맞추면 방향이 틀어져요)
-    { const dx = b[0] - g.a[0], dz = b[1] - g.a[1], L = Math.hypot(dx, dz), a0 = Math.atan2(dz, dx), q = Math.PI / (e.shiftKey ? 4 : 2), ang = Math.round(a0 / q) * q;
-      if (L > 1e-9 && (e.shiftKey || Math.abs(a0 - ang) < 4 * Math.PI / 180)) b = [g.a[0] + Math.cos(ang) * L, g.a[1] + Math.sin(ang) * L]; } // 수평·수직 가까우면 딱 맞춤, Shift는 45°
+    const b = rulerB(g.a, w, e.shiftKey, e.altKey); // 수평·수직 가까우면 딱 맞춤, Shift는 45° · 전문가 조작은 칸에 맞춤
     g.b = b; const L = Math.hypot(b[0] - g.a[0], b[1] - g.a[1]); showTag(e, isSketch() ? `${f2(L)}m` : `${cellsStr(L)}칸 · ${f2(L)}m`); renderStudy(); return;
   }
   if (g.type === 'door') {
@@ -6697,6 +6756,7 @@ function endStudyPointer(e){
   const cancelled = e.type === 'pointercancel';
   if (g.tapAct && !cancelled && !g.panMoved && Math.hypot(e.clientX - g.x0, e.clientY - g.y0) < 8) { g.tapAct(); return; } // 누른 채 움직이지 않고 뗐을 때만 실행
   if (g.type === 'none') return;
+  if (g.x4) { x4End(e, g, cancelled); return; }
   if (g.type === 'pvdrag' || g.type === 'pcdrag') { if (g.moved && !cancelled) pushHist(g.start); else if (cancelled && g.moved) P = JSON.parse(g.start); studyUI(); return; }
   if (g.type === 'fbdraw') { if (!cancelled) { const m = fbMarkFrom(g, false); if (m) { m.id = uid(); fbPush(); myFb.marks.push(m); fbChanged(); return; } } renderStudy(); return; }
   if (g.type === 'pan') {
@@ -6737,7 +6797,8 @@ function endStudyPointer(e){
       commit(() => { if (!Array.isArray(P.guides)) P.guides = []; P.guides.push({ a: [r2(g.a[0]), r2(g.a[1])], b: [r2(g.b[0]), r2(g.b[1])] }); });
       if (rulersArr.length === 1) tip('xline1', '보조선을 그었어요 · 도형을 옮기거나 그릴 때 이 선에 붙어요 · 작업과 같이 저장돼요 · 점 옆 × 로 지워요');
       if (rulersArr.length === 8) toast('보조선은 8개까지예요. 점 옆 × 로 지울 수 있어요');
-    }
+      setTool('select'); studyUI(); // 다 그으면 선택으로
+    } else if (!cancelled) { rulerPend = { si: g.si, a: g.a, cur: null }; tip('ruler2', '보조선 자: 다른 한 점을 클릭하면 그어져요 · Esc 취소'); } // 끌지 않고 눌렀다 떼면: 다음 클릭까지 기다림
     renderStudy(); return;
   }
   if (g.type === 'door' || g.type === 'doorend') {
@@ -6789,6 +6850,7 @@ function endStudyPointer(e){
     placeInSheet(nb, g.si);
     commit(() => { P.boxes.push(nb); setSel([nb.id]); });
     rotMode = false; setTool('select');
+    if (sKeysEff() === 'expert' && g.tool !== 'outer' && !edRO()) setTimeout(() => { if (getBox(nb.id)) openLabelEd(nb.id); }, 0); // 전문가 조작: 그리자마자 이름 쓰기
     return;
   }
   if (g.type === 'seam' || g.type === 'mscale') {
@@ -6998,6 +7060,7 @@ function finishPoly(){
   placeInSheet(nb, d.si);
   commit(() => { P.boxes.push(nb); setSel([nb.id], nb.id); });
   polySelV = null; setTool('select'); studyUI();
+  if (sKeysEff() === 'expert' && !edRO()) setTimeout(() => { if (getBox(nb.id)) openLabelEd(nb.id); }, 0);
   toast(`다각형 완성 · 면적 ${f1(shapeArea(nb))}㎡ · 꼭짓점을 끌어 고치고, 변 가운데 +로 점을 더해요`);
 }
 // 그리는 중인 다각형: 마지막에 찍은 점 취소 · 완성 · 그만두기 막대
@@ -7024,7 +7087,7 @@ function delPolyVertex(){
   const { W, C } = polyWorld(b), i = polySelV; W.splice(i, 1); C.splice(i, 1); if (i > 0) C[i - 1] = null; else C[C.length - 1] = null;
   commit(() => { const x = getBox(sel); if (x) setPolyWorld(x, W, C); }); polySelV = null; studyUI();
 }
-function setTool(t){ tool = t; sizeMode = null; if (t !== 'poly') polyDraft = null; if (t === 'poly') tip('poly', '눌러서 꼭짓점을 찍어요 · 첫 점을 다시 누르거나 두 번 누르면 완성 · Esc로 취소'); if (t !== 'select') { if (multiPick) setMultiPick(false); rotMode = false; } if (t === 'outer') toast('점선 테두리를 가로질러 선을 그어 보세요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 원·반원을 따라 그리면 그 곡선대로 꺾여요'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
+function setTool(t){ x4Cancel(); if (t === 'stretch') tip('stretch', '늘이기(S): 도형의 변이나 동선 끝을 잡고 끌면 늘이고 줄여요 · Alt = 격자 없이 · 다시 S = 선택'); tool = t; sizeMode = null; if (t !== 'poly') polyDraft = null; if (t === 'poly') tip('poly', '눌러서 꼭짓점을 찍어요 · 첫 점을 다시 누르거나 두 번 누르면 완성 · Esc로 취소'); if (t !== 'select') { if (multiPick) setMultiPick(false); rotMode = false; } if (t === 'outer') toast('점선 테두리를 가로질러 선을 그어 보세요. 각지게 그리면 직각, 둥글게 그리면 둥글게, 원·반원을 따라 그리면 그 곡선대로 꺾여요'); if (t === 'site') toast('대지경계선을 손으로 그리고 시작점까지 이어 주세요'); studyUI(); }
 document.querySelectorAll('#stools [data-tool]').forEach(b => b.onclick = () => setTool(b.dataset.tool));
 $('#zoomBtn').onclick = () => fitSheet(activeIdx(), true);
 $('#snapBtn').onclick = () => { studySnap = !studySnap; try { localStorage.setItem('mass-study-snap', studySnap ? 'on' : 'off'); } catch (e) {} studyUI(); toast(studySnap ? `격자가 보이고 반 칸(${f2(P.grid / 2)}m)씩 맞춰져요` : '격자 없이 자유롭게 움직여요'); };
@@ -7622,6 +7685,7 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Space' && e.target === document.body) { if (!spaceDown) spaceUsed = false; spaceDown = true; e.preventDefault(); }
   const t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
   if (e.key.toLowerCase() === 'h' && !e.ctrlKey && !e.metaKey) { spaceDown = true; spaceUsed = true; return; } // 스케치업 H: 누르고 있는 동안 화면 이동
+  if (e.key === 'Escape' && (x4Cancel() || (tool === 'stretch' && !selSet.size && (setTool('select'), true)))) return; // 기다리던 네모 고르기 취소 · 늘이기 끝
   if (e.key === 'Escape' && fbEdit) { exitFb(); return; }
   if (e.key === 'Enter' && polyDraft) { e.preventDefault(); finishPoly(); return; }
   if ((e.key === 'Backspace' || e.key === 'Delete') && polyDraft) { e.preventDefault(); polyUndo(); return; }
@@ -7633,7 +7697,8 @@ window.addEventListener('keydown', e => {
   // 단축키 (스케치업과 같은 키도): Space·V·M 선택, R 사각형, C·O 원형, A 반원(호), L 다각형(선), P·S 크기 바꾸기(밀기·끌기/배율), Q 돌리기, T 자(줄자), Shift+T 텍스트, E 지우기, D 점선 꺾기, W 동선, H 누르고 끌면 화면 이동, Z 이 대지 맞춤, Shift+Z 전체 보기, G 그룹
   const k = e.key.toLowerCase(), one = sel && selSet.size === 1 && getBox(sel) && !getBox(sel).lock;
   if (!flowEdit && !fbEdit) {
-    if ((k === 'p' || k === 's') && one) return; // 2D에는 도형 수정 모드가 없어요 (손잡이로 바로)
+    if (k === 's' && !e.shiftKey && !e.altKey) { setTool(tool === 'stretch' ? 'select' : 'stretch'); return; } // S 늘이기
+    if (k === 'p' && one) return; // 2D에는 도형 수정 모드가 없어요 (손잡이로 바로)
     if (k === 'q' && one) { rotMode = !rotMode; sizeMode = null; studyUI(); return; }
     if (k === 'e' && (selSet.size || selCard)) { e.preventDefault(); if (selCard) removeCard(selCard); else act('del'); return; }
     if (k === 'z') { e.shiftKey ? fitAll() : fitSheet(activeIdx(), true); return; }
@@ -7861,7 +7926,7 @@ function renderPlans(){
   $('#planSaveRow').hidden = edRO();
   $('#planSave').textContent = '저장';
   $('#planDesc').textContent = viewing ? '작성자가 저장해 둔 플랜이에요. 눌러서 화면에 띄워 볼 수 있어요.' : '내 작업 안에서 여러 안을 저장하고 불러와요. 플랜은 나만 보고, 프로젝트에 저장하면 함께 공유돼요.';
-  const list = viewing ? viewPlans : plans;
+  const list = planSorted(viewing ? viewPlans : plans); planSortUI();
   for (const pl of list) {
     const snap = normalize({ ...(pl.snapshot || {}), name: pl.name }), st = calc(snap);
     const btns = [[viewing ? '띄워 보기' : '불러오기', () => loadSnapshot(pl)]];
@@ -8275,7 +8340,7 @@ boot();
         const px = r.left + (v.x + 1) / 2 * r.width, py = r.top + (1 - v.y) / 2 * r.height;
         sx0 = Math.min(sx0, px); sx1 = Math.max(sx1, px); sy0 = Math.min(sy0, py); sy1 = Math.max(sy1, py);
       }
-      if (front && sx0 < X1 && sx1 > X0 && sy0 < Y1 && sy1 > Y0) ids.add(id);
+      if (front && (mq.x1 < mq.x0 ? (sx0 < X1 && sx1 > X0 && sy0 < Y1 && sy1 > Y0) : (sx0 >= X0 && sx1 <= X1 && sy0 >= Y0 && sy1 <= Y1))) ids.add(id); // 오른→왼: 걸친 것까지 · 왼→오른: 다 들어간 것만
     }
     return ids;
   }
@@ -8292,7 +8357,7 @@ boot();
     if (!mq || e.pointerId !== mq.pid) return; stop(e);
     mq.x1 = e.clientX; mq.y1 = e.clientY;
     if (!mq.moved && Math.hypot(mq.x1 - mq.x0, mq.y1 - mq.y0) > 6) mq.moved = true;
-    if (mq.moved) draw();
+    if (mq.moved) { draw(); rectEl().classList.toggle('win', mq.x1 >= mq.x0); }
   }, true);
   const end = e => {
     if (!mq || e.pointerId !== mq.pid) return; stop(e);
@@ -8303,7 +8368,7 @@ boot();
     mq = m; const got = hits(); mq = null;
     const next = m.add ? new Set(selSet) : new Set(); for (const id of got) { const b = getBox(id); if (b) for (const x of groupOf(b)) next.add(x.id); }
     setSel([...next]); buildBoxes(); refreshUI();
-    if (got.size) tip('mq3' + (m.add ? 'a' : ''), `${selSet.size}개 선택${m.add ? ' · 더 끌어서 더하거나, 눌러서 빼요' : ' · Shift를 누르고 끌면 더해요'}`); else toast('네모 안에 걸친 상자가 없어요');
+    if (got.size) tip('mq3' + (m.add ? 'a' : ''), `${selSet.size}개 선택${m.add ? ' · 더 끌어서 더하거나, 눌러서 빼요' : ' · Shift를 누르고 끌면 더해요'}`); else if (!quietTips()) toast(m.x1 < m.x0 ? '네모에 걸친 상자가 없어요' : '네모 안에 다 들어간 상자가 없어요 · 오른쪽에서 왼쪽으로 끌면 걸친 것까지 골라요');
   };
   ev.addEventListener('pointerup', end, true); ev.addEventListener('pointercancel', end, true);
 })();
@@ -8484,12 +8549,12 @@ function ux3Refresh(b, sb, study, ro){
     if (cats.size === 1) { const c = [...cats][0]; document.querySelectorAll('#sw button').forEach(x => x.classList.toggle('on', x.dataset.c === c)); }
     mx.innerHTML = `같이 바꿀 수 있어요 · 공간 종류 · 잠금 · 그룹 · 복제 · 삭제 · 정렬${cats.size > 1 ? '<br><span class="warn">공간 종류가 서로 달라요 · 색을 누르면 모두 그 색으로 바뀌어요</span>' : ''}`;
   }
-  { const kb = $('#keysBtn'); if (kb) kb.textContent = `조작 방식 · ${keysEff() === 'sketchup' ? '전문가' : '기본'}`; }
+  { const kb = $('#keysBtn'); if (kb) kb.textContent = `조작 방식 · ${(uiMode === 'study' ? sKeysEff() === 'expert' : keysEff() === 'sketchup') ? '전문가' : '기본'}`; }
   if (b && !ro && hasMouse() && !(drag && drag.type) && !sizeMode && !multiPick && mode === 'select' && !sb.some(x => x.lock))
     $('#hint').textContent = keysEff() === 'sketchup' ? '도형을 끌거나 ◎ 손잡이로 옮겨요 · 빨강 X · 초록 Y · 파랑 Z(위아래) · 오른쪽 클릭 = 보조 메뉴' : '◎ 이동 손잡이를 끌어 옮겨요 · 빨강 X(폭) · 초록 Y(깊이) · 파랑 Z(위아래) · 오른쪽 짧게 = 보조 메뉴';
   const g = $('#guide3');
   if (g) {
-    const show = !b && !ro && mode === 'select' && !isSketch();
+    const show = !b && !ro && mode === 'select' && !isSketch() && keysEff() !== 'sketchup'; // 전문가 조작은 안내 카드 없이
     g.hidden = !show;
     if (show) {
       const sk = keysEff() === 'sketchup', mouse = hasMouse(), rot = view === 'persp' || view === 'iso';
@@ -8628,6 +8693,343 @@ document.addEventListener('pointerdown', e => {
 }, true);
 { const t2 = document.querySelector('.r2in .tools2'); if (t2) t2.addEventListener('click', e => { if (uiMode !== 'study' && e.target.closest('button')) { r2mOpen = false; r2UI(); } }); }
 
+/* ---------------- 스터디(2D) 조작 방식 · CAD식 고르기 · 늘이기(S) (8차) ----------------
+   기본 조작: 지금 그대로 (빈 곳 끌기 = 화면 이동)
+   전문가 조작(마우스만): 휠 클릭 끌기 = 화면 이동 · 빈 곳 클릭 → 다시 클릭 = 네모 고르기 · 빈 곳 끌기 = 올가미 고르기
+   늘이기(S): 도형의 변이나 동선 끝을 잡고 끌면 늘이고 줄여요 */
+let keys2d = (() => { try { return localStorage.getItem('mass-2d-keys') || ''; } catch (e) { return ''; } })();
+let x4Asked = false, winPend = null, lassoNow = null, x4Hover = null, rulerPend = null;
+function sKeysEff(){ return keys2d === 'expert' ? 'expert' : 'basic'; }
+function x4Expert(e){ return sKeysEff() === 'expert' && (!e || e.pointerType === 'mouse'); }
+function openKeys2d(first){
+  let m = $('#keys2Modal');
+  if (!m) {
+    m = document.createElement('div'); m.className = 'modal'; m.id = 'keys2Modal'; m.hidden = true;
+    m.innerHTML = `<div class="mbox" role="dialog" aria-labelledby="k2T"><h2 id="k2T">스터디 조작 방식 선택</h2>
+      <p class="sub" id="k2D"></p>
+      <button type="button" class="xopt kopt" data-k="basic"><b>기본 조작</b><span class="lbl">빈 곳 왼쪽 끌기 = 화면 이동 · 휠 = 확대·축소<br>빈 곳을 꾹 누르고 끌거나 Shift + 끌기 = 네모로 여러 개 고르기</span></button>
+      <button type="button" class="xopt kopt" data-k="expert"><b>전문가 조작 (CAD 방식)</b><span class="lbl">휠 클릭 끌기 = 화면 이동 · 휠 = 확대·축소<br>빈 곳 클릭 → 한 번 더 클릭 = 네모로 고르기 (왼→오른쪽: 다 들어간 것만 · 오른→왼쪽: 걸친 것까지)<br>빈 곳 왼쪽 끌기 = 올가미(자유 모양)로 고르기 · Shift = 더하기 · Esc = 취소</span></button>
+      <p class="sub">단축키는 두 방식 모두 같아요. 손가락·펜 조작은 어느 쪽이든 그대로예요. 메뉴 → ‘조작 방식’에서 언제든 바꿀 수 있어요.</p>
+      <div class="mact"><button class="btn" id="k2Cancel">취소</button><button class="btn primary" id="k2Ok">선택</button></div></div>`;
+    document.body.appendChild(m);
+    m.querySelectorAll('.kopt').forEach(b => b.onclick = () => { m.dataset.pick = b.dataset.k; m.querySelectorAll('.kopt').forEach(x => x.classList.toggle('on', x === b)); });
+    $('#k2Cancel').onclick = () => { m.hidden = true; };
+    $('#k2Ok').onclick = () => {
+      keys2d = m.dataset.pick === 'expert' ? 'expert' : 'basic'; try { localStorage.setItem('mass-2d-keys', keys2d); } catch (e) {}
+      m.hidden = true; x4Cancel(); refreshUI(); x4Label(); toast(keys2d === 'expert' ? '스터디를 전문가 조작(CAD 방식)으로 바꿨어요' : '스터디를 기본 조작으로 바꿨어요');
+    };
+  }
+  m.dataset.pick = sKeysEff();
+  m.querySelectorAll('.kopt').forEach(x => x.classList.toggle('on', x.dataset.k === m.dataset.pick));
+  $('#k2D').textContent = first ? '스터디(평면) 화면을 마우스로 다루는 방식을 선택하세요. 선택한 방식은 메뉴에서 언제든 변경할 수 있습니다.' : `지금은 ‘${sKeysEff() === 'expert' ? '전문가 조작 (CAD 방식)' : '기본 조작'}’이에요.`;
+  $('#k2T').textContent = first ? '스터디 조작 방식 선택' : '스터디 조작 방식';
+  $('#k2Cancel').hidden = !!first;
+  m.hidden = false;
+}
+$('#keysBtn').onclick = () => { document.body.classList.remove('menuOpen'); if (uiMode === 'study') openKeys2d(false); else openKeys3d(false); };
+
+/* 화면 위 덧그림 (고르기 네모·올가미·늘이기 표시): 스터디 그림과 따로 그려서 가볍게 */
+function x4Svg(){
+  let s = document.getElementById('x4ov');
+  if (!s) { s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.id = 'x4ov'; s.setAttribute('aria-hidden', 'true'); pc.after(s); }
+  s.style.left = pc.offsetLeft + 'px'; s.style.top = pc.offsetTop + 'px'; s.style.width = pc.offsetWidth + 'px'; s.style.height = pc.offsetHeight + 'px';
+  return s;
+}
+const x4S = (x, z) => [sv.tx + x * sv.k, sv.ty + z * sv.k];
+function x4Draw(){
+  const on = uiMode === 'study' && P && (winPend || lassoNow || x4Hover || (rulerPend && rulerPend.cur));
+  const s = document.getElementById('x4ov');
+  if (!on) { if (s && s.firstChild) s.textContent = ''; return; }
+  const v = x4Svg(); let h = '';
+  if (winPend && winPend.cur) {
+    const [ax, az] = x4S(winPend.w0.x, winPend.w0.z), [bx, bz] = x4S(winPend.cur.x, winPend.cur.z), cross = winPend.cur.x < winPend.w0.x;
+    h += `<rect x="${Math.min(ax, bx)}" y="${Math.min(az, bz)}" width="${Math.abs(bx - ax)}" height="${Math.abs(bz - az)}" fill="${cross ? 'rgba(76,140,90,.12)' : 'rgba(44,90,140,.10)'}" stroke="${cross ? '#3d7a4c' : '#2c5a8c'}" stroke-width="1.3"${cross ? ' stroke-dasharray="6 4"' : ''}/>`;
+    h += `<circle cx="${ax}" cy="${az}" r="3.5" fill="#fff" stroke="${cross ? '#3d7a4c' : '#2c5a8c'}" stroke-width="1.6"/>`;
+  }
+  if (lassoNow && lassoNow.pts.length > 1) {
+    const cross = lassoNow.cross, d = lassoNow.pts.map(([x, z], i) => { const [a, b] = x4S(x, z); return (i ? 'L' : 'M') + a.toFixed(1) + ',' + b.toFixed(1); }).join('') + 'Z';
+    h += `<path d="${d}" fill="${cross ? 'rgba(76,140,90,.12)' : 'rgba(44,90,140,.10)'}" stroke="${cross ? '#3d7a4c' : '#2c5a8c'}" stroke-width="1.3" stroke-linejoin="round"${cross ? ' stroke-dasharray="6 4"' : ''}/>`;
+  }
+  if (rulerPend && rulerPend.cur) {
+    const [ax, az] = x4S(rulerPend.a[0], rulerPend.a[1]), [bx, bz] = x4S(rulerPend.cur[0], rulerPend.cur[1]), L = Math.hypot(rulerPend.cur[0] - rulerPend.a[0], rulerPend.cur[1] - rulerPend.a[1]);
+    h += `<line x1="${ax}" y1="${az}" x2="${bx}" y2="${bz}" stroke="#2c5a8c" stroke-width="1.6" stroke-dasharray="7 4"/><circle cx="${ax}" cy="${az}" r="4" fill="#fff" stroke="#2c5a8c" stroke-width="1.8"/>`;
+    h += `<text x="${bx + 12}" y="${bz - 10}" font-size="12" font-family="IBM Plex Mono, monospace" fill="#2c5a8c" stroke="#fbf8f1" stroke-width="3" paint-order="stroke">${isSketch() ? f2(L) + 'm' : cellsStr(L) + '칸 · ' + f2(L) + 'm'}</text>`;
+  }
+  if (x4Hover) {
+    const [a, b] = x4Hover.seg.map(([x, z]) => x4S(x, z));
+    h += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#d9480f" stroke-width="4" stroke-linecap="round" stroke-opacity=".85"/>`;
+    if (x4Hover.end) h += `<circle cx="${b[0]}" cy="${b[1]}" r="6" fill="#fff" stroke="#d9480f" stroke-width="2.2"/>`;
+  }
+  v.innerHTML = h;
+}
+{ const _rsn = renderStudyNow; renderStudyNow = function(){ _rsn(); try { x4Draw(); x4First(); x4Label(); } catch (e) {} }; }
+function x4Label(){ const kb = $('#keysBtn'); if (kb && uiMode === 'study') { const t = `조작 방식 · ${sKeysEff() === 'expert' ? '전문가' : '기본'}`; if (kb.textContent !== t) kb.textContent = t; } }
+function x4First(){ // 처음 스터디를 열 때 한 번: 마우스가 있는 기기에서만 조작 방식 고르기
+  if (x4Asked || keys2d || uiMode !== 'study' || !P || !hasMouse() || $('#editView').hidden) return;
+  x4Asked = true; setTimeout(() => { if (!keys2d && uiMode === 'study' && $('#keysModal')?.hidden !== false) openKeys2d(true); }, 400);
+}
+function x4Cancel(){ const had = !!(winPend || lassoNow || x4Hover || rulerPend); winPend = null; lassoNow = null; x4Hover = null; rulerPend = null; x4Draw(); return had; }
+
+/* 다각형(올가미) 안에 점이 있나 */
+function x4In(poly, [x, z]){ let o = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, zi] = poly[i], [xj, zj] = poly[j]; if ((zi > z) !== (zj > z) && x < (xj - xi) * (z - zi) / (zj - zi) + xi) o = !o; } return o; }
+function x4Hits(poly, cross){
+  const ins = pts => cross ? pts.some(p => x4In(poly, p)) : pts.every(p => x4In(poly, p));
+  const ids = [], cs = [];
+  for (const b of P.boxes) {
+    const si = boxSheetIdx(b); if (!sheetVis(si)) continue;
+    const ox = sheetOx(si), oy = sheetOy(si), pts = worldPts(b).map(([x, z]) => [x + ox, z + oy]);
+    let hit = ins(pts);
+    if (!hit && cross) hit = poly.some(p => x4In(pts, p)); // 올가미가 도형 안에서만 그어진 경우
+    if (hit) ids.push(b.id);
+  }
+  for (const n of P.notes) { const ni = itemSheetIdx(n); if (sheetVis(ni) && x4In(poly, [sheetOx(ni) + n.x, sheetOy(ni) + n.z])) ids.push(n.id); }
+  if (cardShow) for (const c of P.cards) { const ci = itemSheetIdx(c); if (!sheetVis(ci)) continue; const x0 = sheetOx(ci) + c.x, z0 = sheetOy(ci) + c.z, x1 = x0 + c.w, z1 = z0 + c.w / refAR(c.ref); if (ins([[x0, z0], [x1, z0], [x1, z1], [x0, z1]])) cs.push(c.id); }
+  return { ids, cs };
+}
+function x4ApplySel(r, add){
+  const ids = new Set(add ? selSet : []);
+  for (const id of r.ids) { const b = getBox(id); for (const x of b ? groupOf(b) : [{ id }]) ids.add(x.id); }
+  const cs = new Set(add ? selCards : []); for (const c of r.cs) cs.add(c);
+  setSel([...ids]); selCards = cs; selCard = null; rotMode = false; studyUI();
+}
+
+/* 늘이기: 누른 곳 근처의 동선 끝 · 도형 변 찾기 */
+function x4Snap(v){ const st = sStep(); return r2(Math.round(v / st) * st); }
+function x4Find(w, touch){
+  const tol = (touch ? 22 : 12) / sv.k;
+  if (flowShow || flowEdit) for (const f of P.flows) {
+    const si = itemSheetIdx(f); if (!sheetVis(si) || f.pts.length < 2) continue;
+    const ox = sheetOx(si), oy = sheetOy(si), n = f.pts.length;
+    for (const end of [0, 1]) {
+      const p = f.pts[end ? n - 1 : 0], q = f.pts[end ? n - 2 : 1], d = Math.hypot(w.x - ox - p[0], w.z - oy - p[1]);
+      if (d < tol * 1.3) return { kind: 'fend', f, end, seg: [[q[0] + ox, q[1] + oy], [p[0] + ox, p[1] + oy]] };
+    }
+  }
+  let best = null;
+  for (const b of P.boxes) {
+    const si = boxSheetIdx(b); if (!sheetVis(si) || b.lock) continue;
+    const ox = sheetOx(si), oy = sheetOy(si), lx = w.x - ox, lz = w.z - oy;
+    if (b.shape === 'poly') {
+      const { W } = polyWorld(b), n = W.length;
+      for (let i = 0; i < n; i++) {
+        const a = W[i], c = W[(i + 1) % n], vx = c[0] - a[0], vz = c[1] - a[1], L2 = vx * vx + vz * vz; if (L2 < 1e-9) continue;
+        const t = Math.max(0, Math.min(1, ((lx - a[0]) * vx + (lz - a[1]) * vz) / L2)), d = Math.hypot(lx - a[0] - t * vx, lz - a[1] - t * vz);
+        if (d < tol && (!best || d < best.d)) best = { kind: 'pedge', b, i, d, seg: [[a[0] + ox, a[1] + oy], [c[0] + ox, c[1] + oy]] };
+      }
+      continue;
+    }
+    const cx = b.x + b.w / 2, cz = b.z + b.d / 2, an = rad(b.ang || 0), ca = Math.cos(an), sa = Math.sin(an);
+    const dx = lx - cx, dz = lz - cz, ux = dx * ca + dz * sa, uz = -dx * sa + dz * ca, hw = b.w / 2, hd = b.d / 2;
+    const toW = (u, v) => [cx + u * ca - v * sa + ox, cz + u * sa + v * ca + oy];
+    for (const [h, d, inSpan, seg] of [
+      ['w', Math.abs(ux + hw), Math.abs(uz) <= hd + tol, [toW(-hw, -hd), toW(-hw, hd)]],
+      ['e', Math.abs(ux - hw), Math.abs(uz) <= hd + tol, [toW(hw, -hd), toW(hw, hd)]],
+      ['n', Math.abs(uz + hd), Math.abs(ux) <= hw + tol, [toW(-hw, -hd), toW(hw, -hd)]],
+      ['s', Math.abs(uz - hd), Math.abs(ux) <= hw + tol, [toW(-hw, hd), toW(hw, hd)]]]) {
+      if (inSpan && d < tol && (!best || d < best.d)) best = { kind: 'edge', b, h, d, seg };
+    }
+  }
+  return best;
+}
+function x4StartStretch(e, w){
+  const t = x4Find(w, e.pointerType !== 'mouse'); x4Hover = null;
+  if (!t) { toastOnce4(); return false; } // 변·끝이 아니면 보통 선택처럼 (빈 곳 끌기 = 화면 이동)
+  const start = JSON.stringify(P);
+  if (t.kind === 'edge') {
+    const b = t.b, si = boxSheetIdx(b); setSel([b.id]); rotMode = false; selCard = null;
+    gesture = { type: 'resize', h: t.h, dpos: doorAbs([b.id]), start, o: { ...b }, ox: sheetOx(si), oy: sheetOy(si), moved: false };
+  } else if (t.kind === 'pedge') {
+    const b = t.b, si = boxSheetIdx(b), { W, C } = polyWorld(b), n = W.length, a = W[t.i], c = W[(t.i + 1) % n], L = Math.hypot(c[0] - a[0], c[1] - a[1]) || 1;
+    setSel([b.id]); rotMode = false; selCard = null; polySelV = null;
+    gesture = { type: 'x4pedge', x4: true, id: b.id, i: t.i, W0: W.map(p => p.slice()), C0: C.map(p => p ? p.slice() : null), nx: -(c[1] - a[1]) / L, nz: (c[0] - a[0]) / L, a, ox: sheetOx(si), oy: sheetOy(si), start, moved: false };
+  } else {
+    const f = t.f, si = itemSheetIdx(f), n = f.pts.length, p = f.pts[t.end ? n - 1 : 0], q = f.pts[t.end ? n - 2 : 1], L = Math.hypot(p[0] - q[0], p[1] - q[1]) || 1;
+    if (flowEdit) selFlow = f.id;
+    gesture = { type: 'x4fend', x4: true, fid: f.id, idx: t.end ? n - 1 : 0, q, ux: (p[0] - q[0]) / L, uz: (p[1] - q[1]) / L, ox: sheetOx(si), oy: sheetOy(si), start, moved: false };
+  }
+  studyUI(); return true;
+}
+let x4Toasted = false;
+function toastOnce4(){ if (x4Toasted || quietTips()) return; x4Toasted = true; toast('늘이기: 도형의 변이나 동선 끝을 잡고 끌어요 · 빈 곳을 끌면 화면이 움직여요'); }
+
+/* 누를 때 (기존 처리보다 먼저): true면 여기서 다 처리했어요 */
+function x4Down(e, w, role, id, ro){
+  if (!P || pointers.size !== 1) return false;
+  if (rulerPend && tool === 'ruler') {
+    if (e.button === 1 || (e.pointerType === 'mouse' && e.button === 2)) { if (e.button === 2) { x4Cancel(); gesture = { type: 'none' }; return true; } return false; }
+    const pd = rulerPend; rulerPend = null; x4Draw();
+    const b = rulerB(pd.a, w, e.shiftKey, e.altKey);
+    if (Math.hypot(b[0] - pd.a[0], b[1] - pd.a[1]) > 1e-6) {
+      commit(() => { if (!Array.isArray(P.guides)) P.guides = []; P.guides.push({ a: [r2(pd.a[0]), r2(pd.a[1])], b: [r2(b[0]), r2(b[1])] }); });
+      if (rulersArr.length === 1) tip('xline1', '보조선을 그었어요 · 도형을 옮기거나 그릴 때 이 선에 붙어요 · 작업과 같이 저장돼요 · 점 옆 × 로 지워요');
+      setTool('select'); studyUI();
+    }
+    gesture = { type: 'none' }; return true;
+  }
+  if (winPend) {
+    if (e.button === 1) return false; // 휠 클릭: 화면 이동은 그대로 (네모는 계속 따라와요)
+    if (e.button === 2) { x4Cancel(); gesture = { type: 'none' }; return true; }
+    const wp = winPend; winPend = null; x4Draw();
+    gesture = { type: 'marquee', w0: wp.w0, w1: w, add: wp.add || e.shiftKey, cx: e.clientX, cy: e.clientY, dragged: true };
+    return true;
+  }
+  if (ro || flowEdit || fbEdit || linkMode || siteEdit || e.button !== 0 || spaceDown) return false;
+  if (tool === 'stretch') return x4StartStretch(e, w);
+  if (tool === 'select' && x4Expert(e) && !sizeMode && !polyDraft && !id && (!role || role === 'sheet')) {
+    { const se = role === 'sheet' && e.target.closest ? e.target.closest('[data-role=sheet]') : null; if (se && se.dataset.sheet && se.dataset.sheet !== activeSheet) { activeSheet = se.dataset.sheet; studyBars(); } }
+    gesture = { type: 'x4empty', x4: true, w0: w, cx: e.clientX, cy: e.clientY, add: e.shiftKey, pts: [[w.x, w.z]], lx: e.clientX, ly: e.clientY };
+    return true;
+  }
+  return false;
+}
+/* 끌 때 */
+function x4Move(e, g){
+  const w = toWorld(e);
+  if (g.type === 'x4empty') {
+    if (!g.drag) { if (Math.hypot(e.clientX - g.cx, e.clientY - g.cy) < 6) return; g.drag = true; g.cross = e.clientX < g.cx; lassoNow = { pts: g.pts, cross: g.cross }; }
+    if (Math.hypot(e.clientX - g.lx, e.clientY - g.ly) >= 3) { g.pts.push([w.x, w.z]); g.lx = e.clientX; g.ly = e.clientY; x4Draw(); }
+    return;
+  }
+  if (g.type === 'x4pedge') {
+    const b = getBox(g.id); if (!b) return;
+    const lx = w.x - g.ox, lz = w.z - g.oy;
+    let d = (lx - g.a[0]) * g.nx + (lz - g.a[1]) * g.nz; d = e.altKey ? r2(d) : x4Snap(d);
+    if (d === g.d) return; g.d = d;
+    const W = g.W0.map(p => p.slice()), C = g.C0.map(p => p ? p.slice() : null), n = W.length, j = (g.i + 1) % n, mv = p => [p[0] + g.nx * d, p[1] + g.nz * d];
+    W[g.i] = mv(W[g.i]); W[j] = mv(W[j]); if (C[g.i]) C[g.i] = mv(C[g.i]);
+    setPolyWorld(b, W, C); g.moved = true; renderStudy(); showTag(e, `${d >= 0 ? '+' : '−'}${f2(Math.abs(d))}m · 면적 ${f1(shapeArea(b))}㎡`); return;
+  }
+  if (g.type === 'x4fend') {
+    const f = P.flows.find(x => x.id === g.fid); if (!f) return;
+    let t = (w.x - g.ox - g.q[0]) * g.ux + (w.z - g.oy - g.q[1]) * g.uz; t = Math.max(sStep() * 0.5, e.altKey ? r2(t) : x4Snap(t));
+    if (t === g.t) return; g.t = t;
+    f.pts[g.idx] = [r2(g.q[0] + g.ux * t), r2(g.q[1] + g.uz * t)]; g.moved = true; renderStudy(); showTag(e, `끝 칸 ${f2(t)}m`); return;
+  }
+}
+/* 뗄 때 */
+function x4End(e, g, cancelled){
+  if (g.type === 'x4empty') {
+    const lasso = lassoNow; lassoNow = null;
+    if (cancelled) { x4Draw(); return; }
+    if (!g.drag) { winPend = { w0: g.w0, cur: toWorld(e), add: g.add }; x4Draw(); tip('x4win', '네모 고르기: 반대쪽 모서리를 한 번 더 클릭해요 · 왼→오른쪽은 다 들어간 것만, 오른→왼쪽은 걸친 것까지 · Esc 취소'); return; }
+    if (g.pts.length >= 3) x4ApplySel(x4Hits(g.pts, g.cross), g.add);
+    x4Draw(); return;
+  }
+  if (g.type === 'x4pedge' || g.type === 'x4fend') {
+    hideTag();
+    if (g.moved && !cancelled) { pushHist(g.start); studyUI(); return; }
+    if (cancelled && g.moved) { P = JSON.parse(g.start); pruneSel(); }
+    studyUI(); return;
+  }
+}
+/* 마우스만 움직일 때: 네모가 따라오고, 늘이기는 잡힐 곳을 미리 보여 줘요 */
+pc.addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse' || uiMode !== 'study' || !P) return;
+  if (winPend) { winPend.cur = toWorld(e); x4Draw(); }
+  if (rulerPend) { rulerPend.cur = rulerB(rulerPend.a, toWorld(e), e.shiftKey, e.altKey); x4Draw(); }
+  if (tool === 'stretch' && !gesture && !edRO()) {
+    const t = x4Find(toWorld(e), false), key = t ? t.seg.flat().join(',') : '';
+    if (key !== (x4Hover ? x4Hover.key : '')) { x4Hover = t ? { seg: t.seg, end: t.kind === 'fend', key } : null; x4Draw(); }
+    pc.style.cursor = t ? 'crosshair' : '';
+  } else { if (x4Hover) { x4Hover = null; x4Draw(); } if (pc.style.cursor) pc.style.cursor = ''; }
+});
+pc.addEventListener('pointerleave', () => { if (x4Hover) { x4Hover = null; x4Draw(); } });
+/* 저장: 화면을 떠나거나 숨길 때 기다리던 저장을 바로 */
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && dirty) flush(); });
+addEventListener('pagehide', () => { if (dirty) flush(); });
+
+/* 평면 대지 정보: 칸 번호 · 바닥 높이 · 실내 면적 (9차) */
+function areaStr(a){ const r = Math.round(a * 10) / 10; return Math.abs(r - Math.round(r)) < 1e-9 ? String(Math.round(r)) : r.toFixed(1); }
+function levelIndoor(L){ // 그 층을 지나는 실내 도형 바닥 면적 합 (외부·주차·보이드 빼고)
+  let a = 0;
+  for (const b of P.boxes) {
+    if (b.kind !== 'solid' || b.sheet || b.cat === 'outdoor' || b.cat === 'parking' || b.cat === 'void') continue;
+    if (b.lv <= L + 1e-6 && L < b.lv + Math.max(1, b.fl) - 1e-6) a += shapeArea(b);
+  }
+  return a;
+}
+function sheetInfoSvg(s, i, ox, W, D, M, g, k, px, T, hs){
+  let h = '';
+  const cell = g * k; // 한 칸의 화면 크기(px)
+  if (cell >= 9 && M * k >= 11) {
+    const every = cell >= 15 ? 1 : cell >= 7 ? 5 : 10, fs = Math.min(11.5, Math.max(8.5, Math.min(cell, M * k) * 0.5)), nc = Math.ceil(W / g - 1e-6), nr = Math.ceil(D / g - 1e-6);
+    const st = `font-size="${r3(px(fs))}" font-family="IBM Plex Mono, monospace" fill="#a59c8c" text-anchor="middle" pointer-events="none"`;
+    let t = '';
+    for (let c = 1; c <= nc; c++) if (every === 1 || ((c % every === 0 || c === 1) && c !== nc)) t += `<text x="${r3(ox + (c - 0.5) * g)}" y="${r3(-M / 2 + px(fs * 0.36))}" ${st}>${c}</text>`;
+    for (let r = 1; r <= nr; r++) if (every === 1 || r % every === 0 || r === 1) t += `<text x="${r3(ox - M / 2)}" y="${r3((r - 0.5) * g + px(fs * 0.36))}" ${st}>${r}</text>`;
+    h += `<g class="cellnum">${t}</g>`;
+  }
+  if (!isSketch()) {
+    const L = s.level, e = elevOf(L), a = levelIndoor(L);
+    const txt = `${e > 0 ? '+' : e < 0 ? '−' : '±'}${f1(Math.abs(e))} · 실내 ${areaStr(a)}㎡`, fs = 12.5 * T;
+    const xr = hs ? ox + W - px(28 + 10) : ox + W - px(4); // 오른쪽 위 나침반(N)과 겹치지 않게 대지 오른쪽 끝에 맞춤
+    const sub = `${levelName(L)} 평면 · ${cellsStr(W)}×${cellsStr(D)}칸`, tW = textW(sheetTitle(s), 17 * T, 700) + 8 + textW(sub, 11.5 * T, 400), hW = textW(txt, fs, 400) * 1.15;
+    if (tW + hW + 18 <= (xr - (ox - M)) * k) h += `<text x="${r3(xr)}" y="${r3(-M - px(10))}" font-size="${r3(px(fs))}" font-family="IBM Plex Mono, monospace" fill="#6f685c" text-anchor="end" pointer-events="none">${esc(txt)}</text>`;
+  }
+  return h;
+}
+/* 3D 메뉴: 메뉴 버튼 바로 아래에 (스터디와 같은 자리) */
+{ const mb = $('#menuBtn'); const setT = () => { const r = mb.getBoundingClientRect(); if (r.height) document.documentElement.style.setProperty('--mtop', Math.round(r.bottom + 8) + 'px'); };
+  mb.addEventListener('pointerdown', setT); mb.addEventListener('click', setT); addEventListener('resize', setT); }
+
+/* 보조선 자: 방향 맞춤 (수평·수직 가까우면 딱, Shift는 45°) */
+function rulerB(a, w, shift, alt){
+  if (sKeysEff() === 'expert' && !alt) return [sn(w.x), sn(w.z)]; // 전문가 조작: 끝점도 칸(격자)에 맞춤 · Alt = 자유롭게
+  let b = [w.x, w.z]; const dx = b[0] - a[0], dz = b[1] - a[1], L = Math.hypot(dx, dz), a0 = Math.atan2(dz, dx), q = Math.PI / (shift ? 4 : 2), ang = Math.round(a0 / q) * q;
+  if (L > 1e-9 && (shift || Math.abs(a0 - ang) < 4 * Math.PI / 180)) b = [a[0] + Math.cos(ang) * L, a[1] + Math.sin(ang) * L];
+  return b;
+}
+/* 프로젝트에 저장한 내용과 같은지: 키 순서·작은 소수점 차이·빈 값은 무시하고 내용만 비교 */
+function canonV(v){
+  if (Array.isArray(v)) return v.map(canonV);
+  if (v && typeof v === 'object') {
+    const o = {};
+    for (const k of Object.keys(v).sort()) {
+      const x = canonV(v[k]);
+      if (x === undefined || x === null || x === '' || x === false || x === 0) continue;
+      if (Array.isArray(x) && !x.length) continue;
+      if (typeof x === 'object' && !Array.isArray(x) && !Object.keys(x).length) continue;
+      o[k] = x;
+    }
+    return o;
+  }
+  if (typeof v === 'number') return Math.round(v * 100) / 100 || 0;
+  return v;
+}
+function canonSig(p){
+  const s = snapshotOf(p), byId = a => Array.isArray(a) ? a.slice().sort((x, y) => String(x && x.id).localeCompare(String(y && y.id))) : a;
+  for (const k of ['boxes', 'notes', 'flows', 'cards', 'doors']) if (s[k]) s[k] = byId(s[k]);
+  return hash(p.name + JSON.stringify(canonV(s)));
+}
+function isUnsaved(p){
+  if (!p || !p.publishedAt) return true;
+  if (p.pubSig2) return p.pubSig2 !== canonSig(p);
+  return p.pubSig !== sigOf(p); // 예전에 저장한 것
+}
+/* 플랜 정렬: 시간순(만든 순서, 처음 만든 게 맨 아래) · 최신순(마지막으로 저장한 순서) */
+let planSort = (() => { try { return localStorage.getItem('mass-plan-sort') === 'recent' ? 'recent' : 'time'; } catch (e) { return 'time'; } })();
+const planBorn = pl => { const t = parseInt(String(pl.id || '').slice(1, 9), 36); return pl.createdAt || (t > 1.5e12 && t < 4e12 ? t : 0) || pl.savedAt || 0; };
+function planSorted(list){ return list.slice().sort(planSort === 'recent' ? (a, b) => (b.savedAt || 0) - (a.savedAt || 0) : (a, b) => planBorn(b) - planBorn(a)); }
+function planSortUI(){
+  let r = $('#planSortRow');
+  if (!r) {
+    r = document.createElement('div'); r.id = 'planSortRow'; r.className = 'plansort';
+    r.innerHTML = '<button type="button" data-ps="time">시간순</button><button type="button" data-ps="recent">최신순</button>';
+    r.querySelectorAll('button').forEach(b => b.onclick = () => { planSort = b.dataset.ps; try { localStorage.setItem('mass-plan-sort', planSort); } catch (e) {} renderPlans(); });
+    $('#planList').before(r);
+  }
+  r.querySelectorAll('button').forEach(b => { const on = b.dataset.ps === planSort; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.title = b.dataset.ps === 'time' ? '만든 순서 · 처음 만든 플랜이 맨 아래' : '마지막으로 저장(덮어쓰기)한 플랜이 맨 위'; });
+}
+
+/* 안내 줄이기: 전문가 조작이면 늘, 기본 조작은 켠 지 10분 뒤부터 사용법 안내(팁·아래 안내 줄·설명 글)를 안 띄워요 */
+var APP_T0 = Date.now();
+function expertNow(){ try { return uiMode === 'study' ? sKeysEff() === 'expert' : keysEff() === 'sketchup'; } catch (e) { return false; } }
+function quietTips(){ return expertNow() || (APP_T0 ? Date.now() - APP_T0 > 10 * 60 * 1000 : false); }
+{ const q = () => document.body.classList.toggle('quiet', quietTips()); q(); setInterval(q, 3000); addEventListener('pointerup', q, true); }
+
+/* 프로젝트 화면: 보기(전체·고정…) 버튼을 설명 글 오른쪽에 붙여 빈 줄을 없앰 */
+{ const tw = $('#tfWrap'), td = $('#tabDesc'); if (tw && td && td.parentNode) { const row = document.createElement('div'); row.className = 'descrow'; td.parentNode.insertBefore(row, td); row.append(td, tw); tw.classList.add('inl'); } }
+
 // 3D 여러 개 선택 중 안내 막대: 몇 개 골랐는지 · 모두 풀기 · 끝내기
 function upd3Pill(){
   let el = $('#mpPill3');
@@ -8642,12 +9044,13 @@ function upd3Pill(){
   }
   el.hidden = false; el.style.top = ($('#topArea').offsetHeight + 10) + 'px';
   const n = selBoxes().length;
-  $('#mp3T').textContent = `여러 개 고르는 중${n ? ` · ${n}개` : ''} · 끌어서 네모로 감싸거나 눌러서 더하고 빼요`;
+  $('#mp3T').textContent = quietTips() ? `여러 개 선택${n ? ` · ${n}개` : ''}` : `여러 개 고르는 중${n ? ` · ${n}개` : ''} · 끌어서 네모로 감싸거나 눌러서 더하고 빼요`;
   $('#mp3Clr').hidden = !n;
 }
 
 // 사용법 안내는 같은 내용을 3번까지만 (그다음엔 short가 있으면 짧게, 없으면 안 띄움)
 function tip(key, msg, short){
+  if (quietTips()) return; // 전문가 조작이거나 켠 지 10분이 지나면 사용법 안내는 안 띄움
   let n = 0; try { n = Number(localStorage.getItem('mass-tip-' + key)) || 0; localStorage.setItem('mass-tip-' + key, String(n + 1)); } catch (e) {}
   if (n < 3) toast(msg); else if (short) toast(short);
 }
